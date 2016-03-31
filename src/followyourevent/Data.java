@@ -353,8 +353,7 @@ public class Data {
 	public static boolean exist(String mail, String pass){
 		String query = "PREFIX Foaf: <http://xmlns.com/foaf/0.1/> "
 				+ "PREFIX own: <http://followyourevent-upv.rhcloud.com/>	"//TODO habra que cambiar el nombre del pass cuando tengamos claro el vocabulario
-				+ "SELECT ?peo WHERE { ?peo Foaf:mbox '"+mail+"' . "
-								+ " ?peo own:pass '"+pass+"'}";
+				+ "SELECT ?peo WHERE { ?peo Foaf:mbox '"+mail+"'}";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
         if(res.hasNext()){
         	QuerySolution soln = res.nextSolution();

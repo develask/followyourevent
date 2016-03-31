@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="followyourevent.*"%>
 <!DOCTYPE html>
-<html ng-app="fye">
+<html>
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,42 +27,13 @@
 			<div class="jumbotron">
 				<h1>Follow Your Event</h1>
 				<p>Here you can find those events you want to go!</p>
-				<p><a class="btn btn-primary btn-lg" href="#" role="button" data-toggle="modal" data-target="#login">Sign In</a></p>
-			</div>
-
-
-			<!-- login modal -->
-			<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							<h4 class="modal-title" id="myModalLabel">Sign In</h4>
-						</div>
-						<div class="modal-body">
-							<form>
-								<div class="form-group">
-									<label for="exampleInputEmail1">Email address</label>
-									<input type="email" class="form-control" placeholder="Email">
-								</div>
-								<div class="form-group">
-									<label for="exampleInputPassword1">Password</label>
-									<input type="password" class="form-control" placeholder="Password">
-								</div>
-								<div class="checkbox">
-									<label>
-										<input type="checkbox"> Remember
-									</label>
-								</div>
-								<button type="submit" class="btn btn-default">Log In</button>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							<!--button type="button" class="btn btn-primary">Sign In</button-->
-						</div>
-					</div>
-				</div>
+				<p><a class="btn btn-primary btn-lg" href="login" role="button">Sign In</a> <a class="btn btn-default btn-lg" href="signup" role="button">Sign Up</a></p>
+				<%
+					String mail = Sessions.getSessions().verifySession(request.getCookies());
+					if (mail != null){
+						out.print("<p>Mail : " + mail+"</p>");
+					}
+				%>
 			</div>
 
 			<div class="row">
@@ -106,10 +78,10 @@
 		<script src="js/bootstrap.min.js"></script>
 
 		<!-- Angular -->
-		<script type="text/javascript" src="js/angular.min.js"></script>
-		<script src="js/angular-route.min.js"></script>
+		<!-- script type="text/javascript" src="js/angular.min.js"></script>
+		<script src="js/angular-route.min.js"></script -->
 
 		<!-- Own js -->
-		<script src="js/index.js"></script>
+		<!-- script src="js/index.js"></script -->
   </body>
 </html>

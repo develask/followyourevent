@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="followyourevent.*"%>
+<%@ page import="java.util.Date"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -18,15 +19,19 @@
 		if (!pass.equals(pass2)){
 			response.setStatus(response.SC_MOVED_TEMPORARILY);
 			response.setHeader("Location", "/followyourevent/signup");
-		}
-		
-		if (Data.createPerson(mail, name, Integer.parseInt(age), sex, pass)){
-			%>
-			<h2>Se ha creado:</h2>
-			<p><b>Mail:</b><%= mail %></p>
-			<%
+			System.out.println("pass not equal");
 		}else{
-			%><h2>No se ha podido crear.</h2><%
+			if (Data.createPerson(mail, name, Integer.parseInt(age), sex, pass)){
+				response.setStatus(response.SC_MOVED_TEMPORARILY);
+				Cookie c = new Cookie("oauth", Sessions.sha1(mail+(new Date()).getTime()));
+				response.addCookie( c );
+				Sessions.getSessions().setNewSession(c.getValue(), mail);
+				response.setHeader("Location", "/followyourevent");
+			}else{
+				response.setStatus(response.SC_MOVED_TEMPORARILY);
+				response.setHeader("Location", "/followyourevent/signup");
+				System.out.println("Error creating person");
+			}
 		}
 		
 		
