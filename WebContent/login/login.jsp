@@ -9,13 +9,20 @@
 </head>
 <body>
 	<%
-		String mail = request.getParameter("email");
-		String pass = request.getParameter("pass");
 		response.setStatus(response.SC_MOVED_TEMPORARILY);
-		if (Data.confirmPass(mail, pass)){
+		String name = Sessions.getSessions().verifySession(request.getCookies());
+		if (name != null){
 			response.setHeader("Location", "/followyourevent"); 
 		}else{
-			response.setHeader("Location", "/followyourevent/login"); 
+		
+			String mail = request.getParameter("email");
+			String pass = request.getParameter("pass");
+			if (Data.confirmPass(mail, pass)){
+				response.addCookie( new Cookie("oauth","") );
+				response.setHeader("Location", "/followyourevent"); 
+			}else{
+				response.setHeader("Location", "/followyourevent/login"); 
+			}
 		}
 	%>
 </body>
