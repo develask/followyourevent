@@ -30,6 +30,8 @@ public class CargadorDatosMentira {
 		Resource CadeTracy = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"CadeTracy");
 		CadeTracy.addLiteral(FOAF.mbox, "maildecade@gmail.com");
 		CadeTracy.addLiteral(FOAF.givenname, "CadeTracy");
+		CadeTracy.addLiteral(FOAF.gender,"Female");
+		CadeTracy.addLiteral(age, "21");
 		CadeTracy.addLiteral(pass, "mentira");
 		//Create Ines Dominguez
 		//Resource InesDominguez = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"InesDominguez");
