@@ -10,6 +10,7 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
@@ -21,10 +22,19 @@ import org.jsoup.select.Elements;
 public class Data {
 	
 	private static HashMap<String,Integer> oficialnames;
-	private static String MS = "pre:http://followyourevent-upv.rhcloud.com/";
+	private static String MS = "http://followyourevent-upv.rhcloud.com/";
 	
 	public static void main(String[] args) {
+		//boolean s= false;
 		try{
+			Data.createPerson("maildeInesDominguez", "InesDominguez", 20, "Female", "mentira2");
+			//s = Data.exist("maildde@gmail.com", "mentira");
+			//System.out.println(s);
+			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		/*try{
 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
 			insertNewSite("http://www.hulen.no/");
 			System.out.println("------------------------------------------------");
@@ -34,7 +44,7 @@ public class Data {
 			FollowyoureventTDB.getFollowyoureventTDB().closeTransaction();
 		}finally{
 			FollowyoureventTDB.getFollowyoureventTDB().closeModel();
-		}
+		}*/
 		/*//TODO cambiamos a get
 		//declare variables
 		Document doc;
@@ -325,13 +335,15 @@ public class Data {
 	}
 	
 	public static boolean createPerson(String mail, String name, int age, String sex, String pass){
+		Property Ppass = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/pass");
+		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");;
 		if(!exist(mail,pass)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Person");
-			res.addLiteral(RDF.value, mail);
-			res.addLiteral(RDF.value, name);
-			res.addLiteral(RDF.value, age);
-			res.addLiteral(RDF.value, sex);
-			res.addLiteral(RDF.value, pass);
+			res.addLiteral(FOAF.mbox, mail);
+			res.addLiteral(FOAF.givenname, name);
+			res.addLiteral(Page, age);
+			res.addLiteral(FOAF.gender, sex);
+			res.addLiteral(Ppass, pass);
 			return true;
 		}else{
 			return false;
@@ -339,10 +351,13 @@ public class Data {
 	}
 	
 	public static boolean exist(String mail, String pass){
-		String query = "SELECT ?peo WHERE { ?peo '"+MS+"goes' '' .}";
+		String query = "PREFIX Foaf: <http://xmlns.com/foaf/0.1/> "
+				+ "PREFIX own: <http://followyourevent-upv.rhcloud.com/>	"//TODO habra que cambiar el nombre del pass cuando tengamos claro el vocabulario
+				+ "SELECT ?peo WHERE { ?peo Foaf:mbox '"+mail+"' . "
+								+ " ?peo own:pass '"+pass+"'}";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-        QuerySolution soln = res.nextSolution();
-        if(soln!=null){
+        if(res.hasNext()){
+        	QuerySolution soln = res.nextSolution();
         	return true;
         }else{
         	return false;

@@ -80,7 +80,7 @@ public class FollowyoureventTDB {
  	        try {
  	        	results = qexec.execSelect() ;
            	} finally { 
-         		rdfsmodel.close();
+         		//rdfsmodel.close();
            		dataset.end(); 
            	}
  		}else{
