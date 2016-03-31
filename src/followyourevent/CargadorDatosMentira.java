@@ -3,6 +3,7 @@ package followyourevent;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
@@ -15,19 +16,28 @@ public class CargadorDatosMentira {
 	public static void main(String[] args) {
 		
 		//URI
-		String MS = "pre:http://followyourevent-upv.rhcloud.com/";
+		String MS = "http://followyourevent.com/";
+		String own = "http://followyourevent.com/vocabulary/";
 		//Create person
 		Resource person = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Person");
-
+		
+		Property pass =  FollowyoureventTDB.getFollowyoureventTDB().createProperty(own+"pass");
+		
+		Property age = FollowyoureventTDB.getFollowyoureventTDB().createProperty(own+"age");
+		age.addProperty(RDFS.subPropertyOf, FOAF.Agent);
+		
 		//Create Cade tracy
 		Resource CadeTracy = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"CadeTracy");
+		CadeTracy.addLiteral(FOAF.mbox, "maildecade@gmail.com");
+		CadeTracy.addLiteral(FOAF.givenname, "CadeTracy");
+		CadeTracy.addLiteral(pass, "mentira");
 		//Create Ines Dominguez
-		Resource InesDominguez = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"InesDominguez");
+		//Resource InesDominguez = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"InesDominguez");
 		
 		//Cade Tracy is a person
 		CadeTracy.addProperty(RDF.type,person);
 		//Ines Dominguez is a person
-		InesDominguez.addProperty(RDF.type,person);
+		//InesDominguez.addProperty(RDF.type,person);
 		
 		Resource event = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event");
 		//Resource place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
@@ -66,12 +76,12 @@ public class CargadorDatosMentira {
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().createProperty(MS+"goes");
 		
 		//create stmt
-		Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(InesDominguez, goes, ev);
+		//Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(InesDominguez, goes, ev);
 		//Adding the statement
-		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+		//FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 		
 		//create stmt
-		stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev);
+		Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev);
 		//Adding the statement
 		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 		
