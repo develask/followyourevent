@@ -216,6 +216,14 @@ public class FollowyoureventTDB {
 	    }    
 	}
 	
+	public static ArrayList<String> getInformationOfPlace(){
+		return new ArrayList<String>();
+	}
+	
+	public static ArrayList<String> getEventsOfAPlace(){
+		return new ArrayList<String>();
+	}
+	
 	/**
 	 * 
 	 * @param uri
@@ -280,6 +288,14 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
+	public static ArrayList<String> getAllPastEventsOfAPerson(){
+		
+	}
+	
+	public static ArrayList<String> getAllFutureEventsOfAPerson(){
+		
+	}
+	
 	public static ArrayList<Resource> getAllThePeopleFromAnEvent(String event){
 		//the name parameter will be the complete url 
 		//Resource res = FollowyoureventTDB.getFollowyoureventTDB().getResource(event);
@@ -302,6 +318,10 @@ public class FollowyoureventTDB {
 	    }else{
 	    	return false;
 	    }	
+	}
+	
+	public static boolean createPlace(){
+		return true;
 	}
 	
 	public static boolean createEvent(String name, String image, String url, String day, String month, String hour, String price/*, int minimumage*/){
@@ -327,6 +347,7 @@ public class FollowyoureventTDB {
 			return false;
 		}
 	}
+	
 	public static boolean createPerson(String mail, String name, int age, String sex, String pass){
 		Property Ppass = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/pass");
 		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");;
@@ -370,15 +391,14 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
-	public static void addEventToAPerson(String person, String event){
+	public static void addEventToAPerson(String uriPerson, String uriEvent){
 	//	Resource personres = FollowyoureventTDB.getFollowyoureventTDB().getResource(person);
 	//	Resource eventres = FollowyoureventTDB.getFollowyoureventTDB().getResource(event);
 	//	addEventToAPerson(personres,eventres);
 	}
 	
-	public static void addEventToAPerson(Resource person, Resource event){
-		Property progoes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
-		FollowyoureventTDB.getFollowyoureventTDB().add(FollowyoureventTDB.getFollowyoureventTDB().createStatement(person, progoes, event));
+	public static void createRulesForRecommendations(){
+		
 	}
 	
 	public static void recommendEvents(){
