@@ -3,3 +3,11 @@ http://followyourevent.com/vocabulary/pass - Pass
 http://xmlns.com/foaf/0.1/gender - Gender - Sexo
 http://xmlns.com/foaf/0.1/givenname - Name
 http://xmlns.com/foaf/0.1/mbox - Mail
+http://www.w3.org/TR/prov-dm/organization - Place name
+http://dbpedia.org/event - Event name
+http://purl.org/dc/dcmitype/image - Image
+http://www.w3.org/TR/prov-dm/primarySource - Url
+http://dbpedia.org/day - Day
+http://dbpedia.org/month - Month
+http://www.w3.org/TR/prov-dm/start - Hour
+http://schema.org/price - Price
