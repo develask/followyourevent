@@ -51,24 +51,27 @@ public class FollowyoureventTDB {
  	}
  	
  	public static void main(String[] args) {
- 		ArrayList<String> arr = new ArrayList<String>();
+ 		boolean s = false;
  		try{
- 			arr = FollowyoureventTDB.getFollowyoureventTDB().getInformationOfEvent("http://followyourevent.com/event/hulen0223");
- 			System.out.println(arr.size());
+ 			s = FollowyoureventTDB.getFollowyoureventTDB().confirmPass("maildecade@gmail.com", "menti25ra");
+ 			System.out.println(s);
 		}catch(Exception e){
- 			System.out.println(arr.size());
+ 			System.out.println(s);
  			e.printStackTrace();
  		}
  	}
+ 	
  	public static FollowyoureventTDB getFollowyoureventTDB(){
  		if(FollowyoureventTDB.myFollowyoureventTDB==null){
  			FollowyoureventTDB.myFollowyoureventTDB = new FollowyoureventTDB();
  		}
  		return FollowyoureventTDB.myFollowyoureventTDB;
  	}
+ 	
 	public Model getModel(){
 		return FollowyoureventTDB.getFollowyoureventTDB().model;
 	}
+	
 	private void makeDataset(){
 		//this will be the directory that we will use to save the data
      	dataset = TDBFactory.createDataset(OPENSHIFT_DATA_DIR);
@@ -113,6 +116,7 @@ public class FollowyoureventTDB {
 	public Resource getResource(String uri){
 		return rdfsmodel.getResource(uri);
 	}
+	
 	public Resource createResource(String uri){
 		Resource res=null;
 		try{
@@ -165,7 +169,6 @@ public class FollowyoureventTDB {
 	}*/
 	
 	public void write(PrintStream out, String way) {
-	//	dataset.begin(ReadWrite.READ);
 		rdfsmodel.write(out,way);
 	}
 
@@ -284,30 +287,23 @@ public class FollowyoureventTDB {
 		return null;
 	}
 	
-	public static boolean confirmPass(String user, String pass){
-		//TODO crear las SELECT 
-		String query = "SELECT ?peo WHERE { ?peo '"+MS+"goes' '' .}";
+	public static boolean confirmPass(String mail, String pass){
+		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
+		String query = "PREFIX Own:<http://followyourevent.com/vocabulary/> SELECT ?pass WHERE { <"+reso+"> Own:pass ?pass .}";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-	    QuerySolution soln = res.nextSolution();
-	    Literal getuser, getpass; 
-	    getuser = soln.getLiteral(user);
-	    if(getuser!=null){
-	    	query = "SELECT ?peo WHERE { ?peo '"+MS+"goes' '' .}";
-	    	res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-	    	soln = res.nextSolution();
-	    	getpass = soln.getLiteral(pass);
-	    	if (getpass!=null) {
-				return true;
-			}else{
-				System.out.println("The user is not in the database");
-				return false;
-			}
+	    if(res.hasNext()){
+	    	QuerySolution soln = res.nextSolution();
+	    	String dpass = soln.getLiteral("pass").toString();
+	    	if(pass.equals(dpass)){
+	    		return true;
+	    	}else{
+	    		return false;
+	    	}
 	    }else{
-	    	System.out.println("The user is not in the database");
 	    	return false;
-	    }
-		
+	    }	
 	}
+	
 	public static boolean createEvent(String name, String image, String url, String day, String month, String hour, String price/*, int minimumage*/){
 		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
 		Property pimage = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://purl.org/dc/dcmitype/image");
