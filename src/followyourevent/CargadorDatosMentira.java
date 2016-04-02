@@ -99,7 +99,7 @@ public class CargadorDatosMentira {
 		*/
 		
 		//Create the property goes
-		Property goes = FollowyoureventTDB.getFollowyoureventTDB().createProperty(MS+"goes");
+		//Property goes = FollowyoureventTDB.getFollowyoureventTDB().createProperty(MS+"goes");
 		
 		//create stmt
 		//Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(InesDominguez, goes, ev);
@@ -107,9 +107,9 @@ public class CargadorDatosMentira {
 		//FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 		
 		//create stmt
-		Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev);
+		//Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev);
 		//Adding the statement
-		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+		//FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 		
 		//create stmt
 		//stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev2);
