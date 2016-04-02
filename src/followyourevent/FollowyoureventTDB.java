@@ -42,7 +42,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	private static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -55,7 +56,8 @@ public class FollowyoureventTDB {
  		try{
  			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
- 			FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
+ 			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
+ 			FollowyoureventTDB.getFollowyoureventTDB().createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
  			System.out.println(s);
 		}catch(Exception e){
  			System.out.println(s);
@@ -83,6 +85,7 @@ public class FollowyoureventTDB {
         //obtain the model from the dataset
         model = dataset.getDefaultModel();
 		rdfsmodel = ModelFactory.createRDFSModel(model);
+		rdfsmodel.commit();
    	}
 	
 	public void addNewModel(Model mod){
@@ -362,9 +365,9 @@ public class FollowyoureventTDB {
 		}
 	}
 	
-	public static boolean createPerson(String mail, String name, int age, String sex, String pass){
+	public static boolean createPerson(String mail, String name, String age, String sex, String pass){
 		Property Ppass = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/pass");
-		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");;
+		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");
 		if(!existPerson(mail)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"person/"+mail);
 			res.addLiteral(FOAF.mbox, mail);

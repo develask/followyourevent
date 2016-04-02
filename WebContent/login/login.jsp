@@ -18,7 +18,7 @@
 		
 			String mail = request.getParameter("email");
 			String pass = request.getParameter("pass");
-			if (Data.confirmPass(mail, pass)){
+			if (FollowyoureventTDB.getFollowyoureventTDB().confirmPass(mail, pass)){
 				Cookie c = new Cookie("oauth", Sessions.sha1(mail+(new Date()).getTime()));
 				response.addCookie( c );
 				Sessions.getSessions().setNewSession(c.getValue(), mail);

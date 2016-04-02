@@ -21,7 +21,7 @@
 			response.setHeader("Location", "/followyourevent/signup");
 			System.out.println("pass not equal");
 		}else{
-			if (Data.createPerson(mail, name, Integer.parseInt(age), sex, pass)){
+			if (FollowyoureventTDB.getFollowyoureventTDB().createPerson(mail, name, age, sex, pass)){
 				response.setStatus(response.SC_MOVED_TEMPORARILY);
 				Cookie c = new Cookie("oauth", Sessions.sha1(mail+(new Date()).getTime()));
 				response.addCookie( c );

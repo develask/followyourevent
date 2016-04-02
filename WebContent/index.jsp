@@ -31,7 +31,7 @@
 				<%
 					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					if (mail != null){
-						out.print("<p>Mail : " + mail+"</p>");
+						%><p>Mail :  <%= mail%></p><%
 					}
 				%>
 			</div>
