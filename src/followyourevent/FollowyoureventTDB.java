@@ -53,7 +53,9 @@ public class FollowyoureventTDB {
  	public static void main(String[] args) {
  		boolean s = false;
  		try{
- 			s = FollowyoureventTDB.getFollowyoureventTDB().confirmPass("maildecade@gmail.com", "menti25ra");
+ 			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
+ 			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
+ 			FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			System.out.println(s);
 		}catch(Exception e){
  			System.out.println(s);
@@ -195,9 +197,26 @@ public class FollowyoureventTDB {
 	    }    
 	}
 
-	public static ArrayList<String> getInformationOfPlace(){
-		//TODO
-		return new ArrayList<String>();
+	public static ArrayList<String> getInformationOfPlace(String uri){
+		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
+		ArrayList<String> arr = new ArrayList<String>();
+		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX DBpedia: <http://dbpedia.org/> "
+				+ "SELECT ?name ?street ?logo ?capacity "
+				+ "WHERE { <"+reso+"> Prov:organization ?name ."
+						+ " <"+reso+"> VCARD:street ?street ."
+						+ " <"+reso+"> DBpedia:logo ?logo ."
+						+ " <"+reso+"> DBpedia:capacity ?capacity }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	QuerySolution soln = res.nextSolution();
+	    	arr.add(soln.getLiteral("name").toString());
+	    	arr.add(soln.getLiteral("street").toString());
+	    	arr.add(soln.getLiteral("logo").toString());
+	    	arr.add(soln.getLiteral("capacity").toString());
+	    	return arr;
+	    }else{
+	    	return arr;
+	    }
 	}
 	
 	public static ArrayList<String> getEventsOfAPlace(){
@@ -306,6 +325,7 @@ public class FollowyoureventTDB {
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
 		if(!existPlace(placeName, street)){
+			System.out.println("no esta creado");
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+placeName+street);
 			res.addLiteral(porganization, placeName);
 			res.addLiteral(VCARD.Street, street);
@@ -373,14 +393,15 @@ public class FollowyoureventTDB {
 	}
 	public static boolean existPlace(String name, String street){
 		String query = "PREFIX Vcard: <http://www.w3.org/TR/vcard-rdf/> "
-				+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/>"
-				+ "SELECT ?peo WHERE { ?peo Vcard:street '"+street+"' ."
+				+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
+				+ "SELECT ?peo WHERE { ?peo <"+VCARD.Street+"> '"+street+"' . "
 				+ " ?peo Prov:organization '"+name+"' }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-	    if(res.hasNext()){
+		if(res.hasNext()){
 	    	QuerySolution soln = res.nextSolution();
 	    	return true;
 	    }else{
+	    	System.out.println("x aqui");
 	    	return false;
 	    }
 	}
