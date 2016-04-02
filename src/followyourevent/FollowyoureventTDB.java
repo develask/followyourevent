@@ -83,12 +83,12 @@ public class FollowyoureventTDB {
 		rdfsmodel = ModelFactory.createRDFSModel(model);
    	}
 	
-   /*	public void addNewModel(Model mod){
+	public void addNewModel(Model mod){
    		//allow to write
 		dataset.begin(ReadWrite.WRITE);
 		//add the model 
    		rdfsmodel.add(mod);
-	}*/
+	}
    	
 	public ResultSet selectQuery(String query){
 		ResultSet results=null;
@@ -109,9 +109,9 @@ public class FollowyoureventTDB {
  		return results;
 	}
 	
-	/*public void closeExec(){
+	public void closeExec(){
 		qexec.close();
-	}*/
+	}
 	
 	public Resource getResource(String uri){
 		return rdfsmodel.getResource(uri);
@@ -146,27 +146,6 @@ public class FollowyoureventTDB {
 	public Statement getStatement(){
 		return null;
 	}
-	
-	/*public void updateQuery(String query){
-		if(!query.contains("Select")){
-			try{
-				GraphStore graphStore = GraphStoreFactory.create(dataset);
-				//allow to Write 
-				dataset.begin(ReadWrite.WRITE);
-				//Create request	
-				UpdateRequest request = UpdateFactory.create(query);
-	        	//Create processor 
-	        	UpdateProcessor proc = UpdateExecutionFactory.create(request, graphStore);
-	        	//execute
-	        	proc.execute();
-			} finally{
-				rdfsmodel.commit();
-        		dataset.end();
-			}
-		}else{
-			System.out.println("The query is not a Update query");
-		}
-	}*/
 	
 	public void write(PrintStream out, String way) {
 		rdfsmodel.write(out,way);
@@ -215,12 +194,14 @@ public class FollowyoureventTDB {
 	    	return null;
 	    }    
 	}
-	
+
 	public static ArrayList<String> getInformationOfPlace(){
+		//TODO
 		return new ArrayList<String>();
 	}
 	
 	public static ArrayList<String> getEventsOfAPlace(){
+		//TODO
 		return new ArrayList<String>();
 	}
 	
@@ -289,17 +270,17 @@ public class FollowyoureventTDB {
 	}
 	
 	public static ArrayList<String> getAllPastEventsOfAPerson(){
-		
+		//TODO
+		return new ArrayList<String>(); 
 	}
 	
 	public static ArrayList<String> getAllFutureEventsOfAPerson(){
-		
+		//TODO
+		return new ArrayList<String>(); 	
 	}
 	
 	public static ArrayList<Resource> getAllThePeopleFromAnEvent(String event){
-		//the name parameter will be the complete url 
-		//Resource res = FollowyoureventTDB.getFollowyoureventTDB().getResource(event);
-		//	ArrayList<Resource> arr = getAllTheEventsFromAPerson(res);
+		//TODO
 		return null;
 	}
 	
@@ -320,8 +301,21 @@ public class FollowyoureventTDB {
 	    }	
 	}
 	
-	public static boolean createPlace(){
-		return true;
+	public static boolean createPlace(String placeName, String street, String logo, String capacity){
+		Property porganization = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
+		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
+		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
+		if(!existPlace(placeName, street)){
+			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+placeName+street);
+			res.addLiteral(porganization, placeName);
+			res.addLiteral(VCARD.Street, street);
+			res.addLiteral(plogo, logo);
+			res.addLiteral(pcapacity, capacity);
+			FollowyoureventTDB.getFollowyoureventTDB().commit();
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	public static boolean createEvent(String name, String image, String url, String day, String month, String hour, String price/*, int minimumage*/){
@@ -372,6 +366,18 @@ public class FollowyoureventTDB {
 						+ " ?peo DBpedia:month '"+month+"'}";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
+	    	return true;
+	    }else{
+	    	return false;
+	    }
+	}
+	public static boolean existPlace(String name, String street){
+		String query = "PREFIX Vcard: <http://www.w3.org/TR/vcard-rdf/> "
+				+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/>"
+				+ "SELECT ?peo WHERE { ?peo Vcard:street '"+street+"' ."
+				+ " ?peo Prov:organization '"+name+"' }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
 	    	QuerySolution soln = res.nextSolution();
 	    	return true;
 	    }else{
@@ -384,7 +390,6 @@ public class FollowyoureventTDB {
 				+ "SELECT ?peo WHERE { ?peo Foaf:mbox '"+mail+"' }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
-	    	QuerySolution soln = res.nextSolution();
 	    	return true;
 	    }else{
 	    	return false;
@@ -395,14 +400,15 @@ public class FollowyoureventTDB {
 	//	Resource personres = FollowyoureventTDB.getFollowyoureventTDB().getResource(person);
 	//	Resource eventres = FollowyoureventTDB.getFollowyoureventTDB().getResource(event);
 	//	addEventToAPerson(personres,eventres);
+		//TODO
 	}
 	
 	public static void createRulesForRecommendations(){
-		
+		//TODO
 	}
 	
 	public static void recommendEvents(){
-		
+		//TODO
 	}
 
 }
