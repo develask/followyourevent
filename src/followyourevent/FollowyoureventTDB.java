@@ -42,8 +42,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	private static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -57,10 +57,13 @@ public class FollowyoureventTDB {
  			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
- 			//FollowyoureventTDB.getFollowyoureventTDB().createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
- 			s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
- 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
- 			System.out.println(s);
+ 			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+ 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			fye.createEvent("Event Number 1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
+ 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/Event Number 12105");
+ 			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
+ 			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
+ 			//System.out.println(s);
 		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -181,8 +184,8 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return Array => name, mail, age , sex
 	 */
-	public static ArrayList<String> getInformationAboutAPerson(String mail){
-		ArrayList<String> arr = new ArrayList<String>();
+	public static String[] getInformationAboutAPerson(String mail){
+		String[] arr = new String[4];
 		String query = "PREFIX Foaf: <http://xmlns.com/foaf/0.1/> "
 				+ "PREFIX own: <http://followyourevent.com/vocabulary/>"
 				+ "SELECT ?name ?sex ?age WHERE { ?peo Foaf:mbox '"+mail+"' ."
@@ -192,10 +195,10 @@ public class FollowyoureventTDB {
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	QuerySolution soln = res.nextSolution();
-	    	arr.add(soln.getLiteral("name").toString());
-	    	arr.add(mail);
-	    	arr.add(soln.getLiteral("age").toString());
-	    	arr.add(soln.getLiteral("sex").toString());
+	    	arr[0] = soln.getLiteral("name").toString();
+	    	arr[1] = mail;
+	    	arr[2] = soln.getLiteral("age").toString();
+	    	arr[3] = soln.getLiteral("sex").toString();
 	    	return arr;
 	    }else{
 	    	return null;

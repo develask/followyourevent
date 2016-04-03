@@ -1,3 +1,4 @@
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="followyourevent.*"%>
@@ -25,28 +26,48 @@
 
 		<div class="container">
 			<div class="jumbotron">
-				<h1>Follow Your Event</h1>
-				<p>Here you can find those events you want to go!</p>
-				<p><a class="btn btn-primary btn-lg" href="login" role="button">Sign In</a> <a class="btn btn-default btn-lg" href="signup" role="button">Sign Up</a></p>
 				<%
 					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					if (mail != null){
-						%><p>Mail :  <%= mail%></p><%
+						String[] info = FollowyoureventTDB.getFollowyoureventTDB().getInformationAboutAPerson(mail);
+						%><h1>Hello,  <%= info[0]%></h1>
+						<p>Mail:  <%= info[1]%></p>
+						<p>Age:  <%= info[2]%></p>
+						<p>Sex:  <%= info[3]%></p>
+						<p><a class="btn btn-danger btn-lg" href="logout.jsp" role="button">Log Out</a></p>
+						<%
+					}else{
+						%>
+						<h1>Follow Your Event</h1>
+						<p>Here you can find those events you want to go!</p>
+						<p><a class="btn btn-primary btn-lg" href="login" role="button">Sign In</a> <a class="btn btn-default btn-lg" href="signup" role="button">Sign Up</a></p>
+						<%
 					}
 				%>
 			</div>
 
 			<div class="row">
-				<div class="col-sm-6 col-md-4">
-					<div class="thumbnail">
-						<img src="" alt="">
-						<div class="caption">
-							<h3>Event Name</h3>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsam, maxime.</p>
-							<p><a href="#" class="btn btn-primary" role="button">Interest In</a> <a href="#" class="btn btn-default" role="button">I'll go</a></p>
-						</div>
-					</div>
-				</div>
+				<%
+					if (mail != null){
+						ArrayList<String> evs = FollowyoureventTDB.getFollowyoureventTDB().getAllTheEventsOfAPerson(mail);
+						for (String ev: evs){
+							ArrayList<String> infoEv = FollowyoureventTDB.getInformationOfEvent(ev);
+							// name, image, url, day, month, hour, price
+							%>
+							<div class="col-sm-6 col-md-4">
+								<div class="thumbnail">
+									<img src="<%= infoEv.get(1)%>" alt="">
+									<div class="caption">
+										<h3><%= infoEv.get(0)%></h3>
+										<p><%= infoEv.get(3)%>/<%= infoEv.get(4)%> - <%= infoEv.get(5)%>:<%= infoEv.get(6)%></p>
+										<p><a href="#" class="btn btn-primary" role="button">Interest In</a> <a href="#" class="btn btn-default" role="button">I'll go</a></p>
+									</div>
+								</div>
+							</div>
+							<%
+						}
+					}
+				%>
 				<div class="col-sm-6 col-md-4">
 					<div class="thumbnail">
 						<img src="" alt="">
