@@ -48,17 +48,20 @@ public class Sessions {
 	public String verifySession(Cookie[] cookies){
 		Cookie cookie = null;
 		if( cookies != null ){
+			System.out.println(cookies.length);
 			for (int i = 0; i < cookies.length; i++){
 				cookie = cookies[i];
+				System.out.println(cookie.getName());
 				if (cookie.getName().equals("oauth")){
-					return this.sessions.containsKey(cookie.getValue())?cookie.getValue():null;
+					System.out.println("    - "+cookie.getValue());
+					return this.sessions.containsKey(cookie.getValue())?this.sessions.get(cookie.getValue()).name:null;
 				}
 			}
 		}
 		return null;
 	}
 	
-	private void endSession(Cookie[] cookies){
+	public void endSession(Cookie[] cookies){
 		Cookie cookie = null;
 		if( cookies != null ){
 			for (int i = 0; i < cookies.length; i++){

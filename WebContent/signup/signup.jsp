@@ -24,6 +24,7 @@
 			if (FollowyoureventTDB.getFollowyoureventTDB().createPerson(mail, name, age, sex, pass)){
 				response.setStatus(response.SC_MOVED_TEMPORARILY);
 				Cookie c = new Cookie("oauth", Sessions.sha1(mail+(new Date()).getTime()));
+				c.setPath("/");
 				response.addCookie( c );
 				Sessions.getSessions().setNewSession(c.getValue(), mail);
 				response.setHeader("Location", "/followyourevent");
