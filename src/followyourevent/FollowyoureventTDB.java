@@ -30,6 +30,7 @@ import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.SKOS;
 import org.apache.jena.vocabulary.VCARD;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
@@ -42,8 +43,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	private static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -178,7 +179,6 @@ public class FollowyoureventTDB {
 		rdfsmodel.close();
 	}
 	
-	
 	/**
 	 * 
 	 * @param mail
@@ -204,7 +204,12 @@ public class FollowyoureventTDB {
 	    	return null;
 	    }    
 	}
-
+	
+	/**
+	 * 
+	 * @param uri
+	 * @return ArrayList -> name, street, logo, capacity
+	 */
 	public static ArrayList<String> getInformationOfPlace(String uri){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
 		ArrayList<String> arr = new ArrayList<String>();
@@ -227,9 +232,30 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
-	public static ArrayList<String> getEventsOfAPlace(){
-		//TODO
-		return new ArrayList<String>();
+	/**
+	 * 
+	 * @param uriPlace
+	 * @return Array -> list of events
+	 */
+	public static String[] getEventsOfAPlace(String uriPlace){
+		String[] arr = new String[4];
+		String query = "PREFIX Own: <http://followyourevent.com/>"
+				+ "SELECT ?name WHERE { <"+uriPlace+"> Own:offers ?name }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	int i=0;
+	    	while (res.hasNext()) {
+	    		QuerySolution soln = res.next();
+	    		try{
+	    			arr[i++] = soln.getResource("name").toString();
+	    		}catch(Exception e){
+	    			
+	    		}
+			}
+	    	return arr;
+	    }else{
+	    	return null;
+	    }    
 	}
 	
 	/**
@@ -271,7 +297,7 @@ public class FollowyoureventTDB {
 	/**
 	 * 
 	 * @param mail
-	 * @return arraylist -> identificador de eventos
+	 * @return arraylist -> identificador de eventos; si no existe null
 	 */
 	public static ArrayList<String> getAllTheEventsOfAPerson(String mail){
 		ArrayList<String> arr = new ArrayList<String>();
@@ -292,7 +318,7 @@ public class FollowyoureventTDB {
 			}
 	    	return arr;
 	    }else{
-	    	return arr;
+	    	return null;
 	    }
 	}
 	
@@ -306,11 +332,17 @@ public class FollowyoureventTDB {
 		return new ArrayList<String>(); 	
 	}
 	
-	public static ArrayList<Resource> getAllThePeopleFromAnEvent(String event){
+	public static ArrayList<Resource> getAllThePeopleFromAnEvent(String uriEvent){
 		//TODO
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param mail
+	 * @param pass
+	 * @return true if equals; false if not equals
+	 */
 	public static boolean confirmPass(String mail, String pass){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
 		String query = "PREFIX Own:<http://followyourevent.com/vocabulary/> SELECT ?pass WHERE { <"+reso+"> Own:pass ?pass .}";
@@ -328,6 +360,14 @@ public class FollowyoureventTDB {
 	    }	
 	}
 	
+	/**
+	 * 
+	 * @param placeName
+	 * @param street
+	 * @param logo
+	 * @param capacity
+	 * @return true if ok; false if not created
+	 */
 	public static boolean createPlace(String placeName, String street, String logo, String capacity){
 		Property porganization = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
@@ -345,6 +385,36 @@ public class FollowyoureventTDB {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param description
+	 * @param kind
+	 * @return if created true; if not false
+	 */
+	public static boolean createStyle(String description, String kind){
+		Property pKind = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/kind");
+		if(!existStyle(kind)){
+			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"tyle/"+kind);
+			res.addLiteral(SKOS.definition, description);
+			res.addLiteral(pKind, kind);
+			FollowyoureventTDB.getFollowyoureventTDB().commit();
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param name
+	 * @param image
+	 * @param url
+	 * @param day
+	 * @param month
+	 * @param hour
+	 * @param price
+	 * @return true if created; false if not created
+	 */
 	public static boolean createEvent(String name, String image, String url, String day, String month, String hour, String price/*, int minimumage*/){
 		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
 		Property pimage = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://purl.org/dc/dcmitype/image");
@@ -369,6 +439,15 @@ public class FollowyoureventTDB {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param mail
+	 * @param name
+	 * @param age
+	 * @param sex
+	 * @param pass
+	 * @return true if created; false if not created
+	 */
 	public static boolean createPerson(String mail, String name, String age, String sex, String pass){
 		Property Ppass = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/pass");
 		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");
@@ -386,6 +465,29 @@ public class FollowyoureventTDB {
 		}	
 	}
 	
+	/**
+	 * 
+	 * @param kind
+	 * @return true if exist; false if not exist
+	 */
+	public static boolean existStyle(String kind){
+		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
+				+ "SELECT ?peo WHERE { ?peo DBpedia:kind '"+kind+"' }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	return true;
+	    }else{
+	    	return false;
+	    }
+	}
+	
+	/**
+	 * 
+	 * @param name
+	 * @param month
+	 * @param day
+	 * @return true if exist; false if not exist
+	 */
 	public static boolean existEvent(String name,String month, String day){
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?peo WHERE { ?peo DBpedia:event '"+name+"' ."
@@ -398,6 +500,13 @@ public class FollowyoureventTDB {
 	    	return false;
 	    }
 	}
+	
+	/**
+	 * 
+	 * @param name
+	 * @param street
+	 * @return true if exist; false if not exist
+	 */
 	public static boolean existPlace(String name, String street){
 		String query = "PREFIX Vcard: <http://www.w3.org/TR/vcard-rdf/> "
 				+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
@@ -405,14 +514,17 @@ public class FollowyoureventTDB {
 				+ " ?peo Prov:organization '"+name+"' }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 		if(res.hasNext()){
-	    	QuerySolution soln = res.nextSolution();
 	    	return true;
 	    }else{
-	    	System.out.println("x aqui");
 	    	return false;
 	    }
 	}
 	
+	/**
+	 * 
+	 * @param mail
+	 * @return true if exist; false if not exist
+	 */
 	public static boolean existPerson(String mail){
 		String query = "PREFIX Foaf: <http://xmlns.com/foaf/0.1/> "
 				+ "SELECT ?peo WHERE { ?peo Foaf:mbox '"+mail+"' }";
@@ -424,6 +536,13 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
+	/**
+	 * 
+	 * @param res1
+	 * @param prop
+	 * @param res2
+	 * @return true if exist; false if not exist
+	 */
 	public static boolean existStatement(Resource res1, Property prop, Resource res2){
 		String query = " SELECT ?peo WHERE { <"+res1+"> <"+prop+"> <"+res2+"> }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -434,21 +553,81 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
-	public static boolean addStyleToAEvent(){
-		//TODO
-		return true;
+	/**
+	 * 
+	 * @param uriEvent
+	 * @param uriStyle
+	 * @return if added true; if it was already added false
+	 */
+	public static boolean addStyleToAEvent(String uriEvent, String uriStyle){
+		try{
+			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
+			Resource resStyle = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriStyle);
+			Property is = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"is");
+			if(!existStatement(resEvent, is, resStyle)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resEvent, is, resStyle);
+				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
 	}
 	
-	public static boolean addlikeablePlaceToAPerson(){
-		//TODO
-		return true;
+	/**
+	 * 
+	 * @param uriPerson
+	 * @param uriPlace
+	 * @return if added true; if it was already added false
+	 */
+	public static boolean addlikeablePlaceToAPerson(String uriPerson, String uriPlace){
+		try{
+			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
+			Property prefers = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"prefers");
+			if(!existStatement(resPer, prefers, resPlace)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPer, prefers, resPlace);
+				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
 	}
 	
-	public static boolean addEventToAPlace(){
-		//TODO
-		return true;
+	/**
+	 * 
+	 * @param uriPlace
+	 * @param uriEvent
+	 * @return if added true; if it was already added false
+	 */
+	public static boolean addEventToAPlace(String uriPlace, String uriEvent){
+		try{
+			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
+			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
+			Property offers = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"offers");
+			if(!existStatement(resPlace, offers, resEvent)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPlace, offers, resEvent);
+				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
 	}
 	
+	/**
+	 * 
+	 * @param uriPerson
+	 * @param uriEvent
+	 * @return if added true; if it was already added false
+	 */
 	public static boolean addEventToAPerson(String uriPerson, String uriEvent){
 		try{
 			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);

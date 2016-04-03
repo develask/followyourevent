@@ -14,3 +14,5 @@ http://schema.org/price - Price
 http://www.w3.org/TR/vcard-rdf/street - Street
 http://dbpedia.org/logo - Logo
 http://dbpedia.org/capacity - Capacity
+http://www.w3.org/2004/02/skos/core#definition - Definition
+http://dbpedia.org/kind - Kind
