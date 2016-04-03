@@ -42,8 +42,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	private static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -57,7 +57,9 @@ public class FollowyoureventTDB {
  			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
- 			FollowyoureventTDB.getFollowyoureventTDB().createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			//FollowyoureventTDB.getFollowyoureventTDB().createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
+ 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			System.out.println(s);
 		}catch(Exception e){
  			System.out.println(s);
@@ -328,7 +330,6 @@ public class FollowyoureventTDB {
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
 		if(!existPlace(placeName, street)){
-			System.out.println("no esta creado");
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+placeName+street);
 			res.addLiteral(porganization, placeName);
 			res.addLiteral(VCARD.Street, street);
@@ -420,11 +421,46 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
-	public static void addEventToAPerson(String uriPerson, String uriEvent){
-	//	Resource personres = FollowyoureventTDB.getFollowyoureventTDB().getResource(person);
-	//	Resource eventres = FollowyoureventTDB.getFollowyoureventTDB().getResource(event);
-	//	addEventToAPerson(personres,eventres);
+	public static boolean existStatement(Resource res1, Property prop, Resource res2){
+		String query = " SELECT ?peo WHERE { <"+res1+"> <"+prop+"> <"+res2+"> }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	return true;
+	    }else{
+	    	return false;
+	    }
+	}
+	
+	public static boolean addStyleToAEvent(){
 		//TODO
+		return true;
+	}
+	
+	public static boolean addlikeablePlaceToAPerson(){
+		//TODO
+		return true;
+	}
+	
+	public static boolean addEventToAPlace(){
+		//TODO
+		return true;
+	}
+	
+	public static boolean addEventToAPerson(String uriPerson, String uriEvent){
+		try{
+			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
+			Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
+			if(!existStatement(resPer, goes, resEvent)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPer, goes, resEvent);
+				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
 	}
 	
 	public static void createRulesForRecommendations(){
