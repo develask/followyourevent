@@ -3,6 +3,8 @@ package followyourevent;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.xml.validation.Schema;
@@ -237,17 +239,16 @@ public class FollowyoureventTDB {
 	 * @param uriPlace
 	 * @return Array -> list of events
 	 */
-	public static String[] getEventsOfAPlace(String uriPlace){
-		String[] arr = new String[4];
+	public static ArrayList<String> getEventsOfAPlace(String uriPlace){
+		ArrayList<String> arr = new ArrayList<String>();
 		String query = "PREFIX Own: <http://followyourevent.com/>"
 				+ "SELECT ?name WHERE { <"+uriPlace+"> Own:offers ?name }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
-	    	int i=0;
 	    	while (res.hasNext()) {
 	    		QuerySolution soln = res.next();
 	    		try{
-	    			arr[i++] = soln.getResource("name").toString();
+	    			arr.add(soln.getResource("name").toString());
 	    		}catch(Exception e){
 	    			
 	    		}
@@ -322,19 +323,103 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
-	public static ArrayList<String> getAllPastEventsOfAPerson(){
-		//TODO
-		return new ArrayList<String>(); 
+	public static ArrayList<String> getAllPastEventsOfAPerson(String mail){
+		Calendar cal = Calendar.getInstance();
+		Date now = cal.getTime();
+		cal.setTime(now);
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		int month = cal.get(Calendar.MONTH) + 1;
+		ArrayList<String> arr = new ArrayList<String>();
+		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
+		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
+		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
+				+ "SELECT ?ev WHERE { <"+person+"> <"+goes+"> ?ev ."
+				+ " ?ev DBpedia:month ?month ."
+				+ " ?ev DBpedia:day ?day ."
+				+ " FILTER (?month < "+month+" || (?day < "+day+" && ?month = "+month+")) }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	while (res.hasNext()) {
+	    		QuerySolution soln = res.next();
+	    		try{
+	    			String l = soln.getResource("ev").toString();
+		    		arr.add(l);
+	    		}catch(Exception e){
+	    			
+	    		}
+			}
+	    	return arr;
+	    }else{
+	    	return null;
+	    }
 	}
 	
-	public static ArrayList<String> getAllFutureEventsOfAPerson(){
-		//TODO
-		return new ArrayList<String>(); 	
+	public static ArrayList<String> getAllFutureEventsOfAPerson(String mail){
+		Calendar cal = Calendar.getInstance();
+		Date now = cal.getTime();
+		cal.setTime(now);
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		int month = cal.get(Calendar.MONTH) + 1;
+		ArrayList<String> arr = new ArrayList<String>();
+		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
+		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
+		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
+				+ "SELECT ?ev WHERE { <"+person+"> <"+goes+"> ?ev ."
+				+ " ?ev DBpedia:month ?month ."
+				+ " ?ev DBpedia:day ?day ."
+				+ " FILTER (?month > "+month+" || (?day >= "+day+" && ?month = "+month+")) }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	while (res.hasNext()) {
+	    		QuerySolution soln = res.next();
+	    		try{
+	    			String l = soln.getResource("ev").toString();
+		    		arr.add(l);
+	    		}catch(Exception e){
+	    			
+	    		}
+			}
+	    	return arr;
+	    }else{
+	    	return null;
+	    }
 	}
 	
-	public static ArrayList<Resource> getAllThePeopleFromAnEvent(String uriEvent){
-		//TODO
-		return null;
+	/**
+	 * 
+	 * @param uriEvent
+	 * @return Array -> list of resources; if not null
+	 */
+	public static String[] getAllThePeopleFromAnEvent(String uriEvent){
+		String[] arr;
+		Resource event = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
+		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
+		String query = "SELECT (COUNT(?per) AS ?count) WHERE { ?per <"+goes+"> <"+event+"> }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	QuerySolution soln = res.next();
+	    	int count = Integer.parseInt(soln.getLiteral("count").toString());
+	    	arr = new String[count];
+	    	query = "SELECT ?per WHERE { ?per <"+goes+"> <"+event+"> }";
+			res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+			if(res.hasNext()){
+				int i=0;
+				while (res.hasNext()) {
+		    		try{
+		    			soln = res.next();
+		    			arr[i] = soln.getResource("per").toString();
+		    		}catch(Exception e){
+		    			
+		    		}
+	    		}
+				return arr;
+			}else{
+				return null;
+			}
+	    	
+	    }else{
+	    	return null;
+	    }
 	}
 	
 	/**
