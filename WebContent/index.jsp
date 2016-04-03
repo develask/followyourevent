@@ -59,7 +59,7 @@
 									<img src="<%= infoEv.get(1)%>" alt="">
 									<div class="caption">
 										<h3><%= infoEv.get(0)%></h3>
-										<p><%= infoEv.get(3)%>/<%= infoEv.get(4)%> - <%= infoEv.get(5)%>:<%= infoEv.get(6)%></p>
+										<p><%= infoEv.get(3)%>/<%= infoEv.get(4)%> - <%= infoEv.get(5)%> - <%= infoEv.get(6)%>€</p>
 										<p><a href="#" class="btn btn-primary" role="button">Interest In</a> <a href="#" class="btn btn-default" role="button">I'll go</a></p>
 									</div>
 								</div>

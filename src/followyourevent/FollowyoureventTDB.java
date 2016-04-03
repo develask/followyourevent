@@ -43,8 +43,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	private static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -59,9 +59,11 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
- 			fye.createEvent("Event Number 1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
- 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/Event Number 12105");
+// 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+// 			fye.createEvent("Event Number 1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
+ 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/Event Number 10521");
+ 			ArrayList<String> mios = fye.getAllTheEventsOfAPerson("develascomikel@gmail.com");
+ 			System.out.println(mios);
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//System.out.println(s);
@@ -91,6 +93,7 @@ public class FollowyoureventTDB {
         //obtain the model from the dataset
         model = dataset.getDefaultModel();
 		rdfsmodel = ModelFactory.createRDFSModel(model);
+		rdfsmodel.write(System.out);
 		rdfsmodel.commit();
    	}
 	
@@ -306,20 +309,16 @@ public class FollowyoureventTDB {
 		String query = "PREFIX own: <"+MS+"> "
 				+ "SELECT ?ev WHERE { <"+person+"> <"+goes+"> ?ev }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-	    if(res.hasNext()){
-	    	while (res.hasNext()) {
-	    		QuerySolution soln = res.next();
-	    		try{
-	    			String l = soln.getResource("ev").toString();
-		    		arr.add(l);
-	    		}catch(Exception e){
-	    			
-	    		}
-			}
-	    	return arr;
-	    }else{
-	    	return null;
-	    }
+    	while (res.hasNext()) {
+    		QuerySolution soln = res.next();
+    		try{
+    			String l = soln.getResource("ev").toString();
+	    		arr.add(l);
+    		}catch(Exception e){
+    			
+    		}
+		}
+    	return arr;
 	}
 	
 	public static ArrayList<String> getAllPastEventsOfAPerson(){
