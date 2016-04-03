@@ -567,6 +567,7 @@ public class FollowyoureventTDB {
 			if(!existStatement(resEvent, is, resStyle)){
 				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resEvent, is, resStyle);
 				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;
 			}else{
 				return false;
@@ -590,6 +591,7 @@ public class FollowyoureventTDB {
 			if(!existStatement(resPer, prefers, resPlace)){
 				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPer, prefers, resPlace);
 				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;
 			}else{
 				return false;
@@ -613,6 +615,7 @@ public class FollowyoureventTDB {
 			if(!existStatement(resPlace, offers, resEvent)){
 				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPlace, offers, resEvent);
 				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;
 			}else{
 				return false;
@@ -636,6 +639,7 @@ public class FollowyoureventTDB {
 			if(!existStatement(resPer, goes, resEvent)){
 				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPer, goes, resEvent);
 				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;
 			}else{
 				return false;
