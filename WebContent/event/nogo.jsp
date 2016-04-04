@@ -6,4 +6,8 @@
 String mail = Sessions.getSessions().verifySession(request.getCookies());
 String evName = request.getParameter("event");
 
+FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+fye.removeEventFromAPerson(fye.MS+"person/"+mail, fye.MS+"event/"+evName);
+response.setStatus(response.SC_MOVED_TEMPORARILY);
+response.setHeader("Location", "/followyourevent"); 
 %>

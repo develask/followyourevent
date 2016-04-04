@@ -34,7 +34,7 @@
 									<div class="caption">
 										<h3><%= infoEv.get(0)%></h3>
 										<p><%= infoEv.get(3)%>/<%= infoEv.get(4)%> - <%= infoEv.get(5)%> - <%= infoEv.get(6)%>€</p>
-										<p><a href="event/nogo.jsp" class="btn btn-primary" role="button">Don't go</a></p>
+										<p><a href="event/nogo.jsp?event=<%= infoEv.get(0)+infoEv.get(4)+infoEv.get(3)%>" class="btn btn-danger" role="button">Don't go</a></p>
 									</div>
 								</div>
 							</div>

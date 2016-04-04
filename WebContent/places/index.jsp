@@ -11,7 +11,6 @@
 					FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					if (mail != null){
-						
 					}
 				%>
 			</div>

@@ -44,7 +44,7 @@ public class FollowyoureventTDB {
  	private static Dataset dataset=null;
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
- 	private static String MS = "http://followyourevent.com/";
+ 	public static String MS = "http://followyourevent.com/";
  	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
  	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
@@ -63,16 +63,11 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
  			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
- 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
+ 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
+ 			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
+ 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
  			//arr = fye.getInformationOfEvent(MS+"event/hulen0223");
- 			//System.out.println(arr.toString());
- 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
- 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
- 			//s = fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber12105");
-// 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
-// 			fye.createEvent("Event Number 1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
- 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/Event Number 10521");
  			ArrayList<String> mios = fye.getAllTheEventsOfAPerson("develascomikel@gmail.com");
  			System.out.println(mios);
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
@@ -104,7 +99,6 @@ public class FollowyoureventTDB {
         //obtain the model from the dataset
         model = dataset.getDefaultModel();
 		rdfsmodel = ModelFactory.createRDFSModel(model);
-		rdfsmodel.write(System.out);
 		rdfsmodel.commit();
    	}
 	
@@ -292,7 +286,6 @@ public class FollowyoureventTDB {
 		ArrayList<String> arr = new ArrayList<String>();
 		try {
 			Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
-			System.out.println("pasa el res "+reso);
 			String query = "PREFIX DBpedia: <http://dbpedia.org/> PREFIX Purl: <http://purl.org/dc/dcmitype/> "
 					+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX Schema:<http://schema.org/> "
 					+ " PREFIX Own: <http://followyourevent.com/> "
@@ -305,7 +298,6 @@ public class FollowyoureventTDB {
 							+ " <"+reso+"> Prov:start ?hour ."
 							+ " <"+reso+"> Schema:price ?price }";
 			ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-			System.out.println("pasa la query");
 		    if(res.hasNext()){
 		    	QuerySolution soln = res.nextSolution();
 		    	arr.add(soln.getLiteral("name").toString());
@@ -863,6 +855,7 @@ public class FollowyoureventTDB {
 		try{
 			if(existStatement(pers, prop, even)){
 				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().getStatement(pers, prop, even);
+				System.out.println(stmt.toString());
 				FollowyoureventTDB.getFollowyoureventTDB().removeStatement(stmt);
 				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;

@@ -28,10 +28,10 @@
 		</div>
 
 		<!-- jQuery 2.1.4 -->
-		<script src="js/jQuery-2.1.4.min.js"></script>
+		<script src="/followyourevent/js/jQuery-2.1.4.min.js"></script>
 
 		<!-- Bootstrap 3.3.5 -->
-		<script src="js/bootstrap.min.js"></script>
+		<script src="/followyourevent/js/bootstrap.min.js"></script>
 
 		<!-- Angular -->
 		<!-- script type="text/javascript" src="js/angular.min.js"></script>
