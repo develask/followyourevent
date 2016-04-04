@@ -56,6 +56,7 @@ public class FollowyoureventTDB {
  	
  	public static void main(String[] args) {
  		boolean s = false;
+ 		ArrayList<String> arr;
  		try{
  			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
@@ -64,6 +65,14 @@ public class FollowyoureventTDB {
  			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
  			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
+ 			//arr = fye.getInformationOfEvent(MS+"event/hulen0223");
+ 			//System.out.println(arr.toString());
+ 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
+ 			//s = fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber12105");
+// 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+// 			fye.createEvent("Event Number 1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
+ 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/Event Number 10521");
  			ArrayList<String> mios = fye.getAllTheEventsOfAPerson("develascomikel@gmail.com");
  			System.out.println(mios);
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
@@ -159,8 +168,20 @@ public class FollowyoureventTDB {
 		return stmt;
 	}
 	
-	public Statement getStatement(){
-		return null;
+	public Statement getStatement(Resource res, Property pro, Resource res2){
+		Statement stmt = rdfsmodel.createStatement(res, pro, res2);
+		return stmt;
+	}
+	
+	public boolean removeStatement(Statement stmt){
+		try{
+			rdfsmodel.remove(stmt);
+			return true;
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+		
 	}
 	
 	public void write(PrintStream out, String way) {
@@ -649,7 +670,7 @@ public class FollowyoureventTDB {
 	 * @param uriStyle
 	 * @return if added true; if it was already added false
 	 */
-	public static boolean addStyleToAEvent(String uriEvent, String uriStyle){
+	public static boolean addStyleToAnEvent(String uriEvent, String uriStyle){
 		try{
 			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
 			Resource resStyle = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriStyle);
@@ -657,6 +678,30 @@ public class FollowyoureventTDB {
 			if(!existStatement(resEvent, is, resStyle)){
 				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resEvent, is, resStyle);
 				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param uriEvent
+	 * @param uriStyle
+	 * @return true if removed; false if not
+	 */
+	public static boolean removeStyleFromAnEvent(String uriEvent, String uriStyle){
+		try{
+			Resource resEven = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
+			Resource resStyle = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriStyle);
+			Property is = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"is");
+			if(existStatement(resEven, is, resStyle)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().getStatement(resEven, is, resStyle);
+				FollowyoureventTDB.getFollowyoureventTDB().removeStatement(stmt);
 				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;
 			}else{
@@ -693,6 +738,48 @@ public class FollowyoureventTDB {
 	
 	/**
 	 * 
+	 * @param uriPerson
+	 * @param uriPlace
+	 * @return true if removed: false if not
+	 */
+	public static boolean removeLikeablePlaceToAPerson(String uriPerson, String uriPlace){
+		try{
+			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
+			Property prefers = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"prefers");
+			if(existStatement(resPer, prefers, resPlace)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().getStatement(resPer, prefers, resPlace);
+				FollowyoureventTDB.getFollowyoureventTDB().removeStatement(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	public static boolean addOwnerToAPlace(String uriPlace,String uriPerson){
+		try{
+			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
+			Property hasOwner = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"hasOwner");
+			if(!existStatement(resPer, hasOwner, resPlace)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPer, hasOwner, resPlace);
+				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	/**
+	 * 
 	 * @param uriPlace
 	 * @param uriEvent
 	 * @return if added true; if it was already added false
@@ -714,6 +801,30 @@ public class FollowyoureventTDB {
 			return false;
 		}
 	}
+	/**
+	 * 
+	 * @param uriPlace
+	 * @param uriEvent
+	 * @return true if removed, false if not
+	 */
+	public static boolean removeEventFromAPlace(String uriPlace, String uriEvent){
+		Resource place = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
+		Resource even = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
+		Property prop = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"offers");
+		try{
+			if(existStatement(place, prop, even)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().getStatement(place, prop, even);
+				FollowyoureventTDB.getFollowyoureventTDB().removeStatement(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
 	
 	/**
 	 * 
@@ -729,6 +840,30 @@ public class FollowyoureventTDB {
 			if(!existStatement(resPer, goes, resEvent)){
 				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPer, goes, resEvent);
 				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+				FollowyoureventTDB.getFollowyoureventTDB().commit();
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param uriPerson
+	 * @param uriEvent
+	 * @return true if removed, false if not
+	 */
+	public static boolean removeEventFromAPerson(String uriPerson, String uriEvent){
+		Resource pers = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+		Resource even = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
+		Property prop = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
+		try{
+			if(existStatement(pers, prop, even)){
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().getStatement(pers, prop, even);
+				FollowyoureventTDB.getFollowyoureventTDB().removeStatement(stmt);
 				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;
 			}else{
