@@ -268,33 +268,39 @@ public class FollowyoureventTDB {
 	 * @return Arraylist -> name, image, url, day, month, hour, price
 	 */
 	public static ArrayList<String> getInformationOfEvent(String uri){
-		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
 		ArrayList<String> arr = new ArrayList<String>();
-		String query = "PREFIX DBpedia: <http://dbpedia.org/> PREFIX Purl: <http://purl.org/dc/dcmitype/> "
-				+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX Schema:<http://schema.org/> "
-				+ " PREFIX Own: <http://followyourevent.com/> "
-				+ "SELECT ?name ?image ?url ?day ?month ?hour ?price "
-				+ "WHERE { <"+reso+"> DBpedia:event ?name ."
-						+ " <"+reso+"> Purl:image ?image ."
-						+ " <"+reso+"> Prov:primarySource ?url ."
-						+ " <"+reso+"> DBpedia:day ?day ."
-						+ " <"+reso+"> DBpedia:month ?month ."
-						+ " <"+reso+"> Prov:start ?hour ."
-						+ " <"+reso+"> Schema:price ?price }";
-		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-	    if(res.hasNext()){
-	    	QuerySolution soln = res.nextSolution();
-	    	arr.add(soln.getLiteral("name").toString());
-	    	arr.add(soln.getLiteral("image").toString());
-	    	arr.add(soln.getLiteral("url").toString());
-	    	arr.add(soln.getLiteral("day").toString());
-	    	arr.add(soln.getLiteral("month").toString());
-	    	arr.add(soln.getLiteral("hour").toString());
-	    	arr.add(soln.getLiteral("price").toString());
-	    	return arr;
-	    }else{
-	    	return arr;
-	    }
+		try {
+			Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
+			System.out.println("pasa el res "+reso);
+			String query = "PREFIX DBpedia: <http://dbpedia.org/> PREFIX Purl: <http://purl.org/dc/dcmitype/> "
+					+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX Schema:<http://schema.org/> "
+					+ " PREFIX Own: <http://followyourevent.com/> "
+					+ "SELECT ?name ?image ?url ?day ?month ?hour ?price "
+					+ "WHERE { <"+reso+"> DBpedia:event ?name ."
+							+ " <"+reso+"> Purl:image ?image ."
+							+ " <"+reso+"> Prov:primarySource ?url ."
+							+ " <"+reso+"> DBpedia:day ?day ."
+							+ " <"+reso+"> DBpedia:month ?month ."
+							+ " <"+reso+"> Prov:start ?hour ."
+							+ " <"+reso+"> Schema:price ?price }";
+			ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+			System.out.println("pasa la query");
+		    if(res.hasNext()){
+		    	QuerySolution soln = res.nextSolution();
+		    	arr.add(soln.getLiteral("name").toString());
+		    	arr.add(soln.getLiteral("image").toString());
+		    	arr.add(soln.getLiteral("url").toString());
+		    	arr.add(soln.getLiteral("day").toString());
+		    	arr.add(soln.getLiteral("month").toString());
+		    	arr.add(soln.getLiteral("hour").toString());
+		    	arr.add(soln.getLiteral("price").toString());
+		    	return arr;
+		    }else{
+		    	return arr;
+		    }
+		}catch(Exception e){
+			return arr;
+		}
 	} 
 	
 	
