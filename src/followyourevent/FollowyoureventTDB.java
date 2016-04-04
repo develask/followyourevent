@@ -61,9 +61,9 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-// 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
-// 			fye.createEvent("Event Number 1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
- 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/Event Number 10521");
+ 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
+ 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
  			ArrayList<String> mios = fye.getAllTheEventsOfAPerson("develascomikel@gmail.com");
  			System.out.println(mios);
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
