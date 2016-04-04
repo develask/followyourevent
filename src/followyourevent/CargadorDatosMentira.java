@@ -60,17 +60,21 @@ public class CargadorDatosMentira {
 		CadeTracy.addLiteral(age, "21");
 		CadeTracy.addLiteral(pass, "mentira");
 		//Create Ines Dominguez
-		//Resource InesDominguez = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"InesDominguez");
-		
+		Resource InesDominguez = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"person/maildeines@gmail.com");
+		InesDominguez.addLiteral(FOAF.mbox, "maildeines@gmail.com");
+		InesDominguez.addLiteral(FOAF.givenname, "InesDominguez");
+		InesDominguez.addLiteral(FOAF.gender,"Female");
+		InesDominguez.addLiteral(age, "25");
+		InesDominguez.addLiteral(pass, "mentira2");
 		//Cade Tracy is a person
-		CadeTracy.addProperty(RDF.type,person);
+		//CadeTracy.addProperty(RDF.type,person);
 		//Ines Dominguez is a person
 		//InesDominguez.addProperty(RDF.type,person);
 		
 	//	Resource event = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event/Hulen0226");
 		//Resource place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
 		//Create PostalAddress of Cade Tracy
-		Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/hulen0223");
+		Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/hulen0423");
 		
 		ev.addLiteral(eventname, "hulen");
 		ev.addLiteral(image, "HTtps://urldeimagen.com/");
@@ -80,43 +84,34 @@ public class CargadorDatosMentira {
 		ev.addLiteral(start, "21:00");
 		ev.addLiteral(price, "200kr");
 		
-	/*	Resource ev2 = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event/Tidi");
+		Resource ev2 = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/tidi0528");
 		
-		ev2.addProperty(RDF.type, event);
-		ev2.addProperty(VCARD.NAME, "Tidi");
-		ev2.addProperty(VCARD.PHOTO, "direccionTIDI");
-		ev2.addProperty(DCTerms.date, "20150227");
-		ev2.addProperty(DCTerms.date, "12:15");
-		ev2.addProperty(RDFS.label, "90kr");
-		ev2.addProperty(RDFS.label, "linkTidi");
-		*/
-		/*//Create PostalAddress of Ines Dominguez
-		Resource PostalAddressInesDominguez = FollowyoureventTDB.createResource("");
-		
-		//Add information about her address
-		PostalAddressInesDominguez.addLiteral(VCARD.Country, "SPAIN");
-		PostalAddressInesDominguez.addLiteral(VCARD.Locality, "Valencia");
-		PostalAddressInesDominguez.addLiteral(VCARD.Pobox, "46020");
-		PostalAddressInesDominguez.addLiteral(VCARD.Street, "Carrer de la Guardia Civil 20");
-		*/
+		//ev2.addProperty(RDF.type, event);
+		ev2.addLiteral(eventname, "tidi");
+		ev2.addLiteral(image, "HTtps://urldeimagentidi.com/");
+		ev2.addLiteral(primarySource, "HTtps://urldeleventotid.com/");
+		ev2.addLiteral(day, "28");
+		ev2.addLiteral(month, "05");
+		ev2.addLiteral(start, "21:00");
+		ev2.addLiteral(price, "220kr");
 		
 		//Create the property goes
-		//Property goes = FollowyoureventTDB.getFollowyoureventTDB().createProperty(MS+"goes");
+		Property goes = FollowyoureventTDB.getFollowyoureventTDB().createProperty(MS+"goes");
 		
 		//create stmt
-		//Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(InesDominguez, goes, ev);
+		Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev);
 		//Adding the statement
-		//FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 		
 		//create stmt
-		//Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev);
+		stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(InesDominguez, goes, ev);
 		//Adding the statement
-		//FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 		
 		//create stmt
-		//stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev2);
+		stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(InesDominguez, goes, ev2);
 		//Adding the statement
-		//FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 		
 		FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
 		
