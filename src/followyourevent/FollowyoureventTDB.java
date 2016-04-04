@@ -895,6 +895,7 @@ public class FollowyoureventTDB {
 
 }
 
+
 /*try{
 FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
 insertNewSite("http://www.hulen.no/");
