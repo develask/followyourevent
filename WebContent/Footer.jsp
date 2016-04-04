@@ -19,7 +19,7 @@
 					<%
 						if (info != null){
 							%><div class="panel-footer">
-								<p><a class="btn btn-primary" href="places" role="button">Admin place</a>  <a class="btn btn-danger text-right" href="logout.jsp" role="button">Log Out</a></p>
+								<p><a class="btn btn-primary" href="/followyourevent/places" role="button">Admin place</a>  <a class="btn btn-danger text-right" href="/followyourevent/logout.jsp" role="button">Log Out</a></p>
 							</div><%
 						}
 					%>

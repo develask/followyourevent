@@ -13,6 +13,7 @@
 					if (mail != null){
 						ArrayList<String> places = fye.getAllThePlacesOfAPerson(mail);
 						%>
+						<h1>Your places:</h1>
 						<table class="table table-striped">
 							<thead>
 								<tr>
@@ -27,8 +28,8 @@
 								for (String place: places){
 									String[] arr = fye.getInformationOfPlace(place);
 								%>
-								<tr>
-									<th scope="row"><a href="/followyourevent/places/place.jsp?pl=<%= fye.MS+"place/"+(arr[0]+arr[1]).replaceAll(" ", "")%>"><%= places.indexOf(place)%></a></th>
+								<tr onclick="document.location = '/followyourevent/places/place.jsp?pl=<%= (arr[0]+arr[1]).replaceAll(" ", "")%>';">
+									<th scope="row"><%= places.indexOf(place)%></th>
 									<td><%= arr[0]%></td>
 									<td><%= arr[1]%></td>
 									<td><%= arr[3]%></td>
@@ -38,9 +39,9 @@
 						</table>
 						<div class="panel panel-default">
 							<div class="panel-heading">
-								<h3 class="panel-title">Create New Place</h3>
+								<h3 class="panel-title"  role="button" data-toggle="collapse" aria-expanded="false" aria-controls="dropdown" data-target="#dropdown">Create New Place</h3>
 							</div>
-							<div class="panel-body">
+							<div class="panel-body collapse" id="dropdown">
 								<form action="newPlace.jsp" class="form-horizontal">
 									<div class="form-group">
 										<label for="placeName" class="col-sm-2">Place Name:</label>

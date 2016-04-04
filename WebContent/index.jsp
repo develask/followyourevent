@@ -24,17 +24,17 @@
 					if (mail != null){
 						ArrayList<String> evs = FollowyoureventTDB.getFollowyoureventTDB().getAllTheEventsOfAPerson(mail);
 						for (String ev: evs){
-							ArrayList<String> infoEv = FollowyoureventTDB.getInformationOfEvent(ev);
+							String[] infoEv = FollowyoureventTDB.getInformationOfEvent(ev);
 							// name, image, url, day, month, hour, price
-							if (infoEv.size() == 7){
+							if (infoEv.length == 7){
 							%>
 							<div class="col-sm-6">
 								<div class="thumbnail">
-									<img src="<%= infoEv.get(1)%>" alt="" class="img-rounded">
+									<img src="<%= infoEv[1]%>" alt="" class="img-rounded">
 									<div class="caption">
-										<h3><%= infoEv.get(0)%></h3>
-										<p><%= infoEv.get(3)%>/<%= infoEv.get(4)%> - <%= infoEv.get(5)%> - <%= infoEv.get(6)%>€</p>
-										<p><a href="event/nogo.jsp?event=<%= infoEv.get(0)+infoEv.get(4)+infoEv.get(3)%>" class="btn btn-danger" role="button">Don't go</a></p>
+										<h3><%= infoEv[0]%></h3>
+										<p><%= infoEv[3]%>/<%= infoEv[4]%> - <%= infoEv[5]%> - <%= infoEv[6]%>€</p>
+										<p><a href="event/nogo.jsp?event=<%= infoEv[0]+infoEv[4]+infoEv[3]%>" class="btn btn-danger" role="button">Don't go</a></p>
 									</div>
 								</div>
 							</div>

@@ -273,7 +273,7 @@ public class FollowyoureventTDB {
 			}
 	    	return arr;
 	    }else{
-	    	return null;
+	    	return arr;
 	    }    
 	}
 	
@@ -282,8 +282,8 @@ public class FollowyoureventTDB {
 	 * @param uri
 	 * @return Arraylist -> name, image, url, day, month, hour, price
 	 */
-	public static ArrayList<String> getInformationOfEvent(String uri){
-		ArrayList<String> arr = new ArrayList<String>();
+	public static String[] getInformationOfEvent(String uri){
+		String[] arr = new String[7];
 		try {
 			Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
 			String query = "PREFIX DBpedia: <http://dbpedia.org/> PREFIX Purl: <http://purl.org/dc/dcmitype/> "
@@ -300,13 +300,13 @@ public class FollowyoureventTDB {
 			ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 		    if(res.hasNext()){
 		    	QuerySolution soln = res.nextSolution();
-		    	arr.add(soln.getLiteral("name").toString());
-		    	arr.add(soln.getLiteral("image").toString());
-		    	arr.add(soln.getLiteral("url").toString());
-		    	arr.add(soln.getLiteral("day").toString());
-		    	arr.add(soln.getLiteral("month").toString());
-		    	arr.add(soln.getLiteral("hour").toString());
-		    	arr.add(soln.getLiteral("price").toString());
+		    	arr[0] = soln.getLiteral("name").toString();
+		    	arr[1] = soln.getLiteral("image").toString();
+		    	arr[2] = soln.getLiteral("url").toString();
+		    	arr[3] = soln.getLiteral("day").toString();
+		    	arr[4] = soln.getLiteral("month").toString();
+		    	arr[5] = soln.getLiteral("hour").toString();
+		    	arr[6] = soln.getLiteral("price").toString();
 		    	return arr;
 		    }else{
 		    	return arr;
@@ -545,7 +545,7 @@ public class FollowyoureventTDB {
 		Property start = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/start");
 		Property pprice = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://schema.org/price");
 		if(!existEvent(name, month, day)){
-			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/"+name+month+day);
+			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/"+(name+month+day).replaceAll(" ", ""));
 			res.addLiteral(eventname, name);
 			res.addLiteral(pimage, image);
 			res.addLiteral(primarySource, url);
@@ -888,9 +888,9 @@ public class FollowyoureventTDB {
 	public static void createRulesForRecommendations(String uriPerson){
 		ArrayList<String> arr;
 		Resource resPers = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
-		/* "CONSTRUCT {“
-		+ “ ?res <" + RDFS.label + "> ?label .”
-		+ “} WHERE {"
+		/* "CONSTRUCT {ï¿½
+		+ ï¿½ ?res <" + RDFS.label + "> ?label .ï¿½
+		+ ï¿½} WHERE {"
 		+ " ?res <" + myOwnLabel + "> ?label ."
 		+ "}");*/
 		String query = "PREFIX Own:<http://followyourevent.com/> "
