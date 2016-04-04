@@ -68,8 +68,8 @@ public class FollowyoureventTDB {
 // 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
 // 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
  			//arr = fye.getInformationOfEvent(MS+"event/hulen0223");
- 			ArrayList<String> mios = fye.getAllThePlacesOfAPerson("develascomikel@gmail.com");
- 			System.out.println(mios);
+// 			ArrayList<String> mios = fye.getAllThePlacesOfAPerson("develascomikel@gmail.com");
+// 			System.out.println(mios);
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//System.out.println(s);
@@ -236,7 +236,7 @@ public class FollowyoureventTDB {
 		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?name ?street ?logo ?capacity "
 				+ "WHERE { <"+reso+"> Prov:organization ?name ."
-						+ " <"+reso+"> VCARD:street ?street ."
+						+ " <"+reso+"> <"+VCARD.Street+"> ?street ."
 						+ " <"+reso+"> DBpedia:logo ?logo ."
 						+ " <"+reso+"> DBpedia:capacity ?capacity }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -776,7 +776,7 @@ public class FollowyoureventTDB {
 			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
 			Property hasOwner = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"hasOwner");
 			if(!existStatement(resPer, hasOwner, resPlace)){
-				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPer, hasOwner, resPlace);
+				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(resPlace, hasOwner, resPer);
 				FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;

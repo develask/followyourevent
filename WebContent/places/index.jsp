@@ -28,7 +28,7 @@
 									String[] arr = fye.getInformationOfPlace(place);
 								%>
 								<tr>
-									<th scope="row"><%= places.indexOf(place)%></th>
+									<th scope="row"><a href="/followyourevent/places/place.jsp?pl=<%= fye.MS+"place/"+(arr[0]+arr[1]).replaceAll(" ", "")%>"><%= places.indexOf(place)%></a></th>
 									<td><%= arr[0]%></td>
 									<td><%= arr[1]%></td>
 									<td><%= arr[3]%></td>
