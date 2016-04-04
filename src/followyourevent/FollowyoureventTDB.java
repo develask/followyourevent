@@ -45,8 +45,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	private static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -66,10 +66,15 @@ public class FollowyoureventTDB {
  			//System.out.println(arr.toString());
  			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
  			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
- 			s = fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber12105");
+ 			//s = fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber12105");
+// 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+// 			fye.createEvent("Event Number 1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10", "80");
+ 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/Event Number 10521");
+ 			ArrayList<String> mios = fye.getAllTheEventsOfAPerson("develascomikel@gmail.com");
+ 			System.out.println(mios);
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
- 			System.out.println(s);
+ 			//System.out.println(s);
 		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -96,6 +101,7 @@ public class FollowyoureventTDB {
         //obtain the model from the dataset
         model = dataset.getDefaultModel();
 		rdfsmodel = ModelFactory.createRDFSModel(model);
+		rdfsmodel.write(System.out);
 		rdfsmodel.commit();
    	}
 	
@@ -280,33 +286,39 @@ public class FollowyoureventTDB {
 	 * @return Arraylist -> name, image, url, day, month, hour, price
 	 */
 	public static ArrayList<String> getInformationOfEvent(String uri){
-		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
 		ArrayList<String> arr = new ArrayList<String>();
-		String query = "PREFIX DBpedia: <http://dbpedia.org/> PREFIX Purl: <http://purl.org/dc/dcmitype/> "
-				+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX Schema:<http://schema.org/> "
-				+ " PREFIX Own: <http://followyourevent.com/> "
-				+ "SELECT ?name ?image ?url ?day ?month ?hour ?price "
-				+ "WHERE { <"+reso+"> DBpedia:event ?name ."
-						+ " <"+reso+"> Purl:image ?image ."
-						+ " <"+reso+"> Prov:primarySource ?url ."
-						+ " <"+reso+"> DBpedia:day ?day ."
-						+ " <"+reso+"> DBpedia:month ?month ."
-						+ " <"+reso+"> Prov:start ?hour ."
-						+ " <"+reso+"> Schema:price ?price }";
-		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-	    if(res.hasNext()){
-	    	QuerySolution soln = res.nextSolution();
-	    	arr.add(soln.getLiteral("name").toString());
-	    	arr.add(soln.getLiteral("image").toString());
-	    	arr.add(soln.getLiteral("url").toString());
-	    	arr.add(soln.getLiteral("day").toString());
-	    	arr.add(soln.getLiteral("month").toString());
-	    	arr.add(soln.getLiteral("hour").toString());
-	    	arr.add(soln.getLiteral("price").toString());
-	    	return arr;
-	    }else{
-	    	return arr;
-	    }
+		try {
+			Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
+			System.out.println("pasa el res "+reso);
+			String query = "PREFIX DBpedia: <http://dbpedia.org/> PREFIX Purl: <http://purl.org/dc/dcmitype/> "
+					+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX Schema:<http://schema.org/> "
+					+ " PREFIX Own: <http://followyourevent.com/> "
+					+ "SELECT ?name ?image ?url ?day ?month ?hour ?price "
+					+ "WHERE { <"+reso+"> DBpedia:event ?name ."
+							+ " <"+reso+"> Purl:image ?image ."
+							+ " <"+reso+"> Prov:primarySource ?url ."
+							+ " <"+reso+"> DBpedia:day ?day ."
+							+ " <"+reso+"> DBpedia:month ?month ."
+							+ " <"+reso+"> Prov:start ?hour ."
+							+ " <"+reso+"> Schema:price ?price }";
+			ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+			System.out.println("pasa la query");
+		    if(res.hasNext()){
+		    	QuerySolution soln = res.nextSolution();
+		    	arr.add(soln.getLiteral("name").toString());
+		    	arr.add(soln.getLiteral("image").toString());
+		    	arr.add(soln.getLiteral("url").toString());
+		    	arr.add(soln.getLiteral("day").toString());
+		    	arr.add(soln.getLiteral("month").toString());
+		    	arr.add(soln.getLiteral("hour").toString());
+		    	arr.add(soln.getLiteral("price").toString());
+		    	return arr;
+		    }else{
+		    	return arr;
+		    }
+		}catch(Exception e){
+			return arr;
+		}
 	} 
 	
 	
@@ -322,20 +334,16 @@ public class FollowyoureventTDB {
 		String query = "PREFIX own: <"+MS+"> "
 				+ "SELECT ?ev WHERE { <"+person+"> <"+goes+"> ?ev }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-	    if(res.hasNext()){
-	    	while (res.hasNext()) {
-	    		QuerySolution soln = res.next();
-	    		try{
-	    			String l = soln.getResource("ev").toString();
-		    		arr.add(l);
-	    		}catch(Exception e){
-	    			
-	    		}
-			}
-	    	return arr;
-	    }else{
-	    	return null;
-	    }
+    	while (res.hasNext()) {
+    		QuerySolution soln = res.next();
+    		try{
+    			String l = soln.getResource("ev").toString();
+	    		arr.add(l);
+    		}catch(Exception e){
+    			
+    		}
+		}
+    	return arr;
 	}
 	
 	public static ArrayList<String> getAllPastEventsOfAPerson(String mail){

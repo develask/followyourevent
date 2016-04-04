@@ -23,30 +23,22 @@
 		<![endif]-->
 	</head>
 	<body>
-
-		<div class="container">
-			<div class="jumbotron">
+		<div class="container" style="margin-top: 30px;">
 				<%
 					String mail = Sessions.getSessions().verifySession(request.getCookies());
-					if (mail != null){
-						String[] info = FollowyoureventTDB.getFollowyoureventTDB().getInformationAboutAPerson(mail);
-						%><h1>Hello,  <%= info[0]%></h1>
-						<p>Mail:  <%= info[1]%></p>
-						<p>Age:  <%= info[2]%></p>
-						<p>Sex:  <%= info[3]%></p>
-						<p><a class="btn btn-danger btn-lg" href="logout.jsp" role="button">Log Out</a></p>
-						<%
-					}else{
+					if (mail == null){
 						%>
-						<h1>Follow Your Event</h1>
-						<p>Here you can find those events you want to go!</p>
-						<p><a class="btn btn-primary btn-lg" href="login" role="button">Sign In</a> <a class="btn btn-default btn-lg" href="signup" role="button">Sign Up</a></p>
+						<div class="jumbotron">
+							<h1>Follow Your Event</h1>
+							<p>Here you can find those events you want to go!</p>
+							<p><a class="btn btn-primary btn-lg" href="login" role="button">Sign In</a> <a class="btn btn-default btn-lg" href="signup" role="button">Sign Up</a></p>
+						</div>
 						<%
 					}
 				%>
-			</div>
-
+			
 			<div class="row">
+			<div class="col-sm-8 blog-main">
 				<%
 					if (mail != null){
 						ArrayList<String> evs = FollowyoureventTDB.getFollowyoureventTDB().getAllTheEventsOfAPerson(mail);
@@ -54,12 +46,12 @@
 							ArrayList<String> infoEv = FollowyoureventTDB.getInformationOfEvent(ev);
 							// name, image, url, day, month, hour, price
 							%>
-							<div class="col-sm-6 col-md-4">
+							<div class="col-sm-6">
 								<div class="thumbnail">
 									<img src="<%= infoEv.get(1)%>" alt="">
 									<div class="caption">
 										<h3><%= infoEv.get(0)%></h3>
-										<p><%= infoEv.get(3)%>/<%= infoEv.get(4)%> - <%= infoEv.get(5)%>:<%= infoEv.get(6)%></p>
+										<p><%= infoEv.get(3)%>/<%= infoEv.get(4)%> - <%= infoEv.get(5)%> - <%= infoEv.get(6)%>€</p>
 										<p><a href="#" class="btn btn-primary" role="button">Interest In</a> <a href="#" class="btn btn-default" role="button">I'll go</a></p>
 									</div>
 								</div>
@@ -68,7 +60,7 @@
 						}
 					}
 				%>
-				<div class="col-sm-6 col-md-4">
+				<div class="col-sm-6">
 					<div class="thumbnail">
 						<img src="" alt="">
 						<div class="caption">
@@ -78,7 +70,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-6 col-md-4">
+				<div class="col-sm-6">
 					<div class="thumbnail">
 						<img src="" alt="">
 						<div class="caption">
@@ -89,7 +81,31 @@
 					</div>
 				</div>
 			</div>
-
+			<%
+			String[] info = FollowyoureventTDB.getFollowyoureventTDB().getInformationAboutAPerson(mail);
+			%>
+			<div class="col-sm-3 col-sm-offset-1">
+				<div class="panel panel-default" style="margin-bottom: 0;">
+					<div class="panel-heading">
+						<h3 class="panel-title"><%= info!=null?"Hello,  "+info[0]:"Follow Your Event"%></h3>
+					</div>
+					<div class="panel-body">
+						<% if (info != null){ %>
+						<p>Mail:  <%= info[1]%></p>
+						<p>Age:  <%= info[2]%></p>
+						<p>Sex:  <%= info[3]%></p>
+						<% }else{ %>
+							<p>Here you can find those events you want to go!</p>
+							<p><a class="btn btn-primary" href="login" role="button">Sign In</a> <a class="btn btn-default" href="signup" role="button">Sign Up</a></p>
+						<% } %>
+					</div>
+					<%
+						if (info != null){
+							%><div class="panel-footer"><p class="text-right"><a class="btn btn-danger" href="logout.jsp" role="button">Log Out</a></p></div><%
+						}
+					%>
+				</div>
+			</div>
 		</div>
 
 		<!-- jQuery 2.1.4 -->
