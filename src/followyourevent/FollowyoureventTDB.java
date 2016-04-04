@@ -894,13 +894,22 @@ public class FollowyoureventTDB {
 		+ " ?res <" + myOwnLabel + "> ?label ."
 		+ "}");*/
 		String query = "PREFIX Own:<http://followyourevent.com/> "
-				+ "SELECT WHERE"
-				+ "{ SELECT ?per "
-				+ "  WHERE ?per Own:goes ?ev ."
-				+   "{ SELECT ?ev "
-					+ "WHERE { "
-				   		+ "<"+resPers+"> Own:goes> ?ev "
-					   + "}";
+				+ " SELECT ?fev (COUNT(?fev) AS ?count)"
+				+ " WHERE {"
+					+ " ?per Own:goes ?fev"
+					+ "{"
+						+ " SELECT ?per "
+						+ " WHERE {"
+							+ "?per Own:goes ?ev ."
+							+ "{"
+								+ "SELECT ?ev "
+								+ "WHERE { "
+					   				+"<"+resPers+"> Own:goes> ?ev "
+				   				+ "}"
+			   				+ "}"
+		   				+ "}"
+	   				+ "}"
+   				+ "} GROUP BY ?fev ORDER BY DESC(?count)";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
     	while (res.hasNext()) {
     		QuerySolution soln = res.next();
