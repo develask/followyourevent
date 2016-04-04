@@ -341,6 +341,24 @@ public class FollowyoureventTDB {
     	return arr;
 	}
 	
+	public static ArrayList<String> getAllThePlacesOfAPerson(String mail){
+		ArrayList<String> arr = new ArrayList<String>();
+		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
+		Property hasOwner = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"hasOwner");
+		String query = "SELECT ?place WHERE { ?place <"+hasOwner+"> <"+person+"> }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+    	while (res.hasNext()) {
+    		QuerySolution soln = res.next();
+    		try{
+    			String l = soln.getResource("place").toString();
+	    		arr.add(l);
+    		}catch(Exception e){
+    			
+    		}
+		}
+    	return arr;
+	}
+	
 	public static ArrayList<String> getAllPastEventsOfAPerson(String mail){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
