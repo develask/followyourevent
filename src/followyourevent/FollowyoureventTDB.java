@@ -62,13 +62,13 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
- 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
- 			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
- 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
- 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
+// 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+// 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
+// 			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
+// 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
+// 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
  			//arr = fye.getInformationOfEvent(MS+"event/hulen0223");
- 			ArrayList<String> mios = fye.getAllTheEventsOfAPerson("develascomikel@gmail.com");
+ 			ArrayList<String> mios = fye.getAllThePlacesOfAPerson("develascomikel@gmail.com");
  			System.out.println(mios);
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
@@ -230,9 +230,9 @@ public class FollowyoureventTDB {
 	 * @param uri
 	 * @return ArrayList -> name, street, logo, capacity
 	 */
-	public static ArrayList<String> getInformationOfPlace(String uri){
+	public static String[] getInformationOfPlace(String uri){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
-		ArrayList<String> arr = new ArrayList<String>();
+		String[] arr = new String[4];
 		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?name ?street ?logo ?capacity "
 				+ "WHERE { <"+reso+"> Prov:organization ?name ."
@@ -242,10 +242,10 @@ public class FollowyoureventTDB {
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	QuerySolution soln = res.nextSolution();
-	    	arr.add(soln.getLiteral("name").toString());
-	    	arr.add(soln.getLiteral("street").toString());
-	    	arr.add(soln.getLiteral("logo").toString());
-	    	arr.add(soln.getLiteral("capacity").toString());
+	    	arr[0] = soln.getLiteral("name").toString();
+	    	arr[1] = soln.getLiteral("street").toString();
+	    	arr[2] = soln.getLiteral("logo").toString();
+	    	arr[3] = soln.getLiteral("capacity").toString();
 	    	return arr;
 	    }else{
 	    	return arr;
@@ -494,7 +494,7 @@ public class FollowyoureventTDB {
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
 		if(!existPlace(placeName, street)){
-			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+placeName+street);
+			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+(placeName+street).replaceAll(" ", ""));
 			res.addLiteral(porganization, placeName);
 			res.addLiteral(VCARD.Street, street);
 			res.addLiteral(plogo, logo);
