@@ -45,8 +45,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -62,6 +62,9 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+ 			fye.createRecommendations(MS+"person/maildecade@gmail.com");
+ 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
+ 			System.out.println(arr.size());
 // 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
 // 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
 // 			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
@@ -341,24 +344,38 @@ public class FollowyoureventTDB {
     	return arr;
 	}
 	
+	/**
+	 * 
+	 * @param mail
+	 * @return if ok : Arraylist -> String (resources); if not null
+	 */
 	public static ArrayList<String> getAllThePlacesOfAPerson(String mail){
 		ArrayList<String> arr = new ArrayList<String>();
 		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
 		Property hasOwner = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"hasOwner");
 		String query = "SELECT ?place WHERE { ?place <"+hasOwner+"> <"+person+"> }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-    	while (res.hasNext()) {
-    		QuerySolution soln = res.next();
-    		try{
-    			String l = soln.getResource("place").toString();
-	    		arr.add(l);
-    		}catch(Exception e){
-    			
+    	if(res.hasNext()){
+    		while (res.hasNext()) {
+        		QuerySolution soln = res.next();
+        		try{
+        			String l = soln.getResource("place").toString();
+    	    		arr.add(l);
+        		}catch(Exception e){
+        			
+        		}
     		}
-		}
-    	return arr;
+        	return arr;
+    	}else{
+    		return null;
+    	}
 	}
 	
+	/**
+	 * 
+	 * @param mail
+	 * @return if ok : Arraylist -> String (resources); if not null 
+	 */
 	public static ArrayList<String> getAllPastEventsOfAPerson(String mail){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
@@ -390,6 +407,11 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
+	/**
+	 * 
+	 * @param mail
+	 * @return if ok : Arraylist -> String (resources); if not null
+	 */
 	public static ArrayList<String> getAllFutureEventsOfAPerson(String mail){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
@@ -770,6 +792,12 @@ public class FollowyoureventTDB {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param uriPlace
+	 * @param uriPerson
+	 * @return if added true; if not false;
+	 */
 	public static boolean addOwnerToAPlace(String uriPlace,String uriPerson){
 		try{
 			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
@@ -885,36 +913,69 @@ public class FollowyoureventTDB {
 		}
 	}
 	
-	public static void createRulesForRecommendations(String uriPerson){
-		ArrayList<String> arr;
+	/**
+	 * 
+	 * @param uriPerson
+	 */
+	public static void createRecommendations(String uriPerson){
 		Resource resPers = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
-		/* "CONSTRUCT {�
-		+ � ?res <" + RDFS.label + "> ?label .�
-		+ �} WHERE {"
-		+ " ?res <" + myOwnLabel + "> ?label ."
-		+ "}");*/
 		String query = "PREFIX Own:<http://followyourevent.com/> "
-				+ "SELECT WHERE"
-				+ "{ SELECT ?per "
-				+ "  WHERE ?per Own:goes ?ev ."
-				+   "{ SELECT ?ev "
-					+ "WHERE { "
-				   		+ "<"+resPers+"> Own:goes> ?ev "
-					   + "}";
-		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-    	while (res.hasNext()) {
-    		QuerySolution soln = res.next();
-    		try{
-    			String l = soln.getResource("place").toString();
-	    		//arr.add(l);
-    		}catch(Exception e){
-    			
-    		}
-		}
+				+ "CONSTRUCT {"
+				+ " <"+uriPerson+"> Own:mayInterested ?fev ."
+				+ "} WHERE {"
+				+ " ?res Own:goes ?fev ."
+					+ "{"
+						+ " SELECT ?fev (COUNT(?fev) AS ?count)"
+						+ " WHERE {"
+							+ " ?per Own:goes ?fev"
+							+ "{"
+								+ " SELECT ?per "
+								+ " WHERE {"
+									+ "?per Own:goes ?ev ."
+									+ "{"
+										+ "SELECT ?ev "
+										+ "WHERE { "
+							   				+"<"+resPers+"> Own:goes ?ev "
+						   				+ "}"
+					   				+ "}"
+				   				+ "}"
+			   				+ "}"
+		   				+ "} GROUP BY ?fev ORDER BY DESC(?count) LIMIT 10"
+	   				+ "}"
+   				+ "}";
+		QueryExecution queryExecution = QueryExecutionFactory.create(query, dataset);
+		Model resultModel = queryExecution.execConstruct();
+		//resultModel.write(System.out, "JSON-LD");
+		FollowyoureventTDB.getFollowyoureventTDB().addNewModel(resultModel);
+		//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
 	}
 	
-	public static void recommendEvents(){
-		//TODO
+	/**
+	 * 
+	 * @param uriPerson
+	 * @return if Ok: ArrayList -> String (Resource); if not null
+	 */
+	public static ArrayList<String> recommendEvents(String uriPerson){
+		ArrayList<String> arr = new ArrayList<String>();
+		Resource resPers = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+		String query = "PREFIX Own:<http://followyourevent.com/> "
+					+ "SELECT ?ev WHERE {"
+					+ "<"+resPers+"> Own:mayInterested ?ev }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+    	if(res.hasNext()){
+    		while (res.hasNext()) {
+        		QuerySolution soln = res.next();
+        		try{
+        			String l = soln.getResource("ev").toString();
+    	    		arr.add(l);
+        		}catch(Exception e){
+        			
+        		}
+    		}
+        	return arr;
+    	}else{
+    		return null;
+    	}	
 	}
 
 }
