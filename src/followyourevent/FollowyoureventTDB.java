@@ -885,8 +885,32 @@ public class FollowyoureventTDB {
 		}
 	}
 	
-	public static void createRulesForRecommendations(){
-		//TODO
+	public static void createRulesForRecommendations(String uriPerson){
+		ArrayList<String> arr;
+		Resource resPers = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+		/* "CONSTRUCT {“
+		+ “ ?res <" + RDFS.label + "> ?label .”
+		+ “} WHERE {"
+		+ " ?res <" + myOwnLabel + "> ?label ."
+		+ "}");*/
+		String query = "PREFIX Own:<http://followyourevent.com/> "
+				+ "SELECT WHERE"
+				+ "{ SELECT ?per "
+				+ "  WHERE ?per Own:goes ?ev ."
+				+   "{ SELECT ?ev "
+					+ "WHERE { "
+				   		+ "<"+resPers+"> Own:goes> ?ev "
+					   + "}";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+    	while (res.hasNext()) {
+    		QuerySolution soln = res.next();
+    		try{
+    			String l = soln.getResource("place").toString();
+	    		//arr.add(l);
+    		}catch(Exception e){
+    			
+    		}
+		}
 	}
 	
 	public static void recommendEvents(){
