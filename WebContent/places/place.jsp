@@ -29,7 +29,7 @@
 								for (String event: events){
 									String[] arr = fye.getInformationOfEvent(event);
 								%>
-								<tr onclick="document.location = '/followyourevent/events/event.jsp?ev=<%= (arr[0]+arr[4]+arr[3]).replaceAll(" ", "")%>';">
+								<tr onclick="document.location = '/followyourevent/event?ev=<%= (arr[0]+arr[4]+arr[3]).replaceAll(" ", "")%>';">
 									<th scope="row"><%= events.indexOf(event)%></th>
 									<td><%= arr[0]%></td>
 									<td><%= arr[4]+"/"+arr[3]+" - "+arr[5]%></td>

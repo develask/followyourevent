@@ -45,8 +45,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -62,14 +62,14 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			fye.createRecommendations(MS+"person/maildecade@gmail.com");
- 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
- 			System.out.println(arr.size());
-// 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
-// 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
-// 			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
-// 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
-// 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
+// 			fye.createRecommendations(MS+"person/maildecade@gmail.com");
+// 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
+// 			System.out.println(arr.size());
+ 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
+ 			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
+ 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
+ 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
  			//arr = fye.getInformationOfEvent(MS+"event/hulen0223");
 // 			ArrayList<String> mios = fye.getAllThePlacesOfAPerson("develascomikel@gmail.com");
 // 			System.out.println(mios);
@@ -367,7 +367,7 @@ public class FollowyoureventTDB {
     		}
         	return arr;
     	}else{
-    		return null;
+    		return arr;
     	}
 	}
 	
@@ -403,7 +403,7 @@ public class FollowyoureventTDB {
 			}
 	    	return arr;
 	    }else{
-	    	return null;
+	    	return arr;
 	    }
 	}
 	
@@ -976,6 +976,16 @@ public class FollowyoureventTDB {
     	}else{
     		return null;
     	}	
+	}
+	
+	/**
+	 *  
+	 * @param uriEvent
+	 * @param uriPerson
+	 * @return true if that event was created by this person
+	 */
+	public boolean eventIsFromAPerson(String uriEvent, String uriPerson){
+		return false;
 	}
 
 }
