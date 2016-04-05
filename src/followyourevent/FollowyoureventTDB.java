@@ -448,16 +448,15 @@ public class FollowyoureventTDB {
 	 * @param uriEvent
 	 * @return Array -> list of resources; if not null
 	 */
-	public static String[] getAllThePeopleFromAnEvent(String uriEvent){
-		String[] arr;
+	public static ArrayList<String> getAllThePeopleFromAnEvent(String uriEvent){
+		ArrayList<String> arr = new ArrayList<String>();
 		Resource event = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
 		String query = "SELECT (COUNT(?per) AS ?count) WHERE { ?per <"+goes+"> <"+event+"> }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	QuerySolution soln = res.next();
-	    	int count = Integer.parseInt(soln.getLiteral("count").toString());
-	    	arr = new String[count];
+	    	//int count = Integer.parseInt(soln.getLiteral("count").toString());
 	    	query = "SELECT ?per WHERE { ?per <"+goes+"> <"+event+"> }";
 			res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 			if(res.hasNext()){
@@ -465,18 +464,18 @@ public class FollowyoureventTDB {
 				while (res.hasNext()) {
 		    		try{
 		    			soln = res.next();
-		    			arr[i] = soln.getResource("per").toString();
+		    			arr.add(soln.getResource("per").toString());
 		    		}catch(Exception e){
 		    			
 		    		}
 	    		}
 				return arr;
 			}else{
-				return null;
+				return arr;
 			}
 	    	
 	    }else{
-	    	return null;
+	    	return arr;
 	    }
 	}
 	
