@@ -52,6 +52,8 @@ public class CargadorDatosMentira {
 		
 		Property kind = FollowyoureventTDB.getFollowyoureventTDB().createProperty(dbPedia+"kind");
 		
+		Property auto = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://dbpedia.org/auto");
+		
 		//Create Cade tracy
 		Resource CadeTracy = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"person/maildecade@gmail.com");
 		CadeTracy.addLiteral(FOAF.mbox, "maildecade@gmail.com");
