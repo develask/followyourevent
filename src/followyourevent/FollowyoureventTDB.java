@@ -257,6 +257,21 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
+	public static String getWebUrlOfAPlace(String uriPlace){
+		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
+		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
+				+ "SELECT ?oficial "
+				+ "WHERE { <"+reso+"> Prov:primarySource ?name }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	QuerySolution soln = res.nextSolution();
+	    	
+	    	return soln.getLiteral("oficial").toString();
+	    }else{
+	    	return null;
+	    }
+	}
+	
 	/**
 	 * 
 	 * @param uriPlace
@@ -344,6 +359,34 @@ public class FollowyoureventTDB {
     		}
 		}
     	return arr;
+	}
+	
+	/**
+	 * 
+	 * @return ArrayList of all automatic places
+	 */
+	public static ArrayList<String> getAllAutomaticPlaces(){
+		ArrayList<String> arr = new ArrayList<String>();
+		String query = "SELECT ?place WHERE { ?place <"+RDF.type+"> <http://followyourevent.com/place> }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+    	try{
+    		if(res.hasNext()){
+        		while (res.hasNext()) {
+            		QuerySolution soln = res.next();
+            		String place = soln.getResource("place").toString();
+            		if(isautomatic(place)){
+            			arr.add(place);
+            		}
+        		}
+            	return arr;
+        	}else{
+        		return arr;
+        	}
+    	}catch(Exception e){
+    		
+    	}
+		return arr;
+		
 	}
 	
 	/**
@@ -512,11 +555,13 @@ public class FollowyoureventTDB {
 	 * @param capacity
 	 * @return true if ok; false if not created
 	 */
-	public static boolean createPlace(String placeName, String street, String logo, String capacity, String auto){
+	public static boolean createPlace(String placeName, String street, String logo, String capacity, String oficialweb, String auto){
 		Property porganization = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
 		Property pauto = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://dbpedia.org/auto");
+		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
+		Resource place = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/place");
 		if(!existPlace(placeName, street)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+(placeName+street).replaceAll(" ", ""));
 			res.addLiteral(porganization, placeName);
@@ -524,6 +569,8 @@ public class FollowyoureventTDB {
 			res.addLiteral(plogo, logo);
 			res.addLiteral(pcapacity, capacity);
 			res.addLiteral(pauto,auto);
+			res.addLiteral(primarySource, oficialweb);
+			res.addProperty(RDF.type, place);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return true;
 		}else{
@@ -539,10 +586,12 @@ public class FollowyoureventTDB {
 	 */
 	public static boolean createStyle(String description, String kind){
 		Property pKind = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/kind");
+		Resource style = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/style");
 		if(!existStyle(kind)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"tyle/"+kind);
 			res.addLiteral(SKOS.definition, description);
 			res.addLiteral(pKind, kind);
+			res.addProperty(RDF.type, style);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return true;
 		}else{
@@ -569,6 +618,7 @@ public class FollowyoureventTDB {
 		Property pmonth = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/month");
 		Property start = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/start");
 		Property pprice = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://schema.org/price");
+		Resource event = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/event");
 		if(!existEvent(name, month, day)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/"+(name+month+day).replaceAll(" ", ""));
 			res.addLiteral(eventname, name);
@@ -578,6 +628,7 @@ public class FollowyoureventTDB {
 			res.addLiteral(pmonth, month);
 			res.addLiteral(start, hour);
 			res.addLiteral(pprice, price);
+			res.addProperty(RDF.type, event);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return true;
 		}else{
@@ -597,6 +648,7 @@ public class FollowyoureventTDB {
 	public static boolean createPerson(String mail, String name, String age, String sex, String pass){
 		Property Ppass = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/pass");
 		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");
+		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/person");
 		if(!existPerson(mail)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"person/"+mail);
 			res.addLiteral(FOAF.mbox, mail);
@@ -604,6 +656,7 @@ public class FollowyoureventTDB {
 			res.addLiteral(Page, age);
 			res.addLiteral(FOAF.gender, sex);
 			res.addLiteral(Ppass, pass);
+			res.addProperty(RDF.type,person);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return true;
 		}else{
@@ -1010,56 +1063,40 @@ public class FollowyoureventTDB {
 		return false;
 	}
 	
+	/**
+	 * update the events of the places
+	 */
 	public static void updateAutomaticEvents(){
-		
+		ArrayList<String> automatics = getAllAutomaticPlaces();
+		for (int i = 1; i < automatics.size(); i++) {
+			String uri = FollowyoureventTDB.getFollowyoureventTDB().getWebUrlOfAPlace(automatics.get(i));
+			String[][] events = FollowyoureventTDB.getFollowyoureventTDB().getSpecificInfo(uri);
+			updateEvents(events);
+		}
 	}
 	
-	/*public static void update(){
-		try{
-			//declare variables
-			Document doc;
-			Elements newsHeadlines;
-
-			try {
-				String name, img, fecha, hora, precio, link;
-				Element el;
-				Elements els; 
-				for (int i = 0; i < names.size(); i++) {
-					
-					//Start making connections
-					doc = Jsoup.connect("http://hulen.no/").get();
-					//This will be the same for all the sites
-					newsHeadlines = doc.select(".no-gutter .event-list");
-					for (Element element : newsHeadlines) {
-						//System.out.println("\t"+element);
-						img = element.select("img.img-responsive").first().attr("src");
-						el = element.select(".list-info").first();
-						link = el.select("a").first().attr("href").trim();
-						name = el.select("a").first().text();
-						els = el.select("li");
-						fecha = els.first().text();
-						hora = els.get(1).text().replaceAll("\\D+ || :+","");
-						precio = els.get(2).text().replaceAll("\\D+","");
-					
-					}
-				}
-			
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
-
-		}*/
-	public static String[][] getSpecificInfo(String uri,String str){
+	/**
+	 * Update the events of one of the places, it is
+	 * @param events
+	 */
+	public static void updateEvents(String[][] events){
+		//TODO
+	}
+	
+	/**
+	 * 
+	 * @param uri
+	 * @return Doble Array of information of the events in a place
+	 */
+	public static String[][] getSpecificInfo(String uri){
 		Document doc = null;
 		Elements newsHeadlines;
-		//String name, img, fecha, hora, precio, link;
 		Element el;
 		Elements els;
 		String[][] names = null;
 		int ind = 0;
-		//TODO we need to inicialize the structure
-		switch (oficialnames.get(str)) {
-		case 1:
+		switch (uri) {
+		case "http://hulen.no/":
 			//Start making connections
 			try {
 				doc = Jsoup.connect(uri).get();
@@ -1082,7 +1119,7 @@ public class FollowyoureventTDB {
 				ind++;
 			}
 			break;
-		case 2:
+		/*case 2:
 //						System.out.println("KAOS:");
 //						doc = Jsoup.connect("http://kaos-bergen.no/").get();
 //						newsHeadlines = doc.select(".avia-gallery-thumb img");
@@ -1123,13 +1160,13 @@ public class FollowyoureventTDB {
 //						newsHeadlines = doc.select(".hours p");
 //						for (Element element : newsHeadlines) {
 //							System.out.println("\t"+element.text());
-//						}
+//						}*/
 		default:
 			break;
 		}
-
+		
 		return names;
-		}
+	}
 }
 
 
