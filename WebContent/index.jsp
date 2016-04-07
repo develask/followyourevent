@@ -22,7 +22,9 @@
 			<div class="col-sm-8 blog-main">
 				<%
 					if (mail != null){
-						ArrayList<String> evs = FollowyoureventTDB.getFollowyoureventTDB().getAllTheEventsOfAPerson(mail);
+						FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+						ArrayList<String> evs = fye.createRecommendations(fye.MS+"person/"+mail);
+						//ArrayList<String> evs = FollowyoureventTDB.getFollowyoureventTDB().getAllTheEventsOfAPerson(mail);
 						for (String ev: evs){
 							String[] infoEv = FollowyoureventTDB.getInformationOfEvent(ev);
 							// name, image, url, day, month, hour, price
