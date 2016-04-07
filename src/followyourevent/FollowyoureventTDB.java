@@ -237,11 +237,12 @@ public class FollowyoureventTDB {
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
 		String[] arr = new String[4];
 		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX DBpedia: <http://dbpedia.org/> "
-				+ "SELECT ?name ?street ?logo ?capacity "
+				+ "SELECT ?name ?street ?logo ?capacity ?auto "
 				+ "WHERE { <"+reso+"> Prov:organization ?name ."
 						+ " <"+reso+"> <"+VCARD.Street+"> ?street ."
 						+ " <"+reso+"> DBpedia:logo ?logo ."
-						+ " <"+reso+"> DBpedia:capacity ?capacity }";
+						+ " <"+reso+"> DBpedia:capacity ?capacity ."
+						+ " <"+reso+"> DBpedia:auto ?auto}";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	QuerySolution soln = res.nextSolution();
@@ -249,9 +250,25 @@ public class FollowyoureventTDB {
 	    	arr[1] = soln.getLiteral("street").toString();
 	    	arr[2] = soln.getLiteral("logo").toString();
 	    	arr[3] = soln.getLiteral("capacity").toString();
+	    	arr[4] = soln.getLiteral("auto").toString();
 	    	return arr;
 	    }else{
 	    	return arr;
+	    }
+	}
+	
+	public static String getWebUrlOfAPlace(String uriPlace){
+		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
+		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
+				+ "SELECT ?oficial "
+				+ "WHERE { <"+reso+"> Prov:primarySource ?name }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	QuerySolution soln = res.nextSolution();
+	    	
+	    	return soln.getLiteral("oficial").toString();
+	    }else{
+	    	return null;
 	    }
 	}
 	
@@ -342,6 +359,34 @@ public class FollowyoureventTDB {
     		}
 		}
     	return arr;
+	}
+	
+	/**
+	 * 
+	 * @return ArrayList of all automatic places
+	 */
+	public static ArrayList<String> getAllAutomaticPlaces(){
+		ArrayList<String> arr = new ArrayList<String>();
+		String query = "SELECT ?place WHERE { ?place <"+RDF.type+"> <http://followyourevent.com/place> }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+    	try{
+    		if(res.hasNext()){
+        		while (res.hasNext()) {
+            		QuerySolution soln = res.next();
+            		String place = soln.getResource("place").toString();
+            		if(isautomatic(place)){
+            			arr.add(place);
+            		}
+        		}
+            	return arr;
+        	}else{
+        		return arr;
+        	}
+    	}catch(Exception e){
+    		
+    	}
+		return arr;
+		
 	}
 	
 	/**
@@ -510,16 +555,22 @@ public class FollowyoureventTDB {
 	 * @param capacity
 	 * @return true if ok; false if not created
 	 */
-	public static boolean createPlace(String placeName, String street, String logo, String capacity){
+	public static boolean createPlace(String placeName, String street, String logo, String capacity, String oficialweb, String auto){
 		Property porganization = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
+		Property pauto = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://dbpedia.org/auto");
+		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
+		Resource place = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/place");
 		if(!existPlace(placeName, street)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+(placeName+street).replaceAll(" ", ""));
 			res.addLiteral(porganization, placeName);
 			res.addLiteral(VCARD.Street, street);
 			res.addLiteral(plogo, logo);
 			res.addLiteral(pcapacity, capacity);
+			res.addLiteral(pauto,auto);
+			res.addLiteral(primarySource, oficialweb);
+			res.addProperty(RDF.type, place);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return true;
 		}else{
@@ -535,10 +586,12 @@ public class FollowyoureventTDB {
 	 */
 	public static boolean createStyle(String description, String kind){
 		Property pKind = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/kind");
+		Resource style = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/style");
 		if(!existStyle(kind)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"tyle/"+kind);
 			res.addLiteral(SKOS.definition, description);
 			res.addLiteral(pKind, kind);
+			res.addProperty(RDF.type, style);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return true;
 		}else{
@@ -565,6 +618,7 @@ public class FollowyoureventTDB {
 		Property pmonth = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/month");
 		Property start = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/start");
 		Property pprice = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://schema.org/price");
+		Resource event = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/event");
 		if(!existEvent(name, month, day)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/"+(name+month+day).replaceAll(" ", ""));
 			res.addLiteral(eventname, name);
@@ -574,6 +628,7 @@ public class FollowyoureventTDB {
 			res.addLiteral(pmonth, month);
 			res.addLiteral(start, hour);
 			res.addLiteral(pprice, price);
+			res.addProperty(RDF.type, event);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return true;
 		}else{
@@ -593,6 +648,7 @@ public class FollowyoureventTDB {
 	public static boolean createPerson(String mail, String name, String age, String sex, String pass){
 		Property Ppass = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/pass");
 		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");
+		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/person");
 		if(!existPerson(mail)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"person/"+mail);
 			res.addLiteral(FOAF.mbox, mail);
@@ -600,11 +656,33 @@ public class FollowyoureventTDB {
 			res.addLiteral(Page, age);
 			res.addLiteral(FOAF.gender, sex);
 			res.addLiteral(Ppass, pass);
+			res.addProperty(RDF.type,person);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return true;
 		}else{
 			return false;
 		}	
+	}
+	
+	/**
+	 * 
+	 * @param uriPlace
+	 * @return if is automatic true; if not false
+	 */
+	public static boolean isautomatic(String uriPlace){
+		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
+				+ "SELECT ?auto WHERE { <"+uriPlace+"> DBpedia:auto ?auto }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	String auto = res.next().getLiteral("auto").toString();
+	    	if(auto.equals("true")){
+	    		return true;
+	    	}else{
+	    		return false;
+	    	}
+	    }else{
+	    	return false;
+	    }
 	}
 	
 	/**
@@ -944,9 +1022,7 @@ public class FollowyoureventTDB {
    				+ "}";
 		QueryExecution queryExecution = QueryExecutionFactory.create(query, dataset);
 		Model resultModel = queryExecution.execConstruct();
-		//resultModel.write(System.out, "JSON-LD");
 		FollowyoureventTDB.getFollowyoureventTDB().addNewModel(resultModel);
-		//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
 	}
 	
 	/**
@@ -983,242 +1059,114 @@ public class FollowyoureventTDB {
 	 * @param uriPerson
 	 * @return true if that event was created by this person
 	 */
-	public boolean eventIsFromAPerson(String uriEvent, String uriPerson){
+	public static boolean eventIsFromAPerson(String uriEvent, String uriPerson){
 		return false;
 	}
-
-}
-
-
-/*try{
-FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
-insertNewSite("http://www.hulen.no/");
-System.out.println("------------------------------------------------");
-FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
-}catch(Exception e){
-e.printStackTrace();
-FollowyoureventTDB.getFollowyoureventTDB().closeTransaction();
-}finally{
-FollowyoureventTDB.getFollowyoureventTDB().closeModel();
-}*/
-/*//TODO cambiamos a get
-//declare variables
-Document doc;
-Elements newsHeadlines;
-String MS = "pre:http://followyourevent-upv.rhcloud.com/";
-Resource event=null;
-Resource place=null;
-if(FollowyoureventTDB.getResource(MS+"Place")==null){
-event = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event");
-place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
-}else{
-place = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"Place");
-event = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"Event");
-}
-
-try {
-//create local variable for the names
-ArrayList<String> names = new ArrayList<String>();
-//make the sentence for select the names
-String query = "SELECT ?res WHERE { ?res <rdf:type> '"+MS+place+"' .}";//"+MS+"Place .}";
-//get the sites
-names = getSitesNames(query);
-String name, img, fecha, hora, precio, link;
-Element el;
-Elements els; 
-for (int i = 0; i < names.size(); i++) {
-	System.out.println("\n"+names.get(i)+":");
-	//create site resource for each real site
-	Resource site = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+names.get(i));
-	//add the type of place to each one
-	site.addProperty(RDF.type, place);
 	
-	//Start making connections
-	//TODO conseguir la url independientemente de cada garito
-	doc = Jsoup.connect("http://hulen.no/").get();
-	//This will be the same for all the sites
-	newsHeadlines = doc.select(".no-gutter .event-list");
-	for (Element element : newsHeadlines) {
-		//System.out.println("\t"+element);
-		img = element.select("img.img-responsive").first().attr("src");
-		el = element.select(".list-info").first();
-		link = el.select("a").first().attr("href").trim();
-		name = el.select("a").first().text();
-		els = el.select("li");
-		fecha = els.first().text();
-		hora = els.get(1).text().replaceAll("\\D+ || :+","");
-		precio = els.get(2).text().replaceAll("\\D+","");
+	/**
+	 * update the events of the places
+	 */
+	public static void updateAutomaticEvents(){
+		ArrayList<String> automatics = getAllAutomaticPlaces();
+		for (int i = 1; i < automatics.size(); i++) {
+			String uri = FollowyoureventTDB.getFollowyoureventTDB().getWebUrlOfAPlace(automatics.get(i));
+			String[][] events = FollowyoureventTDB.getFollowyoureventTDB().getSpecificInfo(uri);
+			updateEvents(events);
+		}
+	}
+	
+	/**
+	 * Update the events of one of the places, it is
+	 * @param events
+	 */
+	public static void updateEvents(String[][] events){
+		//TODO
+	}
+	
+	/**
+	 * 
+	 * @param uri
+	 * @return Doble Array of information of the events in a place
+	 */
+	public static String[][] getSpecificInfo(String uri){
+		Document doc = null;
+		Elements newsHeadlines;
+		Element el;
+		Elements els;
+		String[][] names = null;
+		int ind = 0;
+		switch (uri) {
+		case "http://hulen.no/":
+			//Start making connections
+			try {
+				doc = Jsoup.connect(uri).get();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//This will be the same for all the sites
+			newsHeadlines = doc.select(".no-gutter .event-list");
+			names = new String[newsHeadlines.size()][6];
+			//get all the events
+			for (Element element : newsHeadlines){
+				names[ind][1] = element.select("img.img-responsive").first().attr("src");
+				el = element.select(".list-info").first();
+				names[ind][5] = el.select("a").first().attr("href").trim();
+				names[ind][0] = el.select("a").first().text();
+				els = el.select("li");
+				names[ind][2] = els.first().text();
+				names[ind][3] = els.get(1).text().replaceAll("\\D+ || :+","");
+				names[ind][4] = els.get(2).text().replaceAll("\\D+","");
+				ind++;
+			}
+			break;
+		/*case 2:
+//						System.out.println("KAOS:");
+//						doc = Jsoup.connect("http://kaos-bergen.no/").get();
+//						newsHeadlines = doc.select(".avia-gallery-thumb img");
+//						for (Element element : newsHeadlines) {
+//							System.out.println("\t"+element.attr("src"));
+//						}
+			break;
+		case 3:
+//						System.out.println("\nTIDI:");
+//						doc = Jsoup.connect("http://tidi-bergen.no/").get();
+//						newsHeadlines = doc.select(".avia-gallery-thumb img");
+//						for (Element element : newsHeadlines) {
+//							System.out.println("\t"+element.attr("src"));
+//						}
+		//	
+			break;
+		case 4:
+//						System.out.println("\nLILLE:");
+//						doc = Jsoup.connect("http://lille-bergen.no/").get();
+//						newsHeadlines = doc.select(".avia-gallery-thumb img");
+//						for (Element element : newsHeadlines) {
+//							System.out.println("\t"+element.attr("src"));
+//						}
+		//	
+			break;
+		case 5:
+//						System.out.println("\nTHESCOTSMAN:");
+//						doc = Jsoup.connect("http://thescotsman.no/").get();
+//						newsHeadlines = doc.select(".avia-gallery-thumb img");
+//						for (Element element : newsHeadlines) {
+//							System.out.println("\t"+element.attr("src"));
+//						}
+		//	
+			break;
+
+//						System.out.println("\nKOK:");
+//						doc = Jsoup.connect("http://klubbkok.no/").get();
+//						newsHeadlines = doc.select(".hours p");
+//						for (Element element : newsHeadlines) {
+//							System.out.println("\t"+element.text());
+//						}*/
+		default:
+			break;
+		}
 		
-		System.out.println("\tEvento: "+name+" - ("+link+")");
-		System.out.println("\t\t- Fecha: "+fecha+" - "+hora);
-		System.out.println("\t\t- Precio: "+precio);
-		System.out.println("\t\t- Imagen: "+ img);
-		
-		// TODO - to url 
-		Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event/"+name.replaceAll(" ", "%20"));
-		ev.addProperty(RDF.type, event);
-		ev.addProperty(VCARD.NAME, name);
-		ev.addProperty(VCARD.PHOTO, img);
-		//ev.addProperty(VCARD., arg1)
+		return names;
 	}
-	
-}
-System.out.println("---------------------------------------------");
-FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "TURTLE");
-} catch (IOException e) {
-e.printStackTrace();
-}
-*/
-/*
-public static ArrayList<String> getSitesNames(){
-String query =null; //TODO falta consulta
-ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-ArrayList<String> names = new ArrayList<String>();
-String name=null;
-for ( ; res.hasNext() ; ){
-    QuerySolution soln = res.nextSolution();
-    name = soln.getLiteral("name").getString();
-    names.add(name);
-}
-FollowyoureventTDB.getFollowyoureventTDB().closeExec();
-return names;
 }
 
-public static void insertNewSite(String uri){
-//declare variables
-String MS = "pre:http://followyourevent-upv.rhcloud.com/";
-Resource event=null;
-Resource place=null;
-Statement stmt=null;
-/*if(FollowyoureventTDB.getFollowyoureventTDB().getModel().contains(MS+"Place", null)){
-	event = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event");
-	place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
-}else{
-	place = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"Place");
-	event = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"Event");
-}*/
-/*
-String name, img, fecha, hora, precio, link;
 
-//take the name of the site
-//TODO coger el nombre del garito
-String str = "Hulen";
-//create site resource for each real site
-Resource site = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
-Property offers = FollowyoureventTDB.getFollowyoureventTDB().createProperty(MS+"offers");
-//add the type of place to each one
-site.addProperty(RDF.type, place);
-site.addProperty(RDF.value, str);
-
-String[][] info = getSpecificInfo(uri,str);
-for (int i = 0; i < info.length; i++) {
-	name = info[i][0];
-	img = info[i][1];
-	fecha = info[i][2];
-	hora = info[i][3];
-	precio = info[i][4];
-	link = info[i][5];
-	
-	//addProperties
-	Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event/"+name.replaceAll(" ", "%20"));
-	ev.addProperty(RDF.type, event);
-	ev.addProperty(VCARD.NAME, name);
-	ev.addProperty(VCARD.PHOTO, img);
-	ev.addProperty(DCTerms.date, fecha);
-	ev.addProperty(DCTerms.date, hora);
-	ev.addProperty(RDFS.label, precio);
-	ev.addProperty(RDFS.label, link);
-	
-	//create conexion between the place and the event
-	stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(site, offers, ev);
-	
-	//add the conexion to the rdfsmodel
-	FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
-}
-FollowyoureventTDB.getFollowyoureventTDB().commit();
-FollowyoureventTDB.getFollowyoureventTDB().closeTransaction();
-}
-
-public static String[][] getSpecificInfo(String uri,String str){
-Document doc = null;
-Elements newsHeadlines;
-//String name, img, fecha, hora, precio, link;
-Element el;
-Elements els;
-String[][] names = null;
-int ind = 0;
-oficialnames = new HashMap<String, Integer>();
-oficialnames.put("Hulen", 1);
-//TODO we need to inicialize the structure
-switch (oficialnames.get(str)) {
-case 1:
-	//Start making connections
-	try {
-		doc = Jsoup.connect(uri).get();
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-	//This will be the same for all the sites
-	newsHeadlines = doc.select(".no-gutter .event-list");
-	names = new String[newsHeadlines.size()][6];
-	//get all the events
-	for (Element element : newsHeadlines){
-		names[ind][1] = element.select("img.img-responsive").first().attr("src");
-		el = element.select(".list-info").first();
-		names[ind][5] = el.select("a").first().attr("href").trim();
-		names[ind][0] = el.select("a").first().text();
-		els = el.select("li");
-		names[ind][2] = els.first().text();
-		names[ind][3] = els.get(1).text().replaceAll("\\D+ || :+","");
-		names[ind][4] = els.get(2).text().replaceAll("\\D+","");
-		ind++;
-	}
-	break;
-case 2:
-//				System.out.println("KAOS:");
-//				doc = Jsoup.connect("http://kaos-bergen.no/").get();
-//				newsHeadlines = doc.select(".avia-gallery-thumb img");
-//				for (Element element : newsHeadlines) {
-//					System.out.println("\t"+element.attr("src"));
-//				}
-	break;
-case 3:
-//				System.out.println("\nTIDI:");
-//				doc = Jsoup.connect("http://tidi-bergen.no/").get();
-//				newsHeadlines = doc.select(".avia-gallery-thumb img");
-//				for (Element element : newsHeadlines) {
-//					System.out.println("\t"+element.attr("src"));
-//				}
-//	
-	break;
-case 4:
-//				System.out.println("\nLILLE:");
-//				doc = Jsoup.connect("http://lille-bergen.no/").get();
-//				newsHeadlines = doc.select(".avia-gallery-thumb img");
-//				for (Element element : newsHeadlines) {
-//					System.out.println("\t"+element.attr("src"));
-//				}
-//	
-	break;
-case 5:
-//				System.out.println("\nTHESCOTSMAN:");
-//				doc = Jsoup.connect("http://thescotsman.no/").get();
-//				newsHeadlines = doc.select(".avia-gallery-thumb img");
-//				for (Element element : newsHeadlines) {
-//					System.out.println("\t"+element.attr("src"));
-//				}
-//	
-	break;
-
-//				System.out.println("\nKOK:");
-//				doc = Jsoup.connect("http://klubbkok.no/").get();
-//				newsHeadlines = doc.select(".hours p");
-//				for (Element element : newsHeadlines) {
-//					System.out.println("\t"+element.text());
-//				}
-default:
-	break;
-}
-
-return names;
-}*/
