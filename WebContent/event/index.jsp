@@ -78,7 +78,7 @@
 								      alert("Saved!");
 								    }
 								 };
-								 xhttp.open("GET", "/followyourevent/event/update?ev="+request.getParameter("ev")
+								 xhttp.open("GET", "/followyourevent/event/update?ev="+ev
 										 +"&logo="+logo
 										 +"&url="+url
 										 +"&date="+date

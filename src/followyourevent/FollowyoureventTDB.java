@@ -1176,6 +1176,12 @@ public class FollowyoureventTDB {
 	public void modifyEvent(String ev, String logo, String url, String date, String time, String price){
 		
 	}
+	public boolean placeOwnerOfAPerson(String uriPerson, String uriPlace){
+		return true;
+	}
+	public boolean PersonAssist(String uriPerson, String uriEvent){
+		return false;
+	}
 }
 
 

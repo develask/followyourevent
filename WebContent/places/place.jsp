@@ -12,7 +12,7 @@
 					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					String pl = fye.MS+"place/"+request.getParameter("pl");
 					ArrayList<String> events = fye.getEventsOfAPlace(pl);
-					Boolean isMine = false;
+					Boolean isMine = mail != null;
 					%>
 						<h1>Place: <small><%= fye.getInformationOfPlace(pl)[0] %></small></h1>
 						<table class="table table-striped">
@@ -39,7 +39,7 @@
 							</tbody>
 						</table>
 						<%
-					if (mail != null){
+					if (isMine){
 						%>
 						<div class="panel panel-default">
 							<div class="panel-heading">
