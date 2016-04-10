@@ -87,8 +87,8 @@ public class FollowyoureventTDB {
  			FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi0528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "21:00", "220krmod");
  			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");*/
  			arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
- 			for (int i = 1; i <= arr.size(); i++) {
-				System.out.println(arr.toString());
+ 			for (int i = 0; i < arr.size(); i++) {
+				System.out.println(arr.get(i).toString());
 			}
  		}catch(Exception e){
  			System.out.println(s);
@@ -518,7 +518,7 @@ public class FollowyoureventTDB {
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?ev WHERE { ?ev DBpedia:month ?month ."
 				+ " ?ev DBpedia:day ?day ."
-				+ " FILTER (?month > "+month+" || (?day >= "+day+" && ?month = "+month+")) }";
+				+ " FILTER (?month <= "+month+" )}";/*|| (?day >= "+day+" && ?month = "+month+")) }";*/
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	while (res.hasNext()) {
@@ -1250,6 +1250,7 @@ public class FollowyoureventTDB {
 		
 		UpdateRequest update = UpdateFactory.create(query);
 		UpdateAction.execute(update, dataset);
+		dataset.close();
 		
 		/*query = "DELETE{ <"+resev+"> } WHERE { <"+resev+"> ?a ?b }";
 		
