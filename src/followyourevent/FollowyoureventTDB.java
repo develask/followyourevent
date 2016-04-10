@@ -382,7 +382,7 @@ public class FollowyoureventTDB {
 	 * 
 	 * @return ArrayList of all automatic places
 	 */
-	public static ArrayList<String> getAllAutomaticPlaces(){
+	public ArrayList<String> getAllAutomaticPlaces(){
 		ArrayList<String> arr = new ArrayList<String>();
 		String query = "SELECT ?place WHERE { ?place <"+RDF.type+"> <http://followyourevent.com/place> }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -391,7 +391,7 @@ public class FollowyoureventTDB {
         		while (res.hasNext()) {
             		QuerySolution soln = res.next();
             		String place = soln.getResource("place").toString();
-            		if(isautomatic(place)){
+            		if(FollowyoureventTDB.getFollowyoureventTDB().isautomatic(place)){
             			arr.add(place);
             		}
         		}
@@ -438,7 +438,7 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return if ok : Arraylist -> String (resources); if not null 
 	 */
-	public static ArrayList<String> getAllPastEventsOfAPerson(String mail){
+	public ArrayList<String> getAllPastEventsOfAPerson(String mail){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
@@ -474,7 +474,7 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return if ok : Arraylist -> String (resources); if not null
 	 */
-	public static ArrayList<String> getAllFutureEventsOfAPerson(String mail){
+	public ArrayList<String> getAllFutureEventsOfAPerson(String mail){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
@@ -735,7 +735,7 @@ public class FollowyoureventTDB {
 	 * @param uriPlace
 	 * @return if is automatic true; if not false
 	 */
-	public static boolean isautomatic(String uriPlace){
+	public boolean isautomatic(String uriPlace){
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?auto WHERE { <"+uriPlace+"> DBpedia:auto ?auto }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -774,7 +774,7 @@ public class FollowyoureventTDB {
 	 * @param day
 	 * @return true if exist; false if not exist
 	 */
-	public static boolean existEvent(String name,String month, String day){
+	public boolean existEvent(String name,String month, String day){
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?peo WHERE { ?peo DBpedia:event '"+name+"' ."
 						+ " ?peo  DBpedia:day '"+day+"' ."
@@ -793,7 +793,7 @@ public class FollowyoureventTDB {
 	 * @param street
 	 * @return true if exist; false if not exist
 	 */
-	public static boolean existPlace(String name, String street){
+	public boolean existPlace(String name, String street){
 		String query = "PREFIX Vcard: <http://www.w3.org/TR/vcard-rdf/> "
 				+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
 				+ "SELECT ?peo WHERE { ?peo <"+VCARD.Street+"> '"+street+"' . "
@@ -829,7 +829,7 @@ public class FollowyoureventTDB {
 	 * @param res2
 	 * @return true if exist; false if not exist
 	 */
-	public static boolean existStatement(Resource res1, Property prop, Resource res2){
+	public boolean existStatement(Resource res1, Property prop, Resource res2){
 		String query = " SELECT ?peo WHERE { <"+res1+"> <"+prop+"> <"+res2+"> }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
@@ -941,7 +941,7 @@ public class FollowyoureventTDB {
 	 * @param uriPerson
 	 * @return if added true; if not false;
 	 */
-	public static boolean addOwnerToAPlace(String uriPlace,String uriPerson){
+	public boolean addOwnerToAPlace(String uriPlace,String uriPerson){
 		try{
 			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
@@ -1132,7 +1132,7 @@ public class FollowyoureventTDB {
 	/**
 	 * update the events of the places
 	 */
-	public static void updateAutomaticEvents(){
+	public void updateAutomaticEvents(){
 		ArrayList<String> automatics = getAllAutomaticPlaces();
 		for (int i = 1; i < automatics.size(); i++) {
 			String uri = FollowyoureventTDB.getFollowyoureventTDB().getWebUrlOfAPlace(automatics.get(i));
@@ -1234,7 +1234,17 @@ public class FollowyoureventTDB {
 		return names;
 	}
 	
-	
+	/**
+	 * 
+	 * @param uriEvent
+	 * @param name
+	 * @param image
+	 * @param url
+	 * @param day
+	 * @param month
+	 * @param hour
+	 * @param price
+	 */
 	public void modifyEvent(String uriEvent,String name, String image, String url, String day, String month, String hour, String price){
 		if(month.charAt(0) == '0'){
 			month = ""+month.charAt(1);
@@ -1302,6 +1312,12 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
+	/**
+	 * 
+	 * @param uriPerson
+	 * @param uriEvent
+	 * @return true if assist; false if not
+	 */
 	public boolean PersonAssist(String uriPerson, String uriEvent){
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
 		String query = "SELECT ?peo WHERE { SELECT ?ev WHERE { <"+uriPerson+"> <"+goes+"> <"+uriPerson+"> }";
@@ -1312,6 +1328,12 @@ public class FollowyoureventTDB {
 	    	return false;
 	    }
 	}
+	
+	/**
+	 * 
+	 * @param uriEvent
+	 * @return String uriPlace
+	 */
 	public String getPlaceOfAnEvent(String uriEvent){
 		String query = "PREFIX Own: <http://followyourevent.com/>"
 				+ "SELECT ?place WHERE { ?place Own:offers <"+uriEvent+"> }";
