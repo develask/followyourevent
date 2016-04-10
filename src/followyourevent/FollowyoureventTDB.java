@@ -26,6 +26,11 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.update.GraphStore;
+import org.apache.jena.update.GraphStoreFactory;
+import org.apache.jena.update.UpdateAction;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateRequest;
 import org.jsoup.Jsoup;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.sparql.vocabulary.FOAF;
@@ -45,8 +50,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -57,7 +62,7 @@ public class FollowyoureventTDB {
  	public static void main(String[] args) {
  		boolean s = false;
  		ArrayList<String> arr;
- 		try{
+ 		try{/*
  			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
@@ -79,7 +84,13 @@ public class FollowyoureventTDB {
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//System.out.println(s);
-		}catch(Exception e){
+ 			FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi0528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "21:00", "220krmod");
+ 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");*/
+ 			arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
+ 			for (int i = 1; i <= arr.size(); i++) {
+				System.out.println(arr.toString());
+			}
+ 		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
  		}
@@ -210,7 +221,7 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return Array => name, mail, age , sex
 	 */
-	public static String[] getInformationAboutAPerson(String mail){
+	public String[] getInformationAboutAPerson(String mail){
 		String[] arr = new String[4];
 		String query = "PREFIX Foaf: <http://xmlns.com/foaf/0.1/> "
 				+ "PREFIX own: <http://followyourevent.com/vocabulary/>"
@@ -236,7 +247,7 @@ public class FollowyoureventTDB {
 	 * @param uri
 	 * @return ArrayList -> name, street, logo, capacity, url, auto
 	 */
-	public static String[] getInformationOfPlace(String uri){
+	public String[] getInformationOfPlace(String uri){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
 		String[] arr = new String[6];
 		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX DBpedia: <http://dbpedia.org/> "
@@ -262,7 +273,7 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
-	public static String getWebUrlOfAPlace(String uriPlace){
+	public String getWebUrlOfAPlace(String uriPlace){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
 		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
 				+ "SELECT ?oficial "
@@ -282,7 +293,7 @@ public class FollowyoureventTDB {
 	 * @param uriPlace
 	 * @return Array -> list of events
 	 */
-	public static ArrayList<String> getEventsOfAPlace(String uriPlace){
+	public ArrayList<String> getEventsOfAPlace(String uriPlace){
 		ArrayList<String> arr = new ArrayList<String>();
 		String query = "PREFIX Own: <http://followyourevent.com/>"
 				+ "SELECT ?name WHERE { <"+uriPlace+"> Own:offers ?name }";
@@ -307,7 +318,7 @@ public class FollowyoureventTDB {
 	 * @param uri
 	 * @return Arraylist -> name, image, url, day, month, hour, price
 	 */
-	public static String[] getInformationOfEvent(String uri){
+	public String[] getInformationOfEvent(String uri){
 		String[] arr = new String[7];
 		try {
 			Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
@@ -347,7 +358,7 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return arraylist -> identificador de eventos; si no existe null
 	 */
-	public static ArrayList<String> getAllTheEventsOfAPerson(String mail){
+	public ArrayList<String> getAllTheEventsOfAPerson(String mail){
 		ArrayList<String> arr = new ArrayList<String>();
 		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
@@ -399,7 +410,7 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return if ok : Arraylist -> String (resources); if not null
 	 */
-	public static ArrayList<String> getAllThePlacesOfAPerson(String mail){
+	public ArrayList<String> getAllThePlacesOfAPerson(String mail){
 		ArrayList<String> arr = new ArrayList<String>();
 		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
 		Property hasOwner = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"hasOwner");
@@ -495,10 +506,42 @@ public class FollowyoureventTDB {
 	
 	/**
 	 * 
+	 * @return Arraylist Events 
+	 */
+	public ArrayList<String> getActualEvents(){
+		Calendar cal = Calendar.getInstance();
+		Date now = cal.getTime();
+		cal.setTime(now);
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		int month = cal.get(Calendar.MONTH) + 1;
+		ArrayList<String> arr = new ArrayList<String>();
+		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
+				+ "SELECT ?ev WHERE { ?ev DBpedia:month ?month ."
+				+ " ?ev DBpedia:day ?day ."
+				+ " FILTER (?month > "+month+" || (?day >= "+day+" && ?month = "+month+")) }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	while (res.hasNext()) {
+	    		QuerySolution soln = res.next();
+	    		try{
+	    			String l = soln.getResource("ev").toString();
+		    		arr.add(l);
+	    		}catch(Exception e){
+	    			
+	    		}
+			}
+	    	return arr;
+	    }else{
+	    	return arr;
+	    }
+	} 
+	
+	/**
+	 * 
 	 * @param uriEvent
 	 * @return Array -> list of resources; if not null
 	 */
-	public static ArrayList<String> getAllThePeopleFromAnEvent(String uriEvent){
+	public ArrayList<String> getAllThePeopleFromAnEvent(String uriEvent){
 		ArrayList<String> arr = new ArrayList<String>();
 		Resource event = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
@@ -535,7 +578,7 @@ public class FollowyoureventTDB {
 	 * @param pass
 	 * @return true if equals; false if not equals
 	 */
-	public static boolean confirmPass(String mail, String pass){
+	public boolean confirmPass(String mail, String pass){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
 		String query = "PREFIX Own:<http://followyourevent.com/vocabulary/> SELECT ?pass WHERE { <"+reso+"> Own:pass ?pass .}";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -560,7 +603,7 @@ public class FollowyoureventTDB {
 	 * @param capacity
 	 * @return true if ok; false if not created
 	 */
-	public static boolean createPlace(String placeName, String street, String logo, String capacity, String oficialweb, String auto){
+	public boolean createPlace(String placeName, String street, String logo, String capacity, String oficialweb, String auto){
 		Property porganization = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
@@ -589,7 +632,7 @@ public class FollowyoureventTDB {
 	 * @param kind
 	 * @return if created true; if not false
 	 */
-	public static boolean createStyle(String description, String kind){
+	public boolean createStyle(String description, String kind){
 		Property pKind = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/kind");
 		Resource style = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/style");
 		if(!existStyle(kind)){
@@ -615,7 +658,7 @@ public class FollowyoureventTDB {
 	 * @param price
 	 * @return true if created; false if not created
 	 */
-	public static boolean createEvent(String name, String image, String url, String day, String month, String hour, String price/*, int minimumage*/){
+	public boolean createEvent(String name, String image, String url, String day, String month, String hour, String price){
 		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
 		Property pimage = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://purl.org/dc/dcmitype/image");
 		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
@@ -650,7 +693,7 @@ public class FollowyoureventTDB {
 	 * @param pass
 	 * @return true if created; false if not created
 	 */
-	public static boolean createPerson(String mail, String name, String age, String sex, String pass){
+	public boolean createPerson(String mail, String name, String age, String sex, String pass){
 		Property Ppass = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/pass");
 		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");
 		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/person");
@@ -695,7 +738,7 @@ public class FollowyoureventTDB {
 	 * @param kind
 	 * @return true if exist; false if not exist
 	 */
-	public static boolean existStyle(String kind){
+	public boolean existStyle(String kind){
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?peo WHERE { ?peo DBpedia:kind '"+kind+"' }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -750,7 +793,7 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return true if exist; false if not exist
 	 */
-	public static boolean existPerson(String mail){
+	public boolean existPerson(String mail){
 		String query = "PREFIX Foaf: <http://xmlns.com/foaf/0.1/> "
 				+ "SELECT ?peo WHERE { ?peo Foaf:mbox '"+mail+"' }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -784,7 +827,7 @@ public class FollowyoureventTDB {
 	 * @param uriStyle
 	 * @return if added true; if it was already added false
 	 */
-	public static boolean addStyleToAnEvent(String uriEvent, String uriStyle){
+	public boolean addStyleToAnEvent(String uriEvent, String uriStyle){
 		try{
 			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
 			Resource resStyle = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriStyle);
@@ -808,7 +851,7 @@ public class FollowyoureventTDB {
 	 * @param uriStyle
 	 * @return true if removed; false if not
 	 */
-	public static boolean removeStyleFromAnEvent(String uriEvent, String uriStyle){
+	public boolean removeStyleFromAnEvent(String uriEvent, String uriStyle){
 		try{
 			Resource resEven = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
 			Resource resStyle = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriStyle);
@@ -832,7 +875,7 @@ public class FollowyoureventTDB {
 	 * @param uriPlace
 	 * @return if added true; if it was already added false
 	 */
-	public static boolean addlikeablePlaceToAPerson(String uriPerson, String uriPlace){
+	public boolean addlikeablePlaceToAPerson(String uriPerson, String uriPlace){
 		try{
 			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
@@ -856,7 +899,7 @@ public class FollowyoureventTDB {
 	 * @param uriPlace
 	 * @return true if removed: false if not
 	 */
-	public static boolean removeLikeablePlaceToAPerson(String uriPerson, String uriPlace){
+	public boolean removeLikeablePlaceToAPerson(String uriPerson, String uriPlace){
 		try{
 			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
@@ -904,7 +947,7 @@ public class FollowyoureventTDB {
 	 * @param uriEvent
 	 * @return if added true; if it was already added false
 	 */
-	public static boolean addEventToAPlace(String uriPlace, String uriEvent){
+	public boolean addEventToAPlace(String uriPlace, String uriEvent){
 		try{
 			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
 			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
@@ -927,7 +970,7 @@ public class FollowyoureventTDB {
 	 * @param uriEvent
 	 * @return true if removed, false if not
 	 */
-	public static boolean removeEventFromAPlace(String uriPlace, String uriEvent){
+	public boolean removeEventFromAPlace(String uriPlace, String uriEvent){
 		Resource place = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
 		Resource even = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
 		Property prop = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"offers");
@@ -952,7 +995,7 @@ public class FollowyoureventTDB {
 	 * @param uriEvent
 	 * @return if added true; if it was already added false
 	 */
-	public static boolean addEventToAPerson(String uriPerson, String uriEvent){
+	public boolean addEventToAPerson(String uriPerson, String uriEvent){
 		try{
 			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
@@ -976,7 +1019,7 @@ public class FollowyoureventTDB {
 	 * @param uriEvent
 	 * @return true if removed, false if not
 	 */
-	public static boolean removeEventFromAPerson(String uriPerson, String uriEvent){
+	public boolean removeEventFromAPerson(String uriPerson, String uriEvent){
 		Resource pers = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 		Resource even = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
 		Property prop = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
@@ -999,7 +1042,7 @@ public class FollowyoureventTDB {
 	 * 
 	 * @param uriPerson
 	 */
-	public static void createRecommendations(String uriPerson){
+	public void createRecommendations(String uriPerson){
 		Resource resPers = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 		String query = "PREFIX Own:<http://followyourevent.com/> "
 				+ "CONSTRUCT {"
@@ -1035,7 +1078,7 @@ public class FollowyoureventTDB {
 	 * @param uriPerson
 	 * @return if Ok: ArrayList -> String (Resource); if not null
 	 */
-	public static ArrayList<String> recommendEvents(String uriPerson){
+	public ArrayList<String> recommendEvents(String uriPerson){
 		ArrayList<String> arr = new ArrayList<String>();
 		Resource resPers = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 		String query = "PREFIX Own:<http://followyourevent.com/> "
@@ -1076,7 +1119,7 @@ public class FollowyoureventTDB {
 		for (int i = 1; i < automatics.size(); i++) {
 			String uri = FollowyoureventTDB.getFollowyoureventTDB().getWebUrlOfAPlace(automatics.get(i));
 			String[][] events = FollowyoureventTDB.getFollowyoureventTDB().getSpecificInfo(uri);
-			updateEvents(events);
+			FollowyoureventTDB.getFollowyoureventTDB().updateEvents(events);
 		}
 	}
 	
@@ -1084,7 +1127,7 @@ public class FollowyoureventTDB {
 	 * Update the events of one of the places, it is
 	 * @param events
 	 */
-	public static void updateEvents(String[][] events){
+	public void updateEvents(String[][] events){
 		//TODO
 	}
 	
@@ -1093,7 +1136,7 @@ public class FollowyoureventTDB {
 	 * @param uri
 	 * @return Doble Array of information of the events in a place
 	 */
-	public static String[][] getSpecificInfo(String uri){
+	public String[][] getSpecificInfo(String uri){
 		Document doc = null;
 		Elements newsHeadlines;
 		Element el;
@@ -1173,14 +1216,91 @@ public class FollowyoureventTDB {
 		return names;
 	}
 	
-	public void modifyEvent(String ev, String logo, String url, String date, String time, String price){
+	
+	public void modifyEvent(String uriEvent,String name, String image, String url, String day, String month, String hour, String price){
+		Resource resev = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriEvent);
+		/*ArrayList<String> pers = FollowyoureventTDB.getFollowyoureventTDB().getAllThePeopleFromAnEvent(uriEvent);
+		Resource reseven = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/"+(name+month+day).replaceAll(" ", ""));
+		for (int i = 1; i <= pers.size(); i++) {
+			FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(pers.get(i).toString(), reseven.toString());
+		}
+		String pla = FollowyoureventTDB.getFollowyoureventTDB().getPlaceOfAnEvent(resev.toString());
+		FollowyoureventTDB.getFollowyoureventTDB().addEventToAPlace(pla, reseven.toString());*/
+		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
+		Property pimage = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://purl.org/dc/dcmitype/image");
+		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
+		Property pday = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/day");
+		Property pmonth = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/month");
+		Property start = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/start");
+		Property pprice = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://schema.org/price");
+		Resource event = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/event");
+		/*<"+reseven+"> <"+eventname+"> ?name ."
+						+ " <"+reseven+"> <"+pimage+"> ?image ."
+						+ " <"+reseven+"> <"+primarySource+"> ?url ."
+						+ " <"+reseven+"> <"+pday+"> ?day ."
+						+ " <"+reseven+"> <"+pmonth+"> ?month ."
+						+ " <"+reseven+"> <"+start+"> ?hour ."
+						+ " <"+reseven+"> <"+pprice+"> ?price ."
+						
+						+"		<"+reseven+"> <"+eventname+"> ?a "
+						*/
+		System.out.println(resev);
+		String query = "DELETE WHERE { "
+				+"<"+resev+"> ?a ?b }";
 		
+		UpdateRequest update = UpdateFactory.create(query);
+		UpdateAction.execute(update, dataset);
+		
+		/*query = "DELETE{ <"+resev+"> } WHERE { <"+resev+"> ?a ?b }";
+		
+		update = UpdateFactory.create(query);
+		UpdateAction.execute(update, dataset);*/
+		
+		resev.addLiteral(eventname, name);
+		resev.addLiteral(pimage, image);
+		resev.addLiteral(primarySource, url);
+		resev.addLiteral(pday, day);
+		resev.addLiteral(pmonth, month);
+		resev.addLiteral(start, hour);
+		resev.addLiteral(pprice, price);
+		resev.addProperty(RDF.type, event);
+		FollowyoureventTDB.getFollowyoureventTDB().commit();
 	}
+	
 	public boolean placeOwnerOfAPerson(String uriPerson, String uriPlace){
-		return true;
+		String query = "SELECT ?peo WHERE { <"+uriPlace+"> <"+MS+"hasOwner> <"+uriPerson+"> }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	return true;
+	    }else{
+	    	return false;
+	    }
 	}
+	
 	public boolean PersonAssist(String uriPerson, String uriEvent){
-		return false;
+		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
+		String query = "SELECT ?peo WHERE { SELECT ?ev WHERE { <"+uriPerson+"> <"+goes+"> <"+uriPerson+"> }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	return true;
+	    }else{
+	    	return false;
+	    }
+	}
+	public String getPlaceOfAnEvent(String uriEvent){
+		String query = "PREFIX Own: <http://followyourevent.com/>"
+				+ "SELECT ?place WHERE { ?place Own:offers <"+uriEvent+"> }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+    		QuerySolution soln = res.next();
+    		try{
+    			return soln.getResource("place").toString();
+    		}catch(Exception e){
+    			return null;
+    		}
+	    }else{
+	    	return null;
+	    } 
 	}
 }
 

@@ -92,7 +92,7 @@ public class CargadorDatosMentira {
 		ev2.addLiteral(eventname, "tidi");
 		ev2.addLiteral(image, "HTtps://urldeimagentidi.com/");
 		ev2.addLiteral(primarySource, "HTtps://urldeleventotid.com/");
-		ev2.addLiteral(day, "28");
+		ev2.addLiteral(day, "10");
 		ev2.addLiteral(month, "05");
 		ev2.addLiteral(start, "21:00");
 		ev2.addLiteral(price, "220kr");
