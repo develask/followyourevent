@@ -13,7 +13,7 @@
 						<p>Sex:  <%= info[3]%></p>
 						<% }else{ %>
 							<p>Here you can find those events you want to go!</p>
-							<p><a class="btn btn-primary" href="login" role="button">Sign In</a> <a class="btn btn-default" href="signup" role="button">Sign Up</a></p>
+							<p><a class="btn btn-primary" href="/followyourevent/login" role="button">Sign In</a> <a class="btn btn-default" href="/followyourevent/signup" role="button">Sign Up</a></p>
 						<% } %>
 					</div>
 					<%

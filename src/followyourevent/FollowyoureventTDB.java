@@ -66,9 +66,12 @@ public class FollowyoureventTDB {
 // 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
 // 			System.out.println(arr.size());
  			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			fye.createPlace("Matxitxako", "Street 4 60", "http://static.panoramio.com/photos/original/10930791.jpg", "700", "http://www.matxitxako.com/", "No");
+ 			fye.addOwnerToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"person/"+"develascomikel@gmail.com");
  			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
  			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
+ 			fye.addEventToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"event/EventNumber10521");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
  			//arr = fye.getInformationOfEvent(MS+"event/hulen0223");
 // 			ArrayList<String> mios = fye.getAllThePlacesOfAPerson("develascomikel@gmail.com");
@@ -231,17 +234,18 @@ public class FollowyoureventTDB {
 	/**
 	 * 
 	 * @param uri
-	 * @return ArrayList -> name, street, logo, capacity
+	 * @return ArrayList -> name, street, logo, capacity, url, auto
 	 */
 	public static String[] getInformationOfPlace(String uri){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
-		String[] arr = new String[4];
+		String[] arr = new String[6];
 		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX DBpedia: <http://dbpedia.org/> "
-				+ "SELECT ?name ?street ?logo ?capacity ?auto "
+				+ "SELECT ?name ?street ?logo ?capacity ?auto ?url "
 				+ "WHERE { <"+reso+"> Prov:organization ?name ."
 						+ " <"+reso+"> <"+VCARD.Street+"> ?street ."
 						+ " <"+reso+"> DBpedia:logo ?logo ."
 						+ " <"+reso+"> DBpedia:capacity ?capacity ."
+						+ " <"+reso+"> Prov:primarySource ?url ."
 						+ " <"+reso+"> DBpedia:auto ?auto}";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
@@ -250,7 +254,8 @@ public class FollowyoureventTDB {
 	    	arr[1] = soln.getLiteral("street").toString();
 	    	arr[2] = soln.getLiteral("logo").toString();
 	    	arr[3] = soln.getLiteral("capacity").toString();
-	    	arr[4] = soln.getLiteral("auto").toString();
+	    	arr[4] = soln.getLiteral("url").toString();
+	    	arr[5] = soln.getLiteral("auto").toString();
 	    	return arr;
 	    }else{
 	    	return arr;
@@ -1049,7 +1054,7 @@ public class FollowyoureventTDB {
     		}
         	return arr;
     	}else{
-    		return null;
+    		return arr;
     	}	
 	}
 	
@@ -1059,8 +1064,8 @@ public class FollowyoureventTDB {
 	 * @param uriPerson
 	 * @return true if that event was created by this person
 	 */
-	public static boolean eventIsFromAPerson(String uriEvent, String uriPerson){
-		return false;
+	public boolean eventIsFromAPerson(String uriEvent, String uriPerson){
+		return true;
 	}
 	
 	/**
@@ -1166,6 +1171,10 @@ public class FollowyoureventTDB {
 		}
 		
 		return names;
+	}
+	
+	public void modifyEvent(String ev, String logo, String url, String date, String time, String price){
+		
 	}
 }
 

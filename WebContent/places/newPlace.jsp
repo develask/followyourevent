@@ -12,8 +12,10 @@ if (email == null){
 	String street = request.getParameter("street");
 	String logo = request.getParameter("logo");
 	String capacity = request.getParameter("capacity");
+	String url = request.getParameter("url");
+	String check = request.getParameter("auto");
 	FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-	if (fye.createPlace(name, street, logo, capacity)){
+	if (fye.createPlace(name, street, logo, capacity, url, check.equals("true")?"Want":"No")){
 		if (fye.addOwnerToAPlace(fye.MS+"place/"+(name+street).replaceAll(" ", ""), fye.MS+"person/"+email)){
 			response.setHeader("Location", "/followyourevent/places/place.jsp?pl="+(name+street).replaceAll(" ", ""));
 		}else{

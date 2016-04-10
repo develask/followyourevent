@@ -20,6 +20,7 @@
 									<th>#</th>
 									<th>Name</th>
 									<th>Street</th>
+									<th>Url</th>
 									<th>Capacity</th>
 								</tr>
 							</thead>
@@ -32,6 +33,7 @@
 									<th scope="row"><%= places.indexOf(place)%></th>
 									<td><%= arr[0]%></td>
 									<td><%= arr[1]%></td>
+									<td><%= arr[4]%></td>
 									<td><%= arr[3]%></td>
 								</tr>
 								<%}%>
@@ -56,6 +58,12 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="url" class="col-sm-2">Logo's URL:</label>
+										<div class="col-sm-10">
+											<input type="url" class="form-control" id="url" placeholder="http://host.domain/path_to_image.ext" name="url">
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="logo" class="col-sm-2">Logo's URL:</label>
 										<div class="col-sm-10">
 											<input type="url" class="form-control" id="logo" placeholder="http://host.domain/path_to_image.ext" name="logo">
@@ -65,6 +73,12 @@
 										<label for="capa" class="col-sm-2">Capacity:</label>
 										<div class="col-sm-10">
 											<input type="number" class="form-control" id="capa" placeholder="Number" name="capacity">
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="auto" class="col-sm-2">Page auto:</label>
+										<div class="col-sm-10">
+											<input type="checkbox" class="" id="auto" placeholder="Number" name="auto">
 										</div>
 									</div>
 									<div class="form-group">

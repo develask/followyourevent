@@ -23,8 +23,7 @@
 				<%
 					if (mail != null){
 						FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-						ArrayList<String> evs = fye.createRecommendations(fye.MS+"person/"+mail);
-						//ArrayList<String> evs = FollowyoureventTDB.getFollowyoureventTDB().getAllTheEventsOfAPerson(mail);
+						ArrayList<String> evs = fye.recommendEvents(fye.MS+"person/"+mail);
 						for (String ev: evs){
 							String[] infoEv = FollowyoureventTDB.getInformationOfEvent(ev);
 							// name, image, url, day, month, hour, price

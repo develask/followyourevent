@@ -11,9 +11,9 @@
 					FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					String pl = fye.MS+"place/"+request.getParameter("pl");
-					if (mail != null){
-						ArrayList<String> events = fye.getEventsOfAPlace(pl);
-						%>
+					ArrayList<String> events = fye.getEventsOfAPlace(pl);
+					Boolean isMine = false;
+					%>
 						<h1>Place: <small><%= fye.getInformationOfPlace(pl)[0] %></small></h1>
 						<table class="table table-striped">
 							<thead>
@@ -38,6 +38,9 @@
 								<%}%>
 							</tbody>
 						</table>
+						<%
+					if (mail != null){
+						%>
 						<div class="panel panel-default">
 							<div class="panel-heading">
 								<h3 class="panel-title" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="dropdown" data-target="#dropdown">Create New Event</h3>
