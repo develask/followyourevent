@@ -66,15 +66,16 @@ public class FollowyoureventTDB {
  			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
- 			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+ 			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 // 			fye.createRecommendations(MS+"person/maildecade@gmail.com");
 // 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
 // 			System.out.println(arr.size());
- 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
- 			fye.createPlace("Matxitxako", "Street 4 60", "http://static.panoramio.com/photos/original/10930791.jpg", "700", "http://www.matxitxako.com/", "No");
- 			fye.addOwnerToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"person/"+"develascomikel@gmail.com");
+ 			//fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			//fye.createPlace("Matxitxako", "Street 4 60", "http://static.panoramio.com/photos/original/10930791.jpg", "700", "http://www.matxitxako.com/", "No");
+ 			//fye.addOwnerToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"person/"+"develascomikel@gmail.com");
  			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
- 			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
+ 			fye.write(System.out, "JSON-LD");
+ 			/*fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
  			fye.addEventToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"event/EventNumber10521");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
@@ -85,11 +86,11 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//System.out.println(s);
  			FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi0528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "21:00", "220krmod");
- 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");*/
+ 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
  			for (int i = 0; i < arr.size(); i++) {
 				System.out.println(arr.get(i).toString());
-			}
+			}*/
  		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -514,11 +515,22 @@ public class FollowyoureventTDB {
 		cal.setTime(now);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 		int month = cal.get(Calendar.MONTH) + 1;
+		System.out.println(day+" - "+month);
 		ArrayList<String> arr = new ArrayList<String>();
-		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
-				+ "SELECT ?ev WHERE { ?ev DBpedia:month ?month ."
-				+ " ?ev DBpedia:day ?day ."
-				+ " FILTER (?month <= "+month+" )}";/*|| (?day >= "+day+" && ?month = "+month+")) }";*/
+		String query;
+		if((day+7)>30){
+			System.out.println("entra 1");
+			query = "PREFIX DBpedia: <http://dbpedia.org/> "
+					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
+					+ " ?ev DBpedia:day ?day ."
+					+ " FILTER (('"+(day+7)%30+"' >= ?day && ?month = '"+(month+1)+"') || ('"+day+"' =< ?day && ?month = '"+month+"')) }";
+		}else{
+			System.out.println("entra 2");
+			query = "PREFIX DBpedia: <http://dbpedia.org/> "
+					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
+					+ " ?ev DBpedia:day ?day ."
+					+ " FILTER (('"+day+"' <=  ?day && ?day <= '"+(day+7)+"') && (?month = '"+month+"')) }";
+		}
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	while (res.hasNext()) {
@@ -659,6 +671,12 @@ public class FollowyoureventTDB {
 	 * @return true if created; false if not created
 	 */
 	public boolean createEvent(String name, String image, String url, String day, String month, String hour, String price){
+		if(month.charAt(0) == '0'){
+			month = ""+month.charAt(1);
+		}
+		if(day.charAt(0) == '0'){
+			day = ""+day.charAt(1);
+		}
 		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
 		Property pimage = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://purl.org/dc/dcmitype/image");
 		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
@@ -1218,6 +1236,12 @@ public class FollowyoureventTDB {
 	
 	
 	public void modifyEvent(String uriEvent,String name, String image, String url, String day, String month, String hour, String price){
+		if(month.charAt(0) == '0'){
+			month = ""+month.charAt(1);
+		}
+		if(day.charAt(0) == '0'){
+			day = ""+day.charAt(1);
+		}
 		Resource resev = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriEvent);
 		/*ArrayList<String> pers = FollowyoureventTDB.getFollowyoureventTDB().getAllThePeopleFromAnEvent(uriEvent);
 		Resource reseven = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/"+(name+month+day).replaceAll(" ", ""));
