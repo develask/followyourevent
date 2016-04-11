@@ -66,15 +66,16 @@ public class FollowyoureventTDB {
  			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
- 			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+ 			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 // 			fye.createRecommendations(MS+"person/maildecade@gmail.com");
 // 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
 // 			System.out.println(arr.size());
- 			fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
- 			fye.createPlace("Matxitxako", "Street 4 60", "http://static.panoramio.com/photos/original/10930791.jpg", "700", "http://www.matxitxako.com/", "No");
- 			fye.addOwnerToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"person/"+"develascomikel@gmail.com");
+ 			//fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
+ 			//fye.createPlace("Matxitxako", "Street 4 60", "http://static.panoramio.com/photos/original/10930791.jpg", "700", "http://www.matxitxako.com/", "No");
+ 			//fye.addOwnerToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"person/"+"develascomikel@gmail.com");
  			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
- 			fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
+ 			fye.write(System.out, "JSON-LD");
+ 			/*fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
  			fye.addEventToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"event/EventNumber10521");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
@@ -85,11 +86,11 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//System.out.println(s);
  			FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi0528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "21:00", "220krmod");
- 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");*/
+ 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
  			for (int i = 0; i < arr.size(); i++) {
 				System.out.println(arr.get(i).toString());
-			}
+			}*/
  		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -381,7 +382,7 @@ public class FollowyoureventTDB {
 	 * 
 	 * @return ArrayList of all automatic places
 	 */
-	public static ArrayList<String> getAllAutomaticPlaces(){
+	public ArrayList<String> getAllAutomaticPlaces(){
 		ArrayList<String> arr = new ArrayList<String>();
 		String query = "SELECT ?place WHERE { ?place <"+RDF.type+"> <http://followyourevent.com/place> }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -390,7 +391,7 @@ public class FollowyoureventTDB {
         		while (res.hasNext()) {
             		QuerySolution soln = res.next();
             		String place = soln.getResource("place").toString();
-            		if(isautomatic(place)){
+            		if(FollowyoureventTDB.getFollowyoureventTDB().isautomatic(place)){
             			arr.add(place);
             		}
         		}
@@ -437,7 +438,7 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return if ok : Arraylist -> String (resources); if not null 
 	 */
-	public static ArrayList<String> getAllPastEventsOfAPerson(String mail){
+	public ArrayList<String> getAllPastEventsOfAPerson(String mail){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
@@ -473,7 +474,7 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return if ok : Arraylist -> String (resources); if not null
 	 */
-	public static ArrayList<String> getAllFutureEventsOfAPerson(String mail){
+	public ArrayList<String> getAllFutureEventsOfAPerson(String mail){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
@@ -514,11 +515,22 @@ public class FollowyoureventTDB {
 		cal.setTime(now);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 		int month = cal.get(Calendar.MONTH) + 1;
+		System.out.println(day+" - "+month);
 		ArrayList<String> arr = new ArrayList<String>();
-		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
-				+ "SELECT ?ev WHERE { ?ev DBpedia:month ?month ."
-				+ " ?ev DBpedia:day ?day ."
-				+ " FILTER (?month <= "+month+" )}";/*|| (?day >= "+day+" && ?month = "+month+")) }";*/
+		String query;
+		if((day+7)>30){
+			System.out.println("entra 1");
+			query = "PREFIX DBpedia: <http://dbpedia.org/> "
+					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
+					+ " ?ev DBpedia:day ?day ."
+					+ " FILTER (('"+(day+7)%30+"' >= ?day && ?month = '"+(month+1)+"') || ('"+day+"' =< ?day && ?month = '"+month+"')) }";
+		}else{
+			System.out.println("entra 2");
+			query = "PREFIX DBpedia: <http://dbpedia.org/> "
+					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
+					+ " ?ev DBpedia:day ?day ."
+					+ " FILTER (('"+day+"' <=  ?day && ?day <= '"+(day+7)+"') && (?month = '"+month+"')) }";
+		}
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	while (res.hasNext()) {
@@ -659,6 +671,12 @@ public class FollowyoureventTDB {
 	 * @return true if created; false if not created
 	 */
 	public boolean createEvent(String name, String image, String url, String day, String month, String hour, String price){
+		if(month.charAt(0) == '0'){
+			month = ""+month.charAt(1);
+		}
+		if(day.charAt(0) == '0'){
+			day = ""+day.charAt(1);
+		}
 		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
 		Property pimage = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://purl.org/dc/dcmitype/image");
 		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
@@ -717,7 +735,7 @@ public class FollowyoureventTDB {
 	 * @param uriPlace
 	 * @return if is automatic true; if not false
 	 */
-	public static boolean isautomatic(String uriPlace){
+	public boolean isautomatic(String uriPlace){
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?auto WHERE { <"+uriPlace+"> DBpedia:auto ?auto }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -756,7 +774,7 @@ public class FollowyoureventTDB {
 	 * @param day
 	 * @return true if exist; false if not exist
 	 */
-	public static boolean existEvent(String name,String month, String day){
+	public boolean existEvent(String name,String month, String day){
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?peo WHERE { ?peo DBpedia:event '"+name+"' ."
 						+ " ?peo  DBpedia:day '"+day+"' ."
@@ -775,7 +793,7 @@ public class FollowyoureventTDB {
 	 * @param street
 	 * @return true if exist; false if not exist
 	 */
-	public static boolean existPlace(String name, String street){
+	public boolean existPlace(String name, String street){
 		String query = "PREFIX Vcard: <http://www.w3.org/TR/vcard-rdf/> "
 				+ " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
 				+ "SELECT ?peo WHERE { ?peo <"+VCARD.Street+"> '"+street+"' . "
@@ -811,7 +829,7 @@ public class FollowyoureventTDB {
 	 * @param res2
 	 * @return true if exist; false if not exist
 	 */
-	public static boolean existStatement(Resource res1, Property prop, Resource res2){
+	public boolean existStatement(Resource res1, Property prop, Resource res2){
 		String query = " SELECT ?peo WHERE { <"+res1+"> <"+prop+"> <"+res2+"> }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
@@ -923,7 +941,7 @@ public class FollowyoureventTDB {
 	 * @param uriPerson
 	 * @return if added true; if not false;
 	 */
-	public static boolean addOwnerToAPlace(String uriPlace,String uriPerson){
+	public boolean addOwnerToAPlace(String uriPlace,String uriPerson){
 		try{
 			Resource resPer = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
@@ -1114,7 +1132,7 @@ public class FollowyoureventTDB {
 	/**
 	 * update the events of the places
 	 */
-	public static void updateAutomaticEvents(){
+	public void updateAutomaticEvents(){
 		ArrayList<String> automatics = getAllAutomaticPlaces();
 		for (int i = 1; i < automatics.size(); i++) {
 			String uri = FollowyoureventTDB.getFollowyoureventTDB().getWebUrlOfAPlace(automatics.get(i));
@@ -1216,8 +1234,24 @@ public class FollowyoureventTDB {
 		return names;
 	}
 	
-	
+	/**
+	 * 
+	 * @param uriEvent
+	 * @param name
+	 * @param image
+	 * @param url
+	 * @param day
+	 * @param month
+	 * @param hour
+	 * @param price
+	 */
 	public void modifyEvent(String uriEvent,String name, String image, String url, String day, String month, String hour, String price){
+		if(month.charAt(0) == '0'){
+			month = ""+month.charAt(1);
+		}
+		if(day.charAt(0) == '0'){
+			day = ""+day.charAt(1);
+		}
 		Resource resev = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriEvent);
 		/*ArrayList<String> pers = FollowyoureventTDB.getFollowyoureventTDB().getAllThePeopleFromAnEvent(uriEvent);
 		Resource reseven = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/"+(name+month+day).replaceAll(" ", ""));
@@ -1278,6 +1312,12 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
+	/**
+	 * 
+	 * @param uriPerson
+	 * @param uriEvent
+	 * @return true if assist; false if not
+	 */
 	public boolean PersonAssist(String uriPerson, String uriEvent){
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
 		String query = "SELECT ?peo WHERE { SELECT ?ev WHERE { <"+uriPerson+"> <"+goes+"> <"+uriPerson+"> }";
@@ -1288,6 +1328,12 @@ public class FollowyoureventTDB {
 	    	return false;
 	    }
 	}
+	
+	/**
+	 * 
+	 * @param uriEvent
+	 * @return String uriPlace
+	 */
 	public String getPlaceOfAnEvent(String uriEvent){
 		String query = "PREFIX Own: <http://followyourevent.com/>"
 				+ "SELECT ?place WHERE { ?place Own:offers <"+uriEvent+"> }";

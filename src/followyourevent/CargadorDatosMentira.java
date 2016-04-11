@@ -76,24 +76,24 @@ public class CargadorDatosMentira {
 	//	Resource event = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event/Hulen0226");
 		//Resource place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
 		//Create PostalAddress of Cade Tracy
-		Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/hulen0423");
+		Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/hulen423");
 		
 		ev.addLiteral(eventname, "hulen");
 		ev.addLiteral(image, "HTtps://urldeimagen.com/");
 		ev.addLiteral(primarySource, "HTtps://urldelevento.com/");
-		ev.addLiteral(day, "23");
-		ev.addLiteral(month, "04");
+		ev.addLiteral(day, "15");
+		ev.addLiteral(month, "4");
 		ev.addLiteral(start, "21:00");
 		ev.addLiteral(price, "200kr");
 		
-		Resource ev2 = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/tidi0528");
+		Resource ev2 = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/tidi528");
 		
 		//ev2.addProperty(RDF.type, event);
 		ev2.addLiteral(eventname, "tidi");
 		ev2.addLiteral(image, "HTtps://urldeimagentidi.com/");
 		ev2.addLiteral(primarySource, "HTtps://urldeleventotid.com/");
 		ev2.addLiteral(day, "10");
-		ev2.addLiteral(month, "05");
+		ev2.addLiteral(month, "5");
 		ev2.addLiteral(start, "21:00");
 		ev2.addLiteral(price, "220kr");
 		
