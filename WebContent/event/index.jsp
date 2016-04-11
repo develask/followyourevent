@@ -20,7 +20,7 @@
 					if (isMine){
 						%>
 						<h1 id="name" contenteditable="true"><%= arr[0] %></h1>
-						<img id="img" src="<%= arr[1]%>"><br><br>
+						<img id="img" src="<%= arr[1]%>" style="max-width: 100%;"><br><br>
 						<div class="form-group">
 							<label for="imgInp" class="col-sm-2">Logo URL:</label>
 							<div class="col-sm-10">

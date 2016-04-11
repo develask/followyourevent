@@ -14,6 +14,7 @@ if (email == null){
 	String capacity = request.getParameter("capacity");
 	String url = request.getParameter("url");
 	String check = request.getParameter("auto");
+	if (check==null) check = "Want";
 	FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 	if (fye.createPlace(name, street, logo, capacity, url, check.equals("true")?"Want":"No")){
 		if (fye.addOwnerToAPlace(fye.MS+"place/"+(name+street).replaceAll(" ", ""), fye.MS+"person/"+email)){
