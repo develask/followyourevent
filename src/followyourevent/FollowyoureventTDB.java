@@ -50,8 +50,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -1045,7 +1045,6 @@ public class FollowyoureventTDB {
 		try{
 			if(existStatement(pers, prop, even)){
 				Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().getStatement(pers, prop, even);
-				System.out.println(stmt.toString());
 				FollowyoureventTDB.getFollowyoureventTDB().removeStatement(stmt);
 				FollowyoureventTDB.getFollowyoureventTDB().commit();
 				return true;
@@ -1322,7 +1321,7 @@ public class FollowyoureventTDB {
 	 */
 	public boolean PersonAssist(String uriPerson, String uriEvent){
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
-		String query = "SELECT <"+uriPerson+"> WHERE { <"+uriPerson+"> <"+goes+"> <"+uriEvent+"> }";
+		String query = "SELECT * WHERE { <"+uriPerson+"> <"+goes+"> <"+uriEvent+"> }";
 		System.out.println(query);
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){

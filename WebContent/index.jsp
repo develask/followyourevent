@@ -51,7 +51,7 @@
 									<h5><%= placeInfo[0] %> (<%= placeInfo[3]%> capacity)</h5>
 									<p><%= infoEv[3]%>/<%= infoEv[4]%> - <%= infoEv[5]%> - <%= infoEv[6]%>€</p>
 									<p><a href="event?ev=<%= ev.split("/event/")[1]%>" class="btn btn-default" role="button">View</a>
-									<a href="<%= (asist?"event/nogo.jsp?event=":"event/go.jsp?event=")+ev.split("/event/")[1] %>" class="btn <%= asist?"btn-danger":"btn-success" %>" role="button">Don't go</a></p>
+									<a href="<%= (asist?"event/nogo.jsp?event=":"event/go.jsp?event=")+ev.split("/event/")[1] %>" class="btn <%= asist?"btn-danger":"btn-success" %>" role="button"><%= asist?"Don't go":"Go!" %></a></p>
 								</div>
 							</div>
 						</div>
