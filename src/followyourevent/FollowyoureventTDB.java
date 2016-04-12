@@ -50,8 +50,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -73,24 +73,26 @@ public class FollowyoureventTDB {
  			//fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
  			//fye.createPlace("Matxitxako", "Street 4 60", "http://static.panoramio.com/photos/original/10930791.jpg", "700", "http://www.matxitxako.com/", "No");
  			//fye.addOwnerToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"person/"+"develascomikel@gmail.com");
- 			fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
- 			fye.write(System.out, "JSON-LD");
+ 			//fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
+ 			//fye.write(System.out, "JSON-LD");
  			/*fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
  			fye.addEventToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"event/EventNumber10521");
  			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
+ 			*/
  			//arr = fye.getInformationOfEvent(MS+"event/hulen0223");
 // 			ArrayList<String> mios = fye.getAllThePlacesOfAPerson("develascomikel@gmail.com");
 // 			System.out.println(mios);
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//System.out.println(s);
- 			FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi0528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "21:00", "220krmod");
- 			FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
- 			arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
- 			for (int i = 0; i < arr.size(); i++) {
-				System.out.println(arr.get(i).toString());
-			}*/
+ 			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi0528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "21:00", "220krmod");
+ 			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
+ 			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
+ 			//for (int i = 0; i < arr.size(); i++) {
+			//	System.out.println(arr.get(i).toString());
+			//}/**/
+ 			System.out.println(fye.eventIsFromAPerson(MS+"event/"+"EventNumber10521", MS+"person/"+"develascomikel@gmail.com"));
  		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -963,6 +965,7 @@ public class FollowyoureventTDB {
 	 * @return if added true; if it was already added false
 	 */
 	public boolean addEventToAPlace(String uriPlace, String uriEvent){
+
 		try{
 			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
 			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
@@ -979,6 +982,7 @@ public class FollowyoureventTDB {
 			return false;
 		}
 	}
+	
 	/**
 	 * 
 	 * @param uriPlace
@@ -1123,7 +1127,8 @@ public class FollowyoureventTDB {
 	 * @return true if that event was created by this person
 	 */
 	public boolean eventIsFromAPerson(String uriEvent, String uriPerson){
-		return true;
+		String uriPlace = getPlaceOfAnEvent(uriEvent);
+		return placeOwnerOfAPerson(uriPerson, uriPlace);
 	}
 	
 	/**
