@@ -16,9 +16,10 @@ if (email == null){
 	String check = request.getParameter("auto");
 	if (check==null) check = "Want";
 	FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-	if (fye.createPlace(name, street, logo, capacity, url, check.equals("true")?"Want":"No")){
-		if (fye.addOwnerToAPlace(fye.MS+"place/"+(name+street).replaceAll(" ", ""), fye.MS+"person/"+email)){
-			response.setHeader("Location", "/followyourevent/places/place.jsp?pl="+(name+street).replaceAll(" ", ""));
+	String pla = fye.createPlace(name, street, logo, capacity, url, check.equals("true")?"Want":"No");
+	if (pla!=null){
+		if (fye.addOwnerToAPlace(pla, fye.MS+"person/"+email)){
+			response.setHeader("Location", "/followyourevent/places/place.jsp?pl="+pla.split("/place/")[1]);
 		}else{
 			response.setHeader("Location", "/followyourevent/places");
 		}

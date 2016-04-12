@@ -15,8 +15,8 @@ if (email == null){
 	String price = request.getParameter("price");
 	String placeUri = request.getParameter("place");
 	FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-	fye.createEvent(name, logo, url, date.split("-")[2], date.split("-")[1], time, price);
-	fye.addEventToAPlace(placeUri, fye.MS+"event/"+(name+date.split("-")[1]+date.split("-")[2]).replaceAll(" ", ""));
+	String event = fye.createEvent(name, logo, url, date.split("-")[2], date.split("-")[1], time, price);
+	fye.addEventToAPlace(placeUri, event);
 	response.setHeader("Location", "/followyourevent/places/place.jsp?pl="+placeUri.split("/place/")[1]);
 	
 }

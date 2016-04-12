@@ -515,17 +515,14 @@ public class FollowyoureventTDB {
 		cal.setTime(now);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 		int month = cal.get(Calendar.MONTH) + 1;
-		System.out.println(day+" - "+month);
 		ArrayList<String> arr = new ArrayList<String>();
 		String query;
 		if((day+7)>30){
-			System.out.println("entra 1");
 			query = "PREFIX DBpedia: <http://dbpedia.org/> "
 					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
 					+ " ?ev DBpedia:day ?day ."
 					+ " FILTER (('"+(day+7)%30+"' >= ?day && ?month = '"+(month+1)+"') || ('"+day+"' =< ?day && ?month = '"+month+"')) }";
 		}else{
-			System.out.println("entra 2");
 			query = "PREFIX DBpedia: <http://dbpedia.org/> "
 					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
 					+ " ?ev DBpedia:day ?day ."
@@ -615,7 +612,7 @@ public class FollowyoureventTDB {
 	 * @param capacity
 	 * @return true if ok; false if not created
 	 */
-	public boolean createPlace(String placeName, String street, String logo, String capacity, String oficialweb, String auto){
+	public String createPlace(String placeName, String street, String logo, String capacity, String oficialweb, String auto){
 		Property porganization = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
@@ -632,9 +629,9 @@ public class FollowyoureventTDB {
 			res.addLiteral(primarySource, oficialweb);
 			res.addProperty(RDF.type, place);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
-			return true;
+			return res.toString();
 		}else{
-			return false;
+			return null;
 		}
 	}
 	
@@ -644,7 +641,7 @@ public class FollowyoureventTDB {
 	 * @param kind
 	 * @return if created true; if not false
 	 */
-	public boolean createStyle(String description, String kind){
+	public String createStyle(String description, String kind){
 		Property pKind = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/kind");
 		Resource style = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/style");
 		if(!existStyle(kind)){
@@ -653,9 +650,9 @@ public class FollowyoureventTDB {
 			res.addLiteral(pKind, kind);
 			res.addProperty(RDF.type, style);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
-			return true;
+			return res.toString();
 		}else{
-			return false;
+			return null;
 		}
 	}
 	
@@ -670,7 +667,7 @@ public class FollowyoureventTDB {
 	 * @param price
 	 * @return true if created; false if not created
 	 */
-	public boolean createEvent(String name, String image, String url, String day, String month, String hour, String price){
+	public String createEvent(String name, String image, String url, String day, String month, String hour, String price){
 		if(month.charAt(0) == '0'){
 			month = ""+month.charAt(1);
 		}
@@ -696,9 +693,9 @@ public class FollowyoureventTDB {
 			res.addLiteral(pprice, price);
 			res.addProperty(RDF.type, event);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
-			return true;
+			return res.toString();
 		}else{
-			return false;
+			return null;
 		}
 	}
 	
@@ -711,7 +708,7 @@ public class FollowyoureventTDB {
 	 * @param pass
 	 * @return true if created; false if not created
 	 */
-	public boolean createPerson(String mail, String name, String age, String sex, String pass){
+	public String createPerson(String mail, String name, String age, String sex, String pass){
 		Property Ppass = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/pass");
 		Property Page = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://followyourevent.com/vocabulary/age");
 		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/person");
@@ -724,9 +721,9 @@ public class FollowyoureventTDB {
 			res.addLiteral(Ppass, pass);
 			res.addProperty(RDF.type,person);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
-			return true;
+			return res.toString();
 		}else{
-			return false;
+			return null;
 		}	
 	}
 	
@@ -1320,7 +1317,8 @@ public class FollowyoureventTDB {
 	 */
 	public boolean PersonAssist(String uriPerson, String uriEvent){
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
-		String query = "SELECT ?peo WHERE { SELECT ?ev WHERE { <"+uriPerson+"> <"+goes+"> <"+uriPerson+"> }";
+		String query = "SELECT <"+uriPerson+"> WHERE { <"+uriPerson+"> <"+goes+"> <"+uriEvent+"> }";
+		System.out.println(query);
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	return true;

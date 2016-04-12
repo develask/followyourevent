@@ -16,7 +16,7 @@
 					Boolean isMine = fye.eventIsFromAPerson(event, fye.MS+"person/"+mail);
 					String[] arr = fye.getInformationOfEvent(event);
 					ArrayList<String> people = fye.getAllThePeopleFromAnEvent(event);
-					
+					String place = fye.getPlaceOfAnEvent(event);
 					if (isMine){
 						%>
 						<h1 id="name" contenteditable="true"><%= arr[0] %></h1>
@@ -99,6 +99,9 @@
 						<%
 					}
 				%>
+				<hr>
+				<a class="btn btn-default" href="/followyourevent/places/place.jsp?pl=<%= place.split("/place/")[1]%>">Place: <%= fye.getInformationOfPlace(place)[0] %></a>
+				<hr>
 				<p>People going: <%= people.size() %></p>
 			</div>
 			<%@include file="../Footer.jsp" %>

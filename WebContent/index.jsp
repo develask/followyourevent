@@ -37,6 +37,9 @@
 					}
 					for (String ev: evs1){
 						String[] infoEv = fye.getInformationOfEvent(ev);
+						String place = fye.getPlaceOfAnEvent(ev);
+						String[] placeInfo = fye.getInformationOfPlace(place);
+						boolean asist = fye.PersonAssist(fye.MS+"person/"+mail, ev);
 						// name, image, url, day, month, hour, price
 						if (infoEv.length == 7){
 						%>	
@@ -45,8 +48,10 @@
 								<img src="<%= infoEv[1]%>" alt="" class="img-rounded">
 								<div class="caption">
 									<h3><%= infoEv[0]%></h3>
+									<h5><%= placeInfo[0] %> (<%= placeInfo[3]%> capacity)</h5>
 									<p><%= infoEv[3]%>/<%= infoEv[4]%> - <%= infoEv[5]%> - <%= infoEv[6]%>€</p>
-									<p><a href="event?ev=<%= infoEv[0]+infoEv[4]+infoEv[3]%>" class="btn btn-default" role="button">View</a> <a href="event/nogo.jsp?event=<%= infoEv[0]+infoEv[4]+infoEv[3]%>" class="btn btn-danger" role="button">Don't go</a></p>
+									<p><a href="event?ev=<%= ev.split("/event/")[1]%>" class="btn btn-default" role="button">View</a>
+									<a href="<%= (asist?"event/nogo.jsp?event=":"event/go.jsp?event=")+ev.split("/event/")[1] %>" class="btn <%= asist?"btn-danger":"btn-success" %>" role="button">Don't go</a></p>
 								</div>
 							</div>
 						</div>

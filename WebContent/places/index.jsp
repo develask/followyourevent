@@ -29,7 +29,7 @@
 								for (String place: places){
 									String[] arr = fye.getInformationOfPlace(place);
 								%>
-								<tr onclick="document.location = '/followyourevent/places/place.jsp?pl=<%= (arr[0]+arr[1]).replaceAll(" ", "")%>';">
+								<tr onclick="document.location = '/followyourevent/places/place.jsp?pl=<%= place.split("/place/")[1]%>';">
 									<th scope="row"><%= places.indexOf(place)%></th>
 									<td><%= arr[0]%></td>
 									<td><%= arr[1]%></td>
