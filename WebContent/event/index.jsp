@@ -40,7 +40,7 @@
 						<div class="form-group">
 							<label for="date" class="col-sm-2">Date:</label>
 							<div class="col-sm-10 input-group" style="padding-left: 15px; padding-right: 15px;">
-								<input type="date" class="form-control" id="date" name="date". value="<%= Year.now().getValue()+"-"+arr[4]+"-"+ arr[3] %>">
+								<input type="date" class="form-control" id="date" name="date". value="<%= Year.now().getValue()+"-"+(arr[4].length()<2?"0":"")+arr[4]+"-"+ (arr[3].length()<2?"0":"")+arr[3] %>">
 								<span class="input-group-addon" id="sizing-addon1"> - </span>
 								<input type="time" class="form-control"  name="time" id="time" value="<%= arr[5]%>">
 							</div>
@@ -67,6 +67,7 @@
 							});
 							var guardar = getId("guardar");
 							guardar.addEventListener("click", function(ev){
+								var name = getId("name").innerHTML;
 								var logo = getId("imgInp").value;
 								var url = getId("url").value;
 								var date = getId("date").value;
@@ -78,7 +79,8 @@
 								      alert("Saved!");
 								    }
 								 };
-								 xhttp.open("GET", "/followyourevent/event/update?ev="+ev
+								 xhttp.open("GET", "/followyourevent/event/update.jsp?ev=<%= ev %>"
+										 +"&name="+name
 										 +"&logo="+logo
 										 +"&url="+url
 										 +"&date="+date

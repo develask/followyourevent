@@ -1127,6 +1127,7 @@ public class FollowyoureventTDB {
 	 */
 	public boolean eventIsFromAPerson(String uriEvent, String uriPerson){
 		String uriPlace = getPlaceOfAnEvent(uriEvent);
+		System.out.println(uriEvent + " - " + uriPlace + " - " + uriPerson);
 		return placeOwnerOfAPerson(uriPerson, uriPlace);
 	}
 	
@@ -1291,7 +1292,7 @@ public class FollowyoureventTDB {
 		
 		update = UpdateFactory.create(query);
 		UpdateAction.execute(update, dataset);*/
-		
+		resev = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriEvent);
 		resev.addLiteral(eventname, name);
 		resev.addLiteral(pimage, image);
 		resev.addLiteral(primarySource, url);
