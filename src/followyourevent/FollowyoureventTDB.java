@@ -491,20 +491,16 @@ public class FollowyoureventTDB {
 				+ " ?ev DBpedia:day ?day ."
 				+ " FILTER (?month > "+month+" || (?day >= "+day+" && ?month = "+month+")) }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
-	    if(res.hasNext()){
-	    	while (res.hasNext()) {
-	    		QuerySolution soln = res.next();
-	    		try{
-	    			String l = soln.getResource("ev").toString();
-		    		arr.add(l);
-	    		}catch(Exception e){
-	    			
-	    		}
-			}
-	    	return arr;
-	    }else{
-	    	return null;
-	    }
+    	while (res.hasNext()) {
+    		QuerySolution soln = res.next();
+    		try{
+    			String l = soln.getResource("ev").toString();
+	    		arr.add(l);
+    		}catch(Exception e){
+    			
+    		}
+		}
+    	return arr;
 	}
 	
 	/**

@@ -59,9 +59,25 @@
 								<div class="panel-heading">
 									<h3 class="panel-title">Future Events:</h3>
 								</div>
-								<div class="panel-body">
-									Panel content
-								</div>
+								<%
+								if (future.size()==0){
+									%>
+									<div class="panel-body">
+										There is no future events.
+									</div>
+									<%
+								}else{
+								%>
+								<ul class="list-group">
+									<%
+									for (String ev: future){
+										String[] evInfo = fye.getInformationOfEvent(ev);
+										
+									%>
+									<li class="list-group-item"><%= evInfo[0] %> <a class="btn btn-primary btn-xs pull-right">Go</a></li>
+									<%} %>
+								</ul>
+								<%} %>
 							</div>
 						</div>
 						<%
