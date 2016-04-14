@@ -50,8 +50,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -67,6 +67,7 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+ 			System.out.println(fye.getAllPastEventsOfAPerson(MS+"person/maildecade@gmail.com").toString());
 // 			fye.createRecommendations(MS+"person/maildecade@gmail.com");
 // 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
 // 			System.out.println(arr.size());
@@ -86,13 +87,15 @@ public class FollowyoureventTDB {
  			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//System.out.println(s);
- 			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi0528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "21:00", "220krmod");
- 			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
+ 			//fye.write(System.out, "JSON-LD");
+ 			//System.out.println("--------------------------------------------------------------");
+ 			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "22:00", "220krmod");
+ 			//fye.write(System.out, "JSON-LD");
  			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
  			//for (int i = 0; i < arr.size(); i++) {
 			//	System.out.println(arr.get(i).toString());
 			//}/**/
- 			System.out.println(fye.eventIsFromAPerson(MS+"event/"+"EventNumber10521", MS+"person/"+"develascomikel@gmail.com"));
+ 			//System.out.println(fye.eventIsFromAPerson(MS+"event/"+"EventNumber10521", MS+"person/"+"develascomikel@gmail.com"));
  		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -440,20 +443,20 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return if ok : Arraylist -> String (resources); if not null 
 	 */
-	public ArrayList<String> getAllPastEventsOfAPerson(String mail){
+	public ArrayList<String> getAllPastEventsOfAPerson(String uriPerson){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 		int month = cal.get(Calendar.MONTH) + 1;
 		ArrayList<String> arr = new ArrayList<String>();
-		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
+		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?ev WHERE { <"+person+"> <"+goes+"> ?ev ."
 				+ " ?ev DBpedia:month ?month ."
 				+ " ?ev DBpedia:day ?day ."
-				+ " FILTER (?month < "+month+" || (?day < "+day+" && ?month = "+month+")) }";
+				+ " FILTER (?month < '"+month+"' || (?day < '"+day+"' && ?month = '"+month+"')) }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	while (res.hasNext()) {
@@ -476,14 +479,14 @@ public class FollowyoureventTDB {
 	 * @param mail
 	 * @return if ok : Arraylist -> String (resources); if not null
 	 */
-	public ArrayList<String> getAllFutureEventsOfAPerson(String mail){
+	public ArrayList<String> getAllFutureEventsOfAPerson(String uriPerson){
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 		int month = cal.get(Calendar.MONTH) + 1;
 		ArrayList<String> arr = new ArrayList<String>();
-		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(MS+"person/"+mail);
+		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?ev WHERE { <"+person+"> <"+goes+"> ?ev ."
@@ -1250,14 +1253,8 @@ public class FollowyoureventTDB {
 		if(day.charAt(0) == '0'){
 			day = ""+day.charAt(1);
 		}
+		
 		Resource resev = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriEvent);
-		/*ArrayList<String> pers = FollowyoureventTDB.getFollowyoureventTDB().getAllThePeopleFromAnEvent(uriEvent);
-		Resource reseven = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/"+(name+month+day).replaceAll(" ", ""));
-		for (int i = 1; i <= pers.size(); i++) {
-			FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(pers.get(i).toString(), reseven.toString());
-		}
-		String pla = FollowyoureventTDB.getFollowyoureventTDB().getPlaceOfAnEvent(resev.toString());
-		FollowyoureventTDB.getFollowyoureventTDB().addEventToAPlace(pla, reseven.toString());*/
 		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
 		Property pimage = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://purl.org/dc/dcmitype/image");
 		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
@@ -1266,37 +1263,30 @@ public class FollowyoureventTDB {
 		Property start = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/start");
 		Property pprice = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://schema.org/price");
 		Resource event = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/event");
-		/*<"+reseven+"> <"+eventname+"> ?name ."
-						+ " <"+reseven+"> <"+pimage+"> ?image ."
-						+ " <"+reseven+"> <"+primarySource+"> ?url ."
-						+ " <"+reseven+"> <"+pday+"> ?day ."
-						+ " <"+reseven+"> <"+pmonth+"> ?month ."
-						+ " <"+reseven+"> <"+start+"> ?hour ."
-						+ " <"+reseven+"> <"+pprice+"> ?price ."
-						
-						+"		<"+reseven+"> <"+eventname+"> ?a "
-						*/
-		System.out.println(resev);
-		String query = "DELETE WHERE { "
-				+"<"+resev+"> ?a ?b }";
+		UpdateRequest update = UpdateFactory.create("DELETE { <"+resev+"> <"+eventname+"> ?name ."
+						+ " <"+resev+"> <"+pimage+"> ?image ."
+						+ " <"+resev+"> <"+primarySource+"> ?primary ."
+						+ " <"+resev+"> <"+pday+"> ?day ."
+						+ " <"+resev+"> <"+pmonth+"> ?month ."
+						+ "	<"+resev+"> <"+start+"> ?start ."
+						+ " <"+resev+"> <"+pprice+"> ?price }"
+				+ "	INSERT { <"+resev+"> <"+eventname+"> '"+name+"' ."
+						+ " <"+resev+"> <"+pimage+"> '"+image+"' ."
+						+ " <"+resev+"> <"+primarySource+"> '"+url+"' ."
+						+ " <"+resev+"> <"+pday+"> '"+day+"' ."
+						+ " <"+resev+"> <"+pmonth+"> '"+month+"' ."
+						+ "	<"+resev+"> <"+start+"> '"+hour+"' ."
+						+ " <"+resev+"> <"+pprice+"> '"+price+"' }"
+				+ "WHERE { <"+resev+"> <"+eventname+"> ?name ."
+					+ " <"+resev+"> <"+pimage+"> ?image ."
+					+ " <"+resev+"> <"+primarySource+"> ?primary ."
+					+ " <"+resev+"> <"+pday+"> ?day ."
+					+ " <"+resev+"> <"+pmonth+"> ?month ."
+					+ "	<"+resev+"> <"+start+"> ?start ."
+					+ " <"+resev+"> <"+pprice+"> ?price }");
 		
-		UpdateRequest update = UpdateFactory.create(query);
-		UpdateAction.execute(update, dataset);
-		dataset.close();
-		
-		/*query = "DELETE{ <"+resev+"> } WHERE { <"+resev+"> ?a ?b }";
-		
-		update = UpdateFactory.create(query);
-		UpdateAction.execute(update, dataset);*/
-		resev = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriEvent);
-		resev.addLiteral(eventname, name);
-		resev.addLiteral(pimage, image);
-		resev.addLiteral(primarySource, url);
-		resev.addLiteral(pday, day);
-		resev.addLiteral(pmonth, month);
+		UpdateAction.execute(update, dataset);	  
 		resev.addLiteral(start, hour);
-		resev.addLiteral(pprice, price);
-		resev.addProperty(RDF.type, event);
 		FollowyoureventTDB.getFollowyoureventTDB().commit();
 	}
 	
