@@ -67,8 +67,8 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			System.out.println(fye.getAllPastEventsOfAPerson(MS+"person/maildecade@gmail.com").toString());
-// 			fye.createRecommendations(MS+"person/maildecade@gmail.com");
+ 			System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
+ 			//fye.createRecommendations(MS+"person/maildecade@gmail.com");
 // 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
 // 			System.out.println(arr.size());
  			//fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
@@ -548,6 +548,33 @@ public class FollowyoureventTDB {
 	
 	/**
 	 * 
+	 * @return Arraylist Events 
+	 */
+	public ArrayList<String> getEventsBetweenDates(String startMonth, String startDay, String endMonth, String endDay){
+		ArrayList<String> arr = new ArrayList<String>();
+		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
+					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
+					+ " ?ev DBpedia:day ?day ."
+					+ " FILTER ((( '"+startDay+"' <= ?day && '"+startMonth+"' = ?month ) || '"+startMonth+"' < ?month ) && (( '"+endDay+"' >= ?day && '"+endMonth+"' = ?month ) || '"+endMonth+"' > ?month ))}";//&& '"+endDay+"' <=  ?day && '"+endMonth+"' <= ?month ) }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	while (res.hasNext()) {
+	    		QuerySolution soln = res.next();
+	    		try{
+	    			String l = soln.getResource("ev").toString();
+		    		arr.add(l);
+	    		}catch(Exception e){
+	    			
+	    		}
+			}
+	    	return arr;
+	    }else{
+	    	return arr;
+	    }
+	} 
+	
+	/**
+	 * 
 	 * @param uriEvent
 	 * @return Array -> list of resources; if not null
 	 */
@@ -669,12 +696,6 @@ public class FollowyoureventTDB {
 	 * @return true if created; false if not created
 	 */
 	public String createEvent(String name, String image, String url, String day, String month, String hour, String price){
-		if(month.charAt(0) == '0'){
-			month = ""+month.charAt(1);
-		}
-		if(day.charAt(0) == '0'){
-			day = ""+day.charAt(1);
-		}
 		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
 		Property pimage = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://purl.org/dc/dcmitype/image");
 		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
