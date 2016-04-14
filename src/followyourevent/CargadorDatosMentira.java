@@ -81,7 +81,7 @@ public class CargadorDatosMentira {
 		ev.addLiteral(eventname, "hulen");
 		ev.addLiteral(image, "HTtps://urldeimagen.com/");
 		ev.addLiteral(primarySource, "HTtps://urldelevento.com/");
-		ev.addLiteral(day, "15");
+		ev.addLiteral(day, "11");
 		ev.addLiteral(month, "4");
 		ev.addLiteral(start, "21:00");
 		ev.addLiteral(price, "200kr");
