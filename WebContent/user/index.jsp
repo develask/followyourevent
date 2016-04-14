@@ -11,8 +11,10 @@
 				<%
 					FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 					String mail2 = Sessions.getSessions().verifySession(request.getCookies());
-					String mail = request.getParameter("mail");
+					String mail1 = request.getParameter("mail");
+					String mail = mail1;
 					if (mail == null) mail = mail2;
+					String me = fye.MS+"person/"+mail2;
 					String person = fye.MS+"person/"+mail;
 					if (mail == null){
 						response.setStatus(response.SC_MOVED_TEMPORARILY);
@@ -20,7 +22,7 @@
 					}else{
 						String[] infoP = fye.getInformationAboutAPerson(mail);
 						%>
-							<h1>Hello, <%= infoP[0] %></h1>
+							<h1><%= infoP[0] %></h1>
 							<p><b>Mail:</b> <%= infoP[1] %></p>
 							<p><b>Age:</b> <%= infoP[2] %></p>
 							<p><b>Sex:</b> <%= infoP[3] %></p>
@@ -46,9 +48,9 @@
 									<%
 									for (String ev: past){
 										String[] evInfo = fye.getInformationOfEvent(ev);
-										
+										Boolean go = fye.PersonAssist(me, ev);
 									%>
-									<li class="list-group-item"><%= evInfo[0] %> <a class="btn btn-primary btn-xs pull-right">Go</a></li>
+									<li class="list-group-item"><a href="/followyourevent/event?ev=<%= ev.split("/event/")[1] %>"><%= evInfo[0] %></a> <span style="color: <%= go?"green":"red" %>;" class="glyphicon glyphicon-<%= go?"ok":"remove" %>-circle pull-right"></span></li>
 									<%} %>
 								</ul>
 								<%} %>
@@ -72,9 +74,9 @@
 									<%
 									for (String ev: future){
 										String[] evInfo = fye.getInformationOfEvent(ev);
-										
+										Boolean go = fye.PersonAssist(me, ev);
 									%>
-									<li class="list-group-item"><%= evInfo[0] %> <a class="btn btn-primary btn-xs pull-right">Go</a></li>
+									<li class="list-group-item"><a href="/followyourevent/event?ev=<%= ev.split("/event/")[1] %>"><%= evInfo[0] %></a> <a href="/followyourevent/event/<%= go?"nogo":"go" %>.jsp?event=<%= ev.split("/event/")[1] %>&from=/followyourevent/user<%= (mail1!=null)?"?mail="+mail:"" %>" class="btn btn-<%= go?"danger":"success" %> btn-xs pull-right"><%= go?"Don't Go":"Go" %></a></li>
 									<%} %>
 								</ul>
 								<%} %>

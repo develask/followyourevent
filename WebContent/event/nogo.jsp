@@ -5,6 +5,8 @@
 <% 
 String mail = Sessions.getSessions().verifySession(request.getCookies());
 String evName = request.getParameter("event");
+String from = request.getParameter("from");
+if (from == null) from = "/followyourevent";
 if (mail == null){
 	response.setStatus(response.SC_MOVED_TEMPORARILY);
 	response.setHeader("Location", "/followyourevent/login");
@@ -12,6 +14,6 @@ if (mail == null){
 	FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 	fye.removeEventFromAPerson(fye.MS+"person/"+mail, fye.MS+"event/"+evName);
 	response.setStatus(response.SC_MOVED_TEMPORARILY);
-	response.setHeader("Location", "/followyourevent");
+	response.setHeader("Location", from);
 } 
 %>
