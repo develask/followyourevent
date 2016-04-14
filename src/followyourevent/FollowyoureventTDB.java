@@ -489,7 +489,7 @@ public class FollowyoureventTDB {
 				+ "SELECT ?ev WHERE { <"+person+"> <"+goes+"> ?ev ."
 				+ " ?ev DBpedia:month ?month ."
 				+ " ?ev DBpedia:day ?day ."
-				+ " FILTER (?month > "+month+" || (?day >= "+day+" && ?month = "+month+")) }";
+				+ " FILTER (?month > '"+month+"' || (?day >= '"+day+"' && ?month = '"+month+"')) }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
     	while (res.hasNext()) {
     		QuerySolution soln = res.next();
