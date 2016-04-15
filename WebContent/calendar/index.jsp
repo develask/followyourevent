@@ -31,6 +31,8 @@
 				cal.setTime(now);
 				int year = cal.get(Calendar.YEAR);
 				if (startMonth == null) startMonth = ""+(cal.get(Calendar.MONTH) + 1);
+				if (startMonth.length()==1) startMonth = "0"+startMonth;
+				
 				if (startDay == null) startDay = "01";
 				if (endMonth == null) endMonth = startMonth;
 				if (endDay == null) endDay = "31";
@@ -50,7 +52,6 @@ for (String ev: evs){
 	// name, image, url, day, month, hour, price
 	String[] evI = fye.getInformationOfEvent(ev);
 	boolean as = fye.PersonAssist(fye.MS+"person/"+mail, ev);
-	System.out.println(year+"-"+evI[4]+"-"+evI[3]);
 	%>{
 			title: '<%= evI[0] %>',
 			url: '/followyourevent/event?ev=<%= ev.split("/event/")[1] %>',

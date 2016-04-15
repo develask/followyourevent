@@ -447,8 +447,10 @@ public class FollowyoureventTDB {
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
-		int day = cal.get(Calendar.DAY_OF_MONTH);
-		int month = cal.get(Calendar.MONTH) + 1;
+		String day = ""+cal.get(Calendar.DAY_OF_MONTH);
+		String month = ""+(cal.get(Calendar.MONTH) + 1);
+		if (day.length()==1) day = "0"+day;
+		if (month.length()==1) month = "0"+month;
 		ArrayList<String> arr = new ArrayList<String>();
 		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
@@ -483,8 +485,10 @@ public class FollowyoureventTDB {
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
-		int day = cal.get(Calendar.DAY_OF_MONTH);
-		int month = cal.get(Calendar.MONTH) + 1;
+		String day = "" + cal.get(Calendar.DAY_OF_MONTH);
+		String month = "" + (cal.get(Calendar.MONTH) + 1);
+		if (day.length()==1) day = "0"+day;
+		if (month.length() == 1) month = "0"+month;
 		ArrayList<String> arr = new ArrayList<String>();
 		Resource person = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
@@ -506,6 +510,9 @@ public class FollowyoureventTDB {
     	return arr;
 	}
 	
+	private String getNumToString(int n){
+		return (n+"").length()==1?"0"+n:""+n;
+	}
 	/**
 	 * 
 	 * @return Arraylist Events 
@@ -522,12 +529,12 @@ public class FollowyoureventTDB {
 			query = "PREFIX DBpedia: <http://dbpedia.org/> "
 					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
 					+ " ?ev DBpedia:day ?day ."
-					+ " FILTER (('"+(day+7)%30+"' >= ?day && ?month = '"+(month+1)+"') || ('"+day+"' =< ?day && ?month = '"+month+"')) }";
+					+ " FILTER (('"+getNumToString((day+7)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' =< ?day && ?month = '"+getNumToString(month)+"')) }";
 		}else{
 			query = "PREFIX DBpedia: <http://dbpedia.org/> "
 					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
 					+ " ?ev DBpedia:day ?day ."
-					+ " FILTER (('"+day+"' <=  ?day && ?day <= '"+(day+7)+"') && (?month = '"+month+"')) }";
+					+ " FILTER (('"+getNumToString(day)+"' <=  ?day && ?day <= '"+getNumToString((day+7))+"') && (?month = '"+getNumToString(month)+"')) }";
 		}
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
