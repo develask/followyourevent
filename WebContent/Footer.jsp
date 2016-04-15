@@ -26,17 +26,4 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- jQuery 2.1.4 -->
-		<script src="/followyourevent/js/jQuery-2.1.4.min.js"></script>
-
-		<!-- Bootstrap 3.3.5 -->
-		<script src="/followyourevent/js/bootstrap.min.js"></script>
-
-		<!-- Angular -->
-		<!-- script type="text/javascript" src="js/angular.min.js"></script>
-		<script src="js/angular-route.min.js"></script -->
-
-		<!-- Own js -->
-		<!-- script src="js/index.js"></script -->
   </body>

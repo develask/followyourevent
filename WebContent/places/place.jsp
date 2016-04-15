@@ -12,7 +12,7 @@
 					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					String pl = fye.MS+"place/"+request.getParameter("pl");
 					ArrayList<String> events = fye.getEventsOfAPlace(pl);
-					Boolean isMine = mail != null;
+					Boolean isMine = fye.placeOwnerOfAPerson(fye.MS+ "person/" + mail, pl);
 					%>
 						<h1>Place: <small><%= fye.getInformationOfPlace(pl)[0] %></small></h1>
 						<table class="table table-striped">

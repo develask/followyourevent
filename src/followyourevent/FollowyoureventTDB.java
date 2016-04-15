@@ -1147,7 +1147,6 @@ public class FollowyoureventTDB {
 	 */
 	public boolean eventIsFromAPerson(String uriEvent, String uriPerson){
 		String uriPlace = getPlaceOfAnEvent(uriEvent);
-		System.out.println(uriEvent + " - " + uriPlace + " - " + uriPerson);
 		return placeOwnerOfAPerson(uriPerson, uriPlace);
 	}
 	
@@ -1268,12 +1267,6 @@ public class FollowyoureventTDB {
 	 * @param price
 	 */
 	public void modifyEvent(String uriEvent,String name, String image, String url, String day, String month, String hour, String price){
-		if(month.charAt(0) == '0'){
-			month = ""+month.charAt(1);
-		}
-		if(day.charAt(0) == '0'){
-			day = ""+day.charAt(1);
-		}
 		
 		Resource resev = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriEvent);
 		Property eventname = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/event");
@@ -1330,7 +1323,6 @@ public class FollowyoureventTDB {
 	public boolean PersonAssist(String uriPerson, String uriEvent){
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"goes");
 		String query = "SELECT * WHERE { <"+uriPerson+"> <"+goes+"> <"+uriEvent+"> }";
-		System.out.println(query);
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	return true;

@@ -13,13 +13,17 @@
 					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					String ev = request.getParameter("ev");
 					String event = fye.MS+"event/"+ev;
-					Boolean isMine = fye.eventIsFromAPerson(event, fye.MS+"person/"+mail);
+					boolean isMine = fye.eventIsFromAPerson(event, fye.MS+"person/"+mail);
+					boolean go = fye.PersonAssist(fye.MS+"person/"+mail, event);
 					String[] arr = fye.getInformationOfEvent(event);
 					ArrayList<String> people = fye.getAllThePeopleFromAnEvent(event);
 					String place = fye.getPlaceOfAnEvent(event);
 					if (isMine){
 						%>
-						<h1 id="name" contenteditable="true"><%= arr[0] %></h1>
+						<h1>
+							<span id="name" contenteditable="true"><%= arr[0] %></span>
+							<a href="/followyourevent/event/<%= go?"nogo":"go" %>.jsp?event=<%= ev %>&from=/followyourevent/event?ev=<%= ev %>" class="btn btn-<%= go?"danger":"success" %> pull-right"><%= go?"Don't Go":"Go" %></a>
+						</h1>
 						<img id="img" src="<%= arr[1]%>" style="max-width: 100%;"><br><br>
 						<div class="form-group">
 							<label for="imgInp" class="col-sm-2">Logo URL:</label>
@@ -104,7 +108,12 @@
 				<hr>
 				<a class="btn btn-default" href="/followyourevent/places/place.jsp?pl=<%= place.split("/place/")[1]%>">Place: <%= fye.getInformationOfPlace(place)[0] %></a>
 				<hr>
-				<p>People going: <%= people.size() %></p>
+				<h3>People going: <%= people.size() %></h3>
+				<ul class="list-group">
+					<% for(String p: people){ String[] i = fye.getInformationAboutAPerson(p.split("/person/")[1]); %>
+					<a href="/followyourevent/user?mail=<%= i[1] %>" class="list-group-item"><%= i[0] %></a>
+					<% } %>
+				</ul>
 			</div>
 			<%@include file="../Footer.jsp" %>
 </html>
