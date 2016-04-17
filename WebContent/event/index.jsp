@@ -96,7 +96,10 @@
 						<%
 					}else{
 						%>
-						<h1><%= arr[0] %></h1>
+						<h1>
+							<span><%= arr[0] %></span>
+							<a href="/followyourevent/event/<%= go?"nogo":"go" %>.jsp?event=<%= ev %>&from=/followyourevent/event?ev=<%= ev %>" class="btn btn-<%= go?"danger":"success" %> pull-right"><%= go?"Don't Go":"Go" %></a>
+						</h1>
 						<img src="<%= arr[1]%>">
 						<br><hr>
 						<a class="btn btn-default" href="<%= arr[2]%>">Go to web</a>

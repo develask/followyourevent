@@ -19,6 +19,7 @@ public class Sessions {
 		public String getName(){
 			return this.name;
 		}
+		
 	}
 	
 	private static Sessions me = null;
@@ -46,28 +47,36 @@ public class Sessions {
 	}
 	
 	public String verifySession(Cookie[] cookies){
-		Cookie cookie = null;
-		if( cookies != null ){
-			for (int i = 0; i < cookies.length; i++){
-				cookie = cookies[i];
-				if (cookie.getName().equals("oauth")){
-					return this.sessions.containsKey(cookie.getValue())?this.sessions.get(cookie.getValue()).name:null;
-				}
-			}
+		String c = getCookie(cookies, "oauth");
+		if (c!= null){
+			return this.sessions.containsKey(c)?this.sessions.get(c).name:null;
+		}else{
+			return null;
 		}
-		return null;
+		
+//		Cookie cookie = null;
+//		if( cookies != null ){
+//			for (int i = 0; i < cookies.length; i++){
+//				cookie = cookies[i];
+//				if (cookie.getName().equals("oauth")){
+//					return this.sessions.containsKey(cookie.getValue())?this.sessions.get(cookie.getValue()).name:null;
+//				}
+//			}
+//		}
+//		return null;
 	}
 	
 	public void endSession(Cookie[] cookies){
-		Cookie cookie = null;
-		if( cookies != null ){
-			for (int i = 0; i < cookies.length; i++){
-				cookie = cookies[i];
-				if (cookie.getName().equals("oauth")){
-					this.sessions.remove(cookie.getValue());
-				}
-			}
-		}
+		this.sessions.remove(getCookie(cookies, "oauth"));
+//		Cookie cookie = null;
+//		if( cookies != null ){
+//			for (int i = 0; i < cookies.length; i++){
+//				cookie = cookies[i];
+//				if (cookie.getName().equals("oauth")){
+//					this.sessions.remove(cookie.getValue());
+//				}
+//			}
+//		}
 	}
 	
 	public static  String sha1(String input) throws NoSuchAlgorithmException {
@@ -80,4 +89,17 @@ public class Sessions {
          
         return sb.toString();
     }
+	
+	public static String getCookie(Cookie[] cookies, String cookieName){
+		Cookie cookie = null;
+		if( cookies != null ){
+			for (int i = 0; i < cookies.length; i++){
+				cookie = cookies[i];
+				if (cookie.getName().equals(cookieName)){
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
+	}
 }

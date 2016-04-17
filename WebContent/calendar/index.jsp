@@ -30,18 +30,24 @@
 				Date now = cal.getTime();
 				cal.setTime(now);
 				int year = cal.get(Calendar.YEAR);
-				if (startMonth == null) startMonth = ""+(cal.get(Calendar.MONTH) + 1);
+				if (startMonth == null) startMonth = ""+cal.get(Calendar.MONTH);
 				if (startMonth.length()==1) startMonth = "0"+startMonth;
 				
 				if (startDay == null) startDay = "01";
-				if (endMonth == null) endMonth = startMonth;
+				if (endMonth == null) endMonth = ""+(Integer.parseInt(startMonth)+2);
+				if (endMonth.length()==1) endMonth = "0"+endMonth;
 				if (endDay == null) endDay = "31";
 %>
 				$(document).ready(function() {
 
 					$('#calendar').fullCalendar({
-						defaultDate: '<%= year %>-<%= Integer.parseInt(startMonth)+1 %>-<%= startDay %>',
-						editable: true,
+						header: {
+							left: 'prev today',
+							center: 'title',
+							right: 'next'
+						},
+						defaultView: 'agendaWeek',
+						editable: false,
 						eventLimit: true, // allow "more" link when too many events
 						events: [
 <%
@@ -55,7 +61,7 @@ for (String ev: evs){
 	%>{
 			title: '<%= evI[0] %>',
 			url: '/followyourevent/event?ev=<%= ev.split("/event/")[1] %>',
-			start: '<%= year %>-<%= evI[4] %>-<%= evI[3] %>',
+			start: '<%= year %>-<%= evI[4] %>-<%= evI[3] %>T<%= evI[5] %>',
 			color: '<%= as?"green":"red" %>'
 		}<%
 }
