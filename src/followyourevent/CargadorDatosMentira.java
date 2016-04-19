@@ -54,6 +54,10 @@ public class CargadorDatosMentira {
 		
 		Property auto = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://dbpedia.org/auto");
 		
+		Property plat = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/lat");
+		
+		Property plong = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/long");
+		
 		//Create Cade tracy
 		Resource CadeTracy = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"person/maildecade@gmail.com");
 		CadeTracy.addLiteral(FOAF.mbox, "maildecade@gmail.com");
@@ -73,15 +77,37 @@ public class CargadorDatosMentira {
 		//Ines Dominguez is a person
 		//InesDominguez.addProperty(RDF.type,person);
 		
-	//	Resource event = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Event/Hulen0226");
-		//Resource place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
+		Resource place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
+		
+		Resource hulen = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/hulencallehulen");
+		hulen.addLiteral(organization, "hulen");
+		hulen.addLiteral(VCARD.Street, "callehulen");
+		hulen.addLiteral(logo, "urllogo");
+		hulen.addLiteral(capacity, "250");
+		hulen.addLiteral(auto, "yes");
+		hulen.addLiteral(primarySource, "paginaoficial");
+		hulen.addProperty(RDF.type, place);
+		hulen.addLiteral(plat, "60.38");
+		hulen.addLiteral(plong, "05.32");
+		
+		Resource tidi = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/tidicalletidi");
+		tidi.addLiteral(organization, "tidi");
+		tidi.addLiteral(VCARD.Street, "calletidi");
+		tidi.addLiteral(logo, "urllogo");
+		tidi.addLiteral(capacity, "250");
+		tidi.addLiteral(auto, "no");
+		tidi.addLiteral(primarySource, "paginaoficial");
+		tidi.addProperty(RDF.type, place);
+		tidi.addLiteral(plat, "60.90");
+		tidi.addLiteral(plong, "05.80");
+		
 		//Create PostalAddress of Cade Tracy
 		Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/hulen0411");
 		
 		ev.addLiteral(eventname, "hulen");
 		ev.addLiteral(image, "HTtps://urldeimagen.com/");
 		ev.addLiteral(primarySource, "HTtps://urldelevento.com/");
-		ev.addLiteral(day, "11");
+		ev.addLiteral(day, "22");
 		ev.addLiteral(month, "04");
 		ev.addLiteral(start, "21:00");
 		ev.addLiteral(price, "200kr");
@@ -92,16 +118,32 @@ public class CargadorDatosMentira {
 		ev2.addLiteral(eventname, "tidi");
 		ev2.addLiteral(image, "HTtps://urldeimagentidi.com/");
 		ev2.addLiteral(primarySource, "HTtps://urldeleventotid.com/");
-		ev2.addLiteral(day, "10");
-		ev2.addLiteral(month, "05");
+		ev2.addLiteral(day, "25");
+		ev2.addLiteral(month, "04");
 		ev2.addLiteral(start, "21:00");
 		ev2.addLiteral(price, "220kr");
+		
+		//hulen offers party hulen
+		Property offers = FollowyoureventTDB.getFollowyoureventTDB().getProperty(MS+"offers");
+		
+		//create offers statement
+		Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(hulen, offers, ev);
+		
+		//Adding the statement
+		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
+		
+		//create offers statement
+		stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(tidi, offers, ev2);
+		
+		//Adding the statement
+		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);	
+		
 		
 		//Create the property goes
 		Property goes = FollowyoureventTDB.getFollowyoureventTDB().createProperty(MS+"goes");
 		
 		//create stmt
-		Statement stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev);
+		stmt = FollowyoureventTDB.getFollowyoureventTDB().createStatement(CadeTracy, goes, ev);
 		//Adding the statement
 		FollowyoureventTDB.getFollowyoureventTDB().add(stmt);
 		
