@@ -8,8 +8,6 @@
 			<div class="row">
 			<div class="col-sm-8 blog-main">
 				<%
-					FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					String pl = fye.MS+"place/"+request.getParameter("pl");
 					ArrayList<String> events = fye.getEventsOfAPlace(pl);
 					Boolean isMine = fye.placeOwnerOfAPerson(fye.MS+ "person/" + mail, pl);

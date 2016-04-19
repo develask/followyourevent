@@ -9,10 +9,9 @@
 			<div class="row">
 			<div class="col-sm-8 blog-main">
 				<%
-					FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 					String mail2 = Sessions.getSessions().verifySession(request.getCookies());
 					String mail1 = request.getParameter("mail");
-					String mail = mail1;
+					mail = mail1;
 					if (mail == null) mail = mail2;
 					String me = fye.MS+"person/"+mail2;
 					String person = fye.MS+"person/"+mail;

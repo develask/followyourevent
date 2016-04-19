@@ -9,8 +9,6 @@
 			<div class="row">
 			<div class="col-sm-8 blog-main">
 				<%
-					FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					String ev = request.getParameter("ev");
 					String event = fye.MS+"event/"+ev;
 					boolean isMine = fye.eventIsFromAPerson(event, fye.MS+"person/"+mail);

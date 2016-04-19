@@ -8,8 +8,6 @@
 			<div class="row">
 			<div class="col-sm-8 blog-main">
 				<%
-					FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					if (mail != null){
 						ArrayList<String> places = fye.getAllThePlacesOfAPerson(mail);
 						%>
@@ -57,10 +55,52 @@
 											<input type="text" class="form-control" id="placeStreet" placeholder="Street Nº 6" name="street">
 										</div>
 									</div>
+									<div class="sr-only">
+										<input type="number" id="lat" name="lat" step="any">
+										<input type="number" id="lon" name="lon" step="any">
+									</div>
+									<div id="map" style="height: 200px; width: 100%; margin-bottom: 20px;"></div>
+									<script type="text/javascript">
+										// api = AIzaSyAcXuoYJXKQ8P4h2l8zSIqr91UrhbTC83o
+										function initMap(){
+											$("#dropdown").removeClass("collapse");
+											var myLatlng = {lat: parseFloat(latitude), lng: (longitude)};
+											
+											var map = new google.maps.Map(document.getElementById('map'), {
+											    zoom: 14,
+											    center: myLatlng
+											});
+											var marker = new google.maps.Marker({
+											    position: myLatlng,
+											    map: map,
+											    title: 'Position'
+											});
+											$("#lat").val(myLatlng.lat);
+											$("#lon").val(myLatlng.lng);
+											needPosition.push(function(lat, lon){
+												var myLatlng = {lat: parseFloat(lat), lng: parseFloat(lon)};
+												marker.setPosition(myLatlng);
+												map.panTo(marker.getPosition());
+												map.setCenter(marker.getPosition());
+												$("#lat").val(myLatlng.lat);
+												$("#lon").val(myLatlng.lng);
+												$("#dropdown").addClass("collapse");
+											});
+											
+											map.addListener("click", function(ev){
+												marker.setPosition(ev.latLng);
+												map.panTo(marker.getPosition());
+												map.setCenter(marker.getPosition());
+												$("#lat").val(ev.latLng.lat());
+												$("#lon").val(ev.latLng.lng());
+											});
+										}
+									</script>
+									<script src="https://maps.googleapis.com/maps/api/js?signed_in=false&callback=initMap" async defer></script>
 									<div class="form-group">
-										<label for="url" class="col-sm-2">Logo's URL:</label>
+										<label for="url" class="col-sm-2">Web URL:</label>
 										<div class="col-sm-10">
-											<input type="url" class="form-control" id="url" placeholder="http://host.domain/path_to_image.ext" name="url">
+											<input type="url" class="form-control" id="url" placeholder="http://host.domain/" name="url">
 										</div>
 									</div>
 									<div class="form-group">

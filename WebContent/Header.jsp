@@ -28,7 +28,68 @@
 
 		<!-- Own js -->
 		<!-- script src="js/index.js"></script -->
+		<%
+			Cookie[] cookies = request.getCookies();
+			String mail = Sessions.getSessions().verifySession(cookies);
+			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+			String lat = Sessions.getCookie(cookies, "lat");
+			String lon = Sessions.getCookie(cookies, "lon");
+		%>
 		
+		<script>
+			var latitude = -25.363, longitude = 131.044;
+			var needPosition = [];
+			function geoFindMe() {
+	
+				  if (!navigator.geolocation){
+				    console.log("Geolocation is not supported by your browser.");
+				    return;
+				  }
+	
+				  function success(position) {
+					  function format(num){
+					    	return (""+num).substr(0, (""+num).indexOf(".")+4);
+					    }
+					  
+				    latitude  = format(position.coords.latitude);
+				    longitude = format(position.coords.longitude);
+				    
+				    var c = document.cookie.split(":");
+				    var change = false;
+				    var existen = false;
+				    for (var el in c){
+				    	var p = c[el].split("=");
+				    	if (p[0].trim() == "lat" || p[0].trim() == "lon"){
+				    		existen = true;
+				    	}
+				    	if ((p[0].trim() == "lat" && p[1]==latitude) || (p[0].trim() == "lon" && p[1]==longitude)){
+				    		change = true;
+				    	}
+				    	
+				    }
+				    
+				    if (change || !existen){
+				    	document.cookie = "lat="+latitude;
+					    document.cookie = "lon="+longitude;
+					    location.reload();
+				    }
+	
+				    console.log('Coordenates:\n\tLatitude: ' + latitude + '\n\tLongitude: ' + longitude + '');
+				    
+				    while (needPosition.length > 0){
+				    	needPosition.pop()(latitude, longitude);
+				    }
+
+				  };
+	
+				  function error() {
+				  	console.log("Unable to retrieve your location");
+				  };
+	
+				  navigator.geolocation.getCurrentPosition(success, error);
+			}
+			geoFindMe();
+		</script>
 	</head>
 	<body>
 		<div class="container" style="margin-top: 30px;">

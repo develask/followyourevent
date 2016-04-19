@@ -18,9 +18,6 @@
 				<div id='calendar'></div>
 				<script>
 				<%
-				String mail = Sessions.getSessions().verifySession(request.getCookies());
-				FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-
 				String startMonth = request.getParameter("startMonth");
 				String startDay = request.getParameter("startDay");
 				String endMonth = request.getParameter("endMonth");

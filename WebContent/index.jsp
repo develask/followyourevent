@@ -7,7 +7,6 @@
 <html>
 	<%@include file="Header.jsp" %>
 				<%
-					String mail = Sessions.getSessions().verifySession(request.getCookies());
 					if (mail == null){
 						%>
 						<div class="jumbotron">
@@ -22,7 +21,6 @@
 			<div class="row">
 			<div class="col-sm-8 blog-main">
 				<%
-					FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 					ArrayList<String[]> evs = new ArrayList<String[]>();
 					ArrayList<String> evs1 = fye.getActualEvents();
 					if (mail != null) evs1.addAll(fye.recommendEvents(fye.MS+"person/"+mail));
