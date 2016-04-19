@@ -50,8 +50,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -252,19 +252,21 @@ public class FollowyoureventTDB {
 	/**
 	 * 
 	 * @param uri
-	 * @return ArrayList -> name, street, logo, capacity, url, auto
+	 * @return ArrayList -> name, street, logo, capacity, url, auto, lat, long
 	 */
 	public String[] getInformationOfPlace(String uri){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uri);
-		String[] arr = new String[6];
-		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX DBpedia: <http://dbpedia.org/> "
-				+ "SELECT ?name ?street ?logo ?capacity ?auto ?url "
+		String[] arr = new String[8];
+		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> PREFIX DBpedia: <http://dbpedia.org/> PREFIX Geo: <http://www.w3.org/2003/01/geo/wgs84_pos#/>"
+				+ "SELECT ?name ?street ?logo ?capacity ?auto ?url ?lat ?long "
 				+ "WHERE { <"+reso+"> Prov:organization ?name ."
 						+ " <"+reso+"> <"+VCARD.Street+"> ?street ."
 						+ " <"+reso+"> DBpedia:logo ?logo ."
 						+ " <"+reso+"> DBpedia:capacity ?capacity ."
 						+ " <"+reso+"> Prov:primarySource ?url ."
-						+ " <"+reso+"> DBpedia:auto ?auto}";
+						+ " <"+reso+"> DBpedia:auto ?auto ."
+						+ " <"+reso+"> Geo:lat ?lat ."
+						+ " <"+reso+"> Geo:long ?long }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	QuerySolution soln = res.nextSolution();
@@ -274,6 +276,8 @@ public class FollowyoureventTDB {
 	    	arr[3] = soln.getLiteral("capacity").toString();
 	    	arr[4] = soln.getLiteral("url").toString();
 	    	arr[5] = soln.getLiteral("auto").toString();
+	    	arr[6] = soln.getLiteral("lat").toString();
+	    	arr[7] = soln.getLiteral("long").toString();
 	    	return arr;
 	    }else{
 	    	return arr;
@@ -526,8 +530,13 @@ public class FollowyoureventTDB {
 	 * @return String of the double if it is necessary
 	 */
 	private String getDoubleToString(double d){
-		String ds = ""+d;
-		return ds.substring(1,2).equals(".")?"0"+ds:ds;
+		String ds[] = (""+d).split(".");
+		String[] minus = ds[0].split("-");
+		String first = minus.length==1?minus[0]:minus[1];
+		while(first.length()<3){
+			first = "0"+first;
+		}
+		return minus.length==1?"":"-"+first+"."+ds[1];
 	}
 	
 	/**

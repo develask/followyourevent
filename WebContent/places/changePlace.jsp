@@ -7,6 +7,11 @@ String email = Sessions.getSessions().verifySession(request.getCookies());
 if (email == null){
 	response.setHeader("Location", "/followyourevent/"+email); 
 }else{
+	FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+	
+	String  pl = request.getParameter("pl");
+	String uriPL =  fye.MS+"place/" + pl;
+	
 	String name = request.getParameter("name");
 	String street = request.getParameter("street");
 	String lat = request.getParameter("lat");
@@ -16,17 +21,11 @@ if (email == null){
 	String url = request.getParameter("url");
 	String check = request.getParameter("auto");
 	if (check==null) check = "No";
-	FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
-	String pla = fye.createPlace(name, street, logo, capacity, url, check.equals("true")?"Want":"No", Double.parseDouble(lat), Double.parseDouble(lng));
-	if (pla!=null){
-		if (fye.addOwnerToAPlace(pla, fye.MS+"person/"+email)){
-			response.setHeader("Location", "/followyourevent/places/place.jsp?pl="+pla.split("/place/")[1]);
-		}else{
-			response.setHeader("Location", "/followyourevent/places");
-		}
-	}else{
-		response.setHeader("Location", "/followyourevent/places"); 
-	}
 	
+	Boolean isMine = fye.placeOwnerOfAPerson(fye.MS+ "person/" + email, uriPL);
+	if (isMine){
+		fye.modifyPlace(uriPL, name, street, logo, capacity, url, check.equals("true")?"Want":"No", Double.parseDouble(lat), Double.parseDouble(lng));
+	}
+	response.setHeader("Location", "/followyourevent/places/place.jsp?pl="+pl);
 }
 %>
