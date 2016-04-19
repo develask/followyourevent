@@ -67,7 +67,9 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			arr = fye.getActualEventsNearToYou(5.05, 60.45);
+ 			fye.updateAutomaticPlaces();
+ 			//System.out.println(fye.getWebUrlOfAPlace(MS+"place/hulencallehulen"));
+ 			//arr = fye.getActualEventsNearToYou(5.05, 60.45);
  			//System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
  			//fye.createRecommendations(MS+"person/maildecade@gmail.com");
 // 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
@@ -93,9 +95,9 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "22:00", "220krmod");
  			//fye.write(System.out, "JSON-LD");
  			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
- 			for (int i = 0; i < arr.size(); i++) {
+ 			/*for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
-			}/**/
+			}*/
  			//System.out.println(fye.eventIsFromAPerson(MS+"event/"+"EventNumber10521", MS+"person/"+"develascomikel@gmail.com"));
  		}catch(Exception e){
  			System.out.println(s);
@@ -284,11 +286,10 @@ public class FollowyoureventTDB {
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
 		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
 				+ "SELECT ?oficial "
-				+ "WHERE { <"+reso+"> Prov:primarySource ?name }";
+				+ "WHERE { <"+reso+"> Prov:primarySource ?oficial }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	QuerySolution soln = res.nextSolution();
-	    	
 	    	return soln.getLiteral("oficial").toString();
 	    }else{
 	    	return null;
@@ -852,7 +853,7 @@ public class FollowyoureventTDB {
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	String auto = res.next().getLiteral("auto").toString();
-	    	if(auto.equals("true")){
+	    	if(auto.equals("Yes")){
 	    		return true;
 	    	}else{
 	    		return false;
@@ -1245,9 +1246,9 @@ public class FollowyoureventTDB {
 	/**
 	 * update the events of the places
 	 */
-	public void updateAutomaticEvents(){
+	public void updateAutomaticPlaces(){
 		ArrayList<String> automatics = getAllAutomaticPlaces();
-		for (int i = 1; i < automatics.size(); i++) {
+		for (int i = 0; i < automatics.size(); i++) {
 			String uri = FollowyoureventTDB.getFollowyoureventTDB().getWebUrlOfAPlace(automatics.get(i));
 			String[][] events = FollowyoureventTDB.getFollowyoureventTDB().getSpecificInfo(uri);
 			FollowyoureventTDB.getFollowyoureventTDB().updateEvents(events);
@@ -1259,7 +1260,13 @@ public class FollowyoureventTDB {
 	 * @param events
 	 */
 	public void updateEvents(String[][] events){
-		//TODO
+		for (int i = 0; i < events.length; i++) {
+			if(existEvent(name, month, day)){
+				modifyEvent(uriEvent, name, image, url, day, month, hour, price);
+			}else{
+				createEvent(name, image, url, day, month, hour, price);
+			}
+		}
 	}
 	
 	/**
@@ -1298,48 +1305,6 @@ public class FollowyoureventTDB {
 				ind++;
 			}
 			break;
-		/*case 2:
-//						System.out.println("KAOS:");
-//						doc = Jsoup.connect("http://kaos-bergen.no/").get();
-//						newsHeadlines = doc.select(".avia-gallery-thumb img");
-//						for (Element element : newsHeadlines) {
-//							System.out.println("\t"+element.attr("src"));
-//						}
-			break;
-		case 3:
-//						System.out.println("\nTIDI:");
-//						doc = Jsoup.connect("http://tidi-bergen.no/").get();
-//						newsHeadlines = doc.select(".avia-gallery-thumb img");
-//						for (Element element : newsHeadlines) {
-//							System.out.println("\t"+element.attr("src"));
-//						}
-		//	
-			break;
-		case 4:
-//						System.out.println("\nLILLE:");
-//						doc = Jsoup.connect("http://lille-bergen.no/").get();
-//						newsHeadlines = doc.select(".avia-gallery-thumb img");
-//						for (Element element : newsHeadlines) {
-//							System.out.println("\t"+element.attr("src"));
-//						}
-		//	
-			break;
-		case 5:
-//						System.out.println("\nTHESCOTSMAN:");
-//						doc = Jsoup.connect("http://thescotsman.no/").get();
-//						newsHeadlines = doc.select(".avia-gallery-thumb img");
-//						for (Element element : newsHeadlines) {
-//							System.out.println("\t"+element.attr("src"));
-//						}
-		//	
-			break;
-
-//						System.out.println("\nKOK:");
-//						doc = Jsoup.connect("http://klubbkok.no/").get();
-//						newsHeadlines = doc.select(".hours p");
-//						for (Element element : newsHeadlines) {
-//							System.out.println("\t"+element.text());
-//						}*/
 		default:
 			break;
 		}

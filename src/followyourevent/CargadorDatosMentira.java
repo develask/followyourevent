@@ -77,14 +77,14 @@ public class CargadorDatosMentira {
 		//Ines Dominguez is a person
 		//InesDominguez.addProperty(RDF.type,person);
 		
-		Resource place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"Place");
+		Resource place = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place");
 		
 		Resource hulen = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/hulencallehulen");
 		hulen.addLiteral(organization, "hulen");
 		hulen.addLiteral(VCARD.Street, "callehulen");
 		hulen.addLiteral(logo, "urllogo");
 		hulen.addLiteral(capacity, "250");
-		hulen.addLiteral(auto, "yes");
+		hulen.addLiteral(auto, "Yes");
 		hulen.addLiteral(primarySource, "paginaoficial");
 		hulen.addProperty(RDF.type, place);
 		hulen.addLiteral(plat, "60.38");
@@ -95,7 +95,7 @@ public class CargadorDatosMentira {
 		tidi.addLiteral(VCARD.Street, "calletidi");
 		tidi.addLiteral(logo, "urllogo");
 		tidi.addLiteral(capacity, "250");
-		tidi.addLiteral(auto, "no");
+		tidi.addLiteral(auto, "No");
 		tidi.addLiteral(primarySource, "paginaoficial");
 		tidi.addProperty(RDF.type, place);
 		tidi.addLiteral(plat, "60.90");
