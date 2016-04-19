@@ -67,8 +67,7 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			System.out.println(fye.getDoubleToString(-1.1));
- 			//fye.modifyPlace(MS+"place/hulencallehulen", "hulen", "callehulenmodi", "logomodi", "masqyeabtes", "paginaoficialmod", "yes", 60.51, 05.28);
+ 			fye.modifyPlace(MS+"place/hulencallehulen", "hulenmodificado", "callehulenmodificado", "logomodificado", "masqyeabtesmodificado", "paginaoficialmodificado", "yesmodificado", 60.51, 05.28);
  			//System.out.println(fye.getWebUrlOfAPlace(MS+"place/hulencallehulen"));
  			//arr = fye.getActualEventsNearToYou(5.05, 60.45);
  			//System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
@@ -94,7 +93,7 @@ public class FollowyoureventTDB {
  			//fye.write(System.out, "JSON-LD");
  			//System.out.println("--------------------------------------------------------------");
  			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "22:00", "220krmod");
- 			//fye.write(System.out, "JSON-LD");
+ 			fye.write(System.out, "JSON-LD");
  			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
  			/*for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
@@ -746,8 +745,8 @@ public class FollowyoureventTDB {
 		Property plat = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/lat");
 		Property plong = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/long");
 		Resource place = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/place");
-		String slat = this.getDoubleToString(lat);
-		String slong = this.getDoubleToString(longi);
+		String slat = getDoubleToString(lat);
+		String slong = getDoubleToString(longi);
 		if(!existPlace(placeName, street)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+(placeName+street).replaceAll(" ", ""));
 			res.addLiteral(porganization, placeName);
@@ -1088,7 +1087,6 @@ public class FollowyoureventTDB {
 	 * @return if added true; if it was already added false
 	 */
 	public boolean addEventToAPlace(String uriPlace, String uriEvent){
-
 		try{
 			Resource resPlace = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
 			Resource resEvent = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriEvent);
@@ -1337,17 +1335,16 @@ public class FollowyoureventTDB {
 	public void modifyPlace(String uriPlace, String placeName, String street, String logo, String capacity, String oficialweb, String auto, double lat, double longi){
 		Resource respla = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriPlace);
 		Property pplaceName = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
-		Property pstreet = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/vcard-rdf/street");
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
 		Property pprimarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
 		Property pauto = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/auto");
 		Property plat = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/lat");
 		Property plong = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/long");
-		String slat = this.getDoubleToString(lat);
-		String slong = this.getDoubleToString(longi);
+		String slat = getDoubleToString(lat);
+		String slong = getDoubleToString(longi);
 		UpdateRequest update = UpdateFactory.create("DELETE { <"+respla+"> <"+pplaceName+"> ?placename ."
-						+ " <"+respla+"> <"+pstreet+"> ?street ."
+						+ " <"+respla+"> <"+VCARD.Street+"> ?Street ."
 						+ " <"+respla+"> <"+plogo+"> ?logo ."
 						+ "	<"+respla+"> <"+pcapacity+"> ?capacity ."
 						+ " <"+respla+"> <"+pprimarySource+"> ?oficialweb ."
@@ -1355,7 +1352,7 @@ public class FollowyoureventTDB {
 						+ " <"+respla+"> <"+plat+"> ?lat ."
 						+ " <"+respla+"> <"+plong+"> ?long }"
 				+ "INSERT { <"+respla+"> <"+pplaceName+"> '"+placeName+"' ."
-						+ " <"+respla+"> <"+pstreet+"> '"+street+"' ."
+						+ " <"+respla+"> <"+VCARD.Street+"> '"+street+"' ."
 						+ " <"+respla+"> <"+plogo+"> '"+logo+"' ."
 						+ " <"+respla+"> <"+pcapacity+"> '"+capacity+"' ."
 						+ " <"+respla+"> <"+pprimarySource+"> '"+oficialweb+"' ."
@@ -1363,7 +1360,7 @@ public class FollowyoureventTDB {
 						+ " <"+respla+"> <"+plat+"> '"+slat+"' ."
 						+ " <"+respla+"> <"+plong+"> '"+slong+"' }"
 				+ "WHERE { <"+respla+"> <"+pplaceName+"> ?placename ."
-					+ " <"+respla+"> <"+pstreet+"> ?street ."
+					+ " <"+respla+"> <"+VCARD.Street+"> ?Street ."
 					+ " <"+respla+"> <"+plogo+"> ?logo ."
 					+ " <"+respla+"> <"+pcapacity+"> ?capacity ."
 					+ " <"+respla+"> <"+pprimarySource+"> ?oficialweb ."

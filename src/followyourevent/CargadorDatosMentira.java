@@ -46,9 +46,9 @@ public class CargadorDatosMentira {
 
 		Property price = FollowyoureventTDB.getFollowyoureventTDB().createProperty(schema+"price");
 		
-		Property logo = FollowyoureventTDB.getFollowyoureventTDB().createProperty(prov+"logo");
+		Property logo = FollowyoureventTDB.getFollowyoureventTDB().createProperty(dbPedia+"logo");
 		
-		Property capacity = FollowyoureventTDB.getFollowyoureventTDB().createProperty(prov+"capacity");
+		Property capacity = FollowyoureventTDB.getFollowyoureventTDB().createProperty(dbPedia+"capacity");
 		
 		Property kind = FollowyoureventTDB.getFollowyoureventTDB().createProperty(dbPedia+"kind");
 		

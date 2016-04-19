@@ -11,7 +11,7 @@ http://dbpedia.org/day - Day
 http://dbpedia.org/month - Month
 http://www.w3.org/TR/prov-dm/start - Hour
 http://schema.org/price - Price
-http://www.w3.org/TR/vcard-rdf/street - Street
+http://www.w3.org/TR/vcard-rdf/Street - Street
 http://dbpedia.org/logo - Logo
 http://www.w3.org/2003/01/geo/wgs84_pos#/lat - Lat
 http://www.w3.org/2003/01/geo/wgs84_pos#/long - Long
