@@ -11,7 +11,6 @@ if (email == null){
 	String street = request.getParameter("street");
 	String lat = request.getParameter("lat");
 	String lng = request.getParameter("lon");
-	System.out.println("Position: " + lat + " | " + lng);
 	String logo = request.getParameter("logo");
 	String capacity = request.getParameter("capacity");
 	String url = request.getParameter("url");
