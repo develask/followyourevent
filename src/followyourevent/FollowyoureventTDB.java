@@ -67,7 +67,8 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			fye.modifyPlace(MS+"place/hulencallehulen", "hulen", "callehulenmodi", "logomodi", "masqyeabtes", "paginaoficialmod", "yes", 60.51, 05.28);
+ 			System.out.println(fye.getDoubleToString(-1.1));
+ 			//fye.modifyPlace(MS+"place/hulencallehulen", "hulen", "callehulenmodi", "logomodi", "masqyeabtes", "paginaoficialmod", "yes", 60.51, 05.28);
  			//System.out.println(fye.getWebUrlOfAPlace(MS+"place/hulencallehulen"));
  			//arr = fye.getActualEventsNearToYou(5.05, 60.45);
  			//System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
@@ -93,7 +94,7 @@ public class FollowyoureventTDB {
  			//fye.write(System.out, "JSON-LD");
  			//System.out.println("--------------------------------------------------------------");
  			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "22:00", "220krmod");
- 			fye.write(System.out, "JSON-LD");
+ 			//fye.write(System.out, "JSON-LD");
  			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
  			/*for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
@@ -530,14 +531,14 @@ public class FollowyoureventTDB {
 	 * @param d
 	 * @return String of the double if it is necessary
 	 */
-	private String getDoubleToString(double d){
-		String ds[] = (""+d).split(".");
+	public static String getDoubleToString(double d){
+		String ds[] = (""+d).split("[.]");
 		String[] minus = ds[0].split("-");
 		String first = minus.length==1?minus[0]:minus[1];
 		while(first.length()<3){
 			first = "0"+first;
 		}
-		return minus.length==1?"":"-"+first+"."+ds[1];
+		return (minus.length==1?"":"-")+first+"."+ds[1];
 	}
 	
 	/**
