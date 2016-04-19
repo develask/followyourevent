@@ -50,8 +50,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -67,7 +67,7 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			fye.updateAutomaticPlaces();
+ 			fye.modifyPlace(MS+"place/hulencallehulen", "hulen", "callehulenmodi", "logomodi", "masqyeabtes", "paginaoficialmod", "yes", 60.51, 05.28);
  			//System.out.println(fye.getWebUrlOfAPlace(MS+"place/hulencallehulen"));
  			//arr = fye.getActualEventsNearToYou(5.05, 60.45);
  			//System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
@@ -93,7 +93,7 @@ public class FollowyoureventTDB {
  			//fye.write(System.out, "JSON-LD");
  			//System.out.println("--------------------------------------------------------------");
  			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "22:00", "220krmod");
- 			//fye.write(System.out, "JSON-LD");
+ 			fye.write(System.out, "JSON-LD");
  			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
  			/*for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
@@ -1353,7 +1353,7 @@ public class FollowyoureventTDB {
 						+ " <"+respla+"> <"+pauto+"> ?auto ."
 						+ " <"+respla+"> <"+plat+"> ?lat ."
 						+ " <"+respla+"> <"+plong+"> ?long }"
-				+ "	INSERT { <"+respla+"> <"+pplaceName+"> '"+placeName+"' ."
+				+ "INSERT { <"+respla+"> <"+pplaceName+"> '"+placeName+"' ."
 						+ " <"+respla+"> <"+pstreet+"> '"+street+"' ."
 						+ " <"+respla+"> <"+plogo+"> '"+logo+"' ."
 						+ " <"+respla+"> <"+pcapacity+"> '"+capacity+"' ."
