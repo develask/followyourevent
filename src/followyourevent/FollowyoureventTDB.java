@@ -50,8 +50,8 @@ public class FollowyoureventTDB {
  	private static QueryExecution qexec=null;
 // 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -67,7 +67,8 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
+ 			arr = fye.getActualEventsNearToYou(5.05, 60.45);
+ 			//System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
  			//fye.createRecommendations(MS+"person/maildecade@gmail.com");
 // 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
 // 			System.out.println(arr.size());
@@ -92,9 +93,9 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "22:00", "220krmod");
  			//fye.write(System.out, "JSON-LD");
  			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
- 			//for (int i = 0; i < arr.size(); i++) {
-			//	System.out.println(arr.get(i).toString());
-			//}/**/
+ 			for (int i = 0; i < arr.size(); i++) {
+ 				System.out.println(arr.get(i).toString());
+			}/**/
  			//System.out.println(fye.eventIsFromAPerson(MS+"event/"+"EventNumber10521", MS+"person/"+"develascomikel@gmail.com"));
  		}catch(Exception e){
  			System.out.println(s);
@@ -510,9 +511,83 @@ public class FollowyoureventTDB {
     	return arr;
 	}
 	
+	/**
+	 * 
+	 * @param n
+	 * @return String of the num with 0 if it is necessary 
+	 */
 	private String getNumToString(int n){
 		return (n+"").length()==1?"0"+n:""+n;
 	}
+	
+	/**
+	 * 
+	 * @param d
+	 * @return String of the double if it is necessary
+	 */
+	private String getDoubleToString(double d){
+		String ds = ""+d;
+		return ds.substring(1,2).equals(".")?"0"+ds:ds;
+	}
+	
+	/**
+	 * 
+	 * @param lat
+	 * @param longi
+	 * @return
+	 */
+	public ArrayList<String> getActualEventsNearToYou(double lat, double longi){
+		Calendar cal = Calendar.getInstance();
+		Date now = cal.getTime();
+		cal.setTime(now);
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		int month = cal.get(Calendar.MONTH) + 1;
+		ArrayList<String> arr = new ArrayList<String>();
+		String query;
+		if((day+7)>30){
+			query = "PREFIX DBpedia: <http://dbpedia.org/> "
+					+ " PREFIX Own: <http://followyourevent.com/> "
+					+ " PREFIX Geo: <http://www.w3.org/2003/01/geo/wgs84_pos#/> "
+					+ "SELECT ?ev ?month ?day ?lat ?long"
+					+ "WHERE { ?ev DBpedia:month ?month ."
+					+ " ?place Own:offers ?ev ."
+					+ " ?ev DBpedia:day ?day ."
+					+ " ?place Geo:lat ?lat ."
+					+ " ?place Geo:long ?long ."
+					+ " FILTER ( ?lat >= '"+(lat-0.3)+"' && '"+(lat+0.3)+"' <= ?lat && ?long >= '"+(longi-0.3)+"' && '"+(longi+0.3)+"' <= ?long && "
+					+ "(('"+getNumToString((day+7)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' =< ?day && ?month = '"+getNumToString(month)+"'))) ";
+		}else{
+			System.out.println(getDoubleToString(lat-1.3));
+			query = "PREFIX DBpedia: <http://dbpedia.org/> "
+					+ " PREFIX Own: <http://followyourevent.com/> "
+					+ " PREFIX Geo: <http://www.w3.org/2003/01/geo/wgs84_pos#/> "
+					+ "SELECT ?ev ?month ?day ?lat ?long "
+					+ "WHERE { ?ev DBpedia:month ?month ."
+					+ " ?ev DBpedia:day ?day ."
+					+ " ?place Own:offers ?ev ."
+					+ " ?place Geo:lat ?lat ."
+					+ " ?place Geo:long ?long ."
+					+ " FILTER ( ?lat >= '"+getDoubleToString(lat-1.3)+"' && '"+getDoubleToString(lat+1.3)+"' >= ?lat && ?long >= '"+getDoubleToString(longi-1.3)+"' && '"+getDoubleToString(longi+1.3)+"' >= ?long )"
+					+ " FILTER (('"+getNumToString(day)+"' <=  ?day && ?day <= '"+getNumToString((day+7))+"') && (?month = '"+getNumToString(month)+"')) }";
+		}
+		
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	while (res.hasNext()) {
+	    		QuerySolution soln = res.next();
+	    		try{
+	    			String l = soln.getResource("ev").toString();
+		    		arr.add(l);
+	    		}catch(Exception e){
+	    			
+	    		}
+			}
+	    	return arr;
+	    }else{
+	    	return arr;
+	    }
+	}
+	
 	/**
 	 * 
 	 * @return Arraylist Events 
@@ -645,15 +720,23 @@ public class FollowyoureventTDB {
 	 * @param street
 	 * @param logo
 	 * @param capacity
+	 * @param oficialweb
+	 * @param auto
+	 * @param lat
+	 * @param longi  
 	 * @return true if ok; false if not created
 	 */
-	public String createPlace(String placeName, String street, String logo, String capacity, String oficialweb, String auto){
+	public String createPlace(String placeName, String street, String logo, String capacity, String oficialweb, String auto, double lat, double longi){
 		Property porganization = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
 		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
 		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
 		Property pauto = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://dbpedia.org/auto");
 		Property primarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
+		Property plat = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/lat");
+		Property plong = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/long");
 		Resource place = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/place");
+		String slat = this.getDoubleToString(lat);
+		String slong = this.getDoubleToString(longi);
 		if(!existPlace(placeName, street)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+(placeName+street).replaceAll(" ", ""));
 			res.addLiteral(porganization, placeName);
@@ -663,6 +746,8 @@ public class FollowyoureventTDB {
 			res.addLiteral(pauto,auto);
 			res.addLiteral(primarySource, oficialweb);
 			res.addProperty(RDF.type, place);
+			res.addLiteral(plat, slat);
+			res.addLiteral(plong, slong);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return res.toString();
 		}else{
@@ -1264,6 +1349,59 @@ public class FollowyoureventTDB {
 	
 	/**
 	 * 
+	 * @param uriPlace
+	 * @param placeName
+	 * @param street
+	 * @param logo
+	 * @param capacity
+	 * @param oficialweb
+	 * @param auto
+	 * @param lat
+	 * @param longi
+	 */
+	public void modifyPlace(String uriPlace, String placeName, String street, String logo, String capacity, String oficialweb, String auto, double lat, double longi){
+		Resource respla = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriPlace);
+		Property pplaceName = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/organization");
+		Property pstreet = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/vcard-rdf/street");
+		Property plogo = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/logo");
+		Property pcapacity = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/capacity");
+		Property pprimarySource = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/primarySource");
+		Property pauto = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/auto");
+		Property plat = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/lat");
+		Property plong = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/long");
+		String slat = this.getDoubleToString(lat);
+		String slong = this.getDoubleToString(longi);
+		UpdateRequest update = UpdateFactory.create("DELETE { <"+respla+"> <"+pplaceName+"> ?placename ."
+						+ " <"+respla+"> <"+pstreet+"> ?street ."
+						+ " <"+respla+"> <"+plogo+"> ?logo ."
+						+ "	<"+respla+"> <"+pcapacity+"> ?capacity ."
+						+ " <"+respla+"> <"+pprimarySource+"> ?oficialweb ."
+						+ " <"+respla+"> <"+pauto+"> ?auto ."
+						+ " <"+respla+"> <"+plat+"> ?lat ."
+						+ " <"+respla+"> <"+plong+"> ?long }"
+				+ "	INSERT { <"+respla+"> <"+pplaceName+"> '"+placeName+"' ."
+						+ " <"+respla+"> <"+pstreet+"> '"+street+"' ."
+						+ " <"+respla+"> <"+plogo+"> '"+logo+"' ."
+						+ " <"+respla+"> <"+pcapacity+"> '"+capacity+"' ."
+						+ " <"+respla+"> <"+pprimarySource+"> '"+oficialweb+"' ."
+						+ "	<"+respla+"> <"+pauto+"> '"+auto+"' ."
+						+ " <"+respla+"> <"+plat+"> '"+slat+"' ."
+						+ " <"+respla+"> <"+plong+"> '"+slong+"' }"
+				+ "WHERE { <"+respla+"> <"+pplaceName+"> ?placename ."
+					+ " <"+respla+"> <"+pstreet+"> ?street ."
+					+ " <"+respla+"> <"+plogo+"> ?logo ."
+					+ " <"+respla+"> <"+pcapacity+"> ?capacity ."
+					+ " <"+respla+"> <"+pprimarySource+"> ?oficialweb ."
+					+ "	<"+respla+"> <"+pauto+"> ?auto ."
+					+ " <"+respla+"> <"+plat+"> ?lat ."
+					+ " <"+respla+"> <"+plong+"> ?long }");
+		
+		UpdateAction.execute(update, dataset);
+		FollowyoureventTDB.getFollowyoureventTDB().commit();
+	}
+	
+	/**
+	 * 
 	 * @param uriEvent
 	 * @param name
 	 * @param image
@@ -1283,7 +1421,6 @@ public class FollowyoureventTDB {
 		Property pmonth = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/month");
 		Property start = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/TR/prov-dm/start");
 		Property pprice = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://schema.org/price");
-		Resource event = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/event");
 		UpdateRequest update = UpdateFactory.create("DELETE { <"+resev+"> <"+eventname+"> ?name ."
 						+ " <"+resev+"> <"+pimage+"> ?image ."
 						+ " <"+resev+"> <"+primarySource+"> ?primary ."
@@ -1307,7 +1444,6 @@ public class FollowyoureventTDB {
 					+ " <"+resev+"> <"+pprice+"> ?price }");
 		
 		UpdateAction.execute(update, dataset);	  
-		resev.addLiteral(start, hour);
 		FollowyoureventTDB.getFollowyoureventTDB().commit();
 	}
 	
