@@ -87,8 +87,8 @@ public class CargadorDatosMentira {
 		hulen.addLiteral(auto, "Yes");
 		hulen.addLiteral(primarySource, "paginaoficial");
 		hulen.addProperty(RDF.type, place);
-		hulen.addLiteral(plat, "60.38");
-		hulen.addLiteral(plong, "05.32");
+		hulen.addLiteral(plat, "060.38");
+		hulen.addLiteral(plong, "005.32");
 		
 		Resource tidi = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/tidicalletidi");
 		tidi.addLiteral(organization, "tidi");
@@ -98,8 +98,8 @@ public class CargadorDatosMentira {
 		tidi.addLiteral(auto, "No");
 		tidi.addLiteral(primarySource, "paginaoficial");
 		tidi.addProperty(RDF.type, place);
-		tidi.addLiteral(plat, "60.90");
-		tidi.addLiteral(plong, "05.80");
+		tidi.addLiteral(plat, "060.90");
+		tidi.addLiteral(plong, "005.80");
 		
 		//Create PostalAddress of Cade Tracy
 		Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/hulen0411");

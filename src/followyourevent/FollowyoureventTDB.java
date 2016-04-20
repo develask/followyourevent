@@ -67,7 +67,8 @@ public class FollowyoureventTDB {
  			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
  			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
  			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			fye.modifyPlace(MS+"place/hulencallehulen", "hulenmodificado", "callehulenmodificado", "logomodificado", "masqyeabtesmodificado", "paginaoficialmodificado", "yesmodificado", 60.51, 05.28);
+ 			arr = fye.getActualEventsNearToYou(60.00, 005.00, 002.00);
+ 			//fye.modifyPlace(MS+"place/hulencallehulen", "hulenmodificado", "callehulenmodificado", "logomodificado", "masqyeabtesmodificado", "paginaoficialmodificado", "yesmodificado", 60.51, 05.28);
  			//System.out.println(fye.getWebUrlOfAPlace(MS+"place/hulencallehulen"));
  			//arr = fye.getActualEventsNearToYou(5.05, 60.45);
  			//System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
@@ -93,11 +94,11 @@ public class FollowyoureventTDB {
  			//fye.write(System.out, "JSON-LD");
  			//System.out.println("--------------------------------------------------------------");
  			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "22:00", "220krmod");
- 			fye.write(System.out, "JSON-LD");
+ 			//fye.write(System.out, "JSON-LD");
  			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
- 			/*for (int i = 0; i < arr.size(); i++) {
+ 			for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
-			}*/
+			}
  			//System.out.println(fye.eventIsFromAPerson(MS+"event/"+"EventNumber10521", MS+"person/"+"develascomikel@gmail.com"));
  		}catch(Exception e){
  			System.out.println(s);
@@ -577,24 +578,28 @@ public class FollowyoureventTDB {
 		if(lat-distancia<=-90.00){
 			latMin="0"+-90.00;
 		}else{
-			latMin= getDoubleToString(lat+distancia);
+			latMin= getDoubleToString(lat-distancia);
 		}
 		
-		if(longi+distancia>=180){
+		if(longi+distancia>=180.00){
 			longMax=getDoubleToString(longi+distancia-180.00);
 		}else{
 			longMax=getDoubleToString(longi+distancia);
 		}
 		if(longi-distancia<=-180.00){
+			System.out.println("no tiene");
 			longMin=getDoubleToString(longi-distancia+180.00);
 			inverse=true;
 		}else{
 			longMin=getDoubleToString(longi-distancia);
 		}
+		System.out.println(latMin+" - "+latMax+" - "+longMin+" - "+longMax);
 		if(!inverse){
-			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long >= '"+longMin+"' && '"+longMax+"' >= ?long )";
+			System.out.println("xkasi");
+			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long >= '"+longMin+"' && '"+longMax+"' >= ?long )}";
 		}else{
-			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long <= '"+longMin+"' && '"+longMax+"' <= ?long )";
+			System.out.println("no inverso");
+			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long <= '"+longMin+"' && '"+longMax+"' <= ?long )}";
 		}
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
