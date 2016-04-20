@@ -546,41 +546,56 @@ public class FollowyoureventTDB {
 	 * @param longi
 	 * @return
 	 */
-	public ArrayList<String> getActualEventsNearToYou(double lat, double longi){
+	public ArrayList<String> getActualEventsNearToYou(double lat, double longi, double distancia){
+		String latMin,latMax,longMin,longMax;
+		boolean inverse=false;
 		Calendar cal = Calendar.getInstance();
 		Date now = cal.getTime();
 		cal.setTime(now);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 		int month = cal.get(Calendar.MONTH) + 1;
 		ArrayList<String> arr = new ArrayList<String>();
-		String query;
+		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
+				+ " PREFIX Own: <http://followyourevent.com/> "
+				+ " PREFIX Geo: <http://www.w3.org/2003/01/geo/wgs84_pos#/> "
+				+ "SELECT ?ev ?month ?day ?lat ?long"
+				+ "WHERE { ?ev DBpedia:month ?month ."
+				+ " ?place Own:offers ?ev ."
+				+ " ?ev DBpedia:day ?day ."
+				+ " ?place Geo:lat ?lat ."
+				+ " ?place Geo:long ?long .";
 		if((day+7)>30){
-			query = "PREFIX DBpedia: <http://dbpedia.org/> "
-					+ " PREFIX Own: <http://followyourevent.com/> "
-					+ " PREFIX Geo: <http://www.w3.org/2003/01/geo/wgs84_pos#/> "
-					+ "SELECT ?ev ?month ?day ?lat ?long"
-					+ "WHERE { ?ev DBpedia:month ?month ."
-					+ " ?place Own:offers ?ev ."
-					+ " ?ev DBpedia:day ?day ."
-					+ " ?place Geo:lat ?lat ."
-					+ " ?place Geo:long ?long ."
-					+ " FILTER ( ?lat >= '"+(lat-0.3)+"' && '"+(lat+0.3)+"' <= ?lat && ?long >= '"+(longi-0.3)+"' && '"+(longi+0.3)+"' <= ?long && "
-					+ "(('"+getNumToString((day+7)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' =< ?day && ?month = '"+getNumToString(month)+"'))) ";
+			query += "FILTER (('"+getNumToString((day+7)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' =< ?day && ?month = '"+getNumToString(month)+"')) ";
 		}else{
-			System.out.println(getDoubleToString(lat-1.3));
-			query = "PREFIX DBpedia: <http://dbpedia.org/> "
-					+ " PREFIX Own: <http://followyourevent.com/> "
-					+ " PREFIX Geo: <http://www.w3.org/2003/01/geo/wgs84_pos#/> "
-					+ "SELECT ?ev ?month ?day ?lat ?long "
-					+ "WHERE { ?ev DBpedia:month ?month ."
-					+ " ?ev DBpedia:day ?day ."
-					+ " ?place Own:offers ?ev ."
-					+ " ?place Geo:lat ?lat ."
-					+ " ?place Geo:long ?long ."
-					+ " FILTER ( ?lat >= '"+getDoubleToString(lat-1.3)+"' && '"+getDoubleToString(lat+1.3)+"' >= ?lat && ?long >= '"+getDoubleToString(longi-1.3)+"' && '"+getDoubleToString(longi+1.3)+"' >= ?long )"
-					+ " FILTER (('"+getNumToString(day)+"' <=  ?day && ?day <= '"+getNumToString((day+7))+"') && (?month = '"+getNumToString(month)+"')) }";
+			query += " FILTER (('"+getNumToString(day)+"' <=  ?day && ?day <= '"+getNumToString((day+7))+"') && (?month = '"+getNumToString(month)+"')) ";
+		}
+		if(lat+distancia>=90.00){
+			latMax="0"+90.00;
+		}else{
+			latMax = getDoubleToString(lat+distancia);
+		}
+		if(lat-distancia<=-90.00){
+			latMin="0"+-90.00;
+		}else{
+			latMin= getDoubleToString(lat+distancia);
 		}
 		
+		if(longi+distancia>=180){
+			longMax=getDoubleToString(longi+distancia-180.00);
+		}else{
+			longMax=getDoubleToString(longi+distancia);
+		}
+		if(longi-distancia<=-180.00){
+			longMin=getDoubleToString(longi-distancia+180.00);
+			inverse=true;
+		}else{
+			longMin=getDoubleToString(longi-distancia);
+		}
+		if(!inverse){
+			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long >= '"+longMin+"' && '"+longMax+"' >= ?long )";
+		}else{
+			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long <= '"+longMin+"' && '"+longMax+"' <= ?long )";
+		}
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	while (res.hasNext()) {
