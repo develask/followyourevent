@@ -117,7 +117,7 @@
 										// api = AIzaSyAcXuoYJXKQ8P4h2l8zSIqr91UrhbTC83o
 										function initMap(){
 											$("#dropdown2").removeClass("collapse");
-											var myLatlng = {lat: <%= infopl[6] %>, lng: <%= infopl[7] %>};
+											var myLatlng = {lat: <%= Double.parseDouble(infopl[6]) %>, lng: <%= Double.parseDouble(infopl[7]) %>};
 											
 											var map = new google.maps.Map(document.getElementById('map'), {
 											    zoom: 14,
@@ -165,12 +165,12 @@
 									<div class="form-group">
 										<label for="auto" class="col-sm-2">Page auto:</label>
 										<div class="col-sm-10">
-											<input type="checkbox" class="" id="auto" placeholder="Number" name="auto" value="<%= infopl[5].equals("No")?"false":"true" %>">
+											<input type="checkbox" class="" id="auto" placeholder="Number" name="auto" value="auto" <%= infopl[5].equals("No")?"":"checked" %>>
 										</div>
 									</div>
 									<div class="form-group">
 										<div class="col-sm-offset-2 col-sm-10">
-											<button type="submit" class="btn btn-default">Create</button>
+											<button type="submit" class="btn btn-default">Modify</button>
 										</div>
 									</div>
 								</form>

@@ -14,8 +14,7 @@ if (email == null){
 	String logo = request.getParameter("logo");
 	String capacity = request.getParameter("capacity");
 	String url = request.getParameter("url");
-	String check = request.getParameter("auto");
-	if (check==null) check = "No";
+	String check = request.getParameter("auto")!=null?"true":"false";
 	FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
 	String pla = fye.createPlace(name, street, logo, capacity, url, check.equals("true")?"Want":"No", Double.parseDouble(lat), Double.parseDouble(lng));
 	if (pla!=null){
