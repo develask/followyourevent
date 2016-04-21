@@ -44,6 +44,8 @@
 					fechaFin = cal.get(Calendar.YEAR)+"-"+month+"-"+day;
 				}
 				
+				ArrayList<String> evs = fye.getActualEventsNearToYou(Double.parseDouble(lat), Double.parseDouble(lon), dist, fechaInicio.split("-")[1], fechaInicio.split("-")[2], fechaFin.split("-")[1], fechaFin.split("-")[2]);
+				
 				%>
 				<form action="search.jsp">
 					<div class="form-group">
@@ -97,6 +99,28 @@
 								$("#lat").val(ev.latLng.lat());
 								$("#lng").val(ev.latLng.lng());
 							});
+							
+							<%
+							for (String ev: evs){
+								String[] infoEv = fye.getInformationOfEvent(ev);
+								String[] infoPl = fye.getInformationOfPlace(fye.getPlaceOfAnEvent(ev));
+								boolean b = fye.PersonAssist(fye.MS+"person/"+mail, ev);
+								System.out.println(ev);
+							%>
+							new google.maps.Marker({
+							    position: {
+							    	lat: <%= Double.parseDouble(""+infoPl[6]) %>,
+							    	lng: <%= Double.parseDouble(""+infoPl[7]) %>
+							    },
+							    map: map,
+							    title: 'Position'
+							}).addListener("click", function(ev){
+								
+							});
+							<%
+							}
+							%>
+							
 							setTimeout(function(){
 								$("#dropdown2").addClass("collapse");
 							},500);

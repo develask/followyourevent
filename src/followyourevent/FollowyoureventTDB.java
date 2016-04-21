@@ -44,8 +44,8 @@ public class FollowyoureventTDB {
  	private static Dataset dataset=null;
  	private static QueryExecution qexec=null;
  	public static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -58,10 +58,11 @@ public class FollowyoureventTDB {
  		ArrayList<String> arr;
  		try{
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			arr = fye.getActualEventsNearToYou(60.00, 5., 5.00, "04", "20", "04", "24");
+ 			/*arr = fye.getActualEventsNearToYou(60.00, 5., 5.00, "04", "20", "04", "24");
  			for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
-			}
+			}*/
+ 			fye.write(System.out, "JSON-LD");
  		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -513,13 +514,13 @@ public class FollowyoureventTDB {
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ " PREFIX Own: <http://followyourevent.com/> "
 				+ " PREFIX Geo: <http://www.w3.org/2003/01/geo/wgs84_pos#/> "
-				+ "SELECT ?ev ?month ?day ?lat ?long"
+				+ "SELECT ?ev ?month ?day ?lat ?long "
 				+ "WHERE { ?ev DBpedia:month ?month ."
 				+ " ?place Own:offers ?ev ."
 				+ " ?ev DBpedia:day ?day ."
 				+ " ?place Geo:lat ?lat ."
 				+ " ?place Geo:long ?long ."
-		        + " FILTER ((( '"+startDay+"' <= ?day && '"+startMonth+"' = ?month ) || '"+startMonth+"' < ?month ) && (( '"+endDay+"' >= ?day && '"+endMonth+"' = ?month ) || '"+endMonth+"' > ?month ))";
+		        + " FILTER ((( '"+startDay+"' <= ?day && '"+startMonth+"' = ?month ) || '"+startMonth+"' < ?month ) && (( '"+endDay+"' >= ?day && '"+endMonth+"' = ?month ) || '"+endMonth+"' > ?month )) ";
 		if(lat+distancia>=90.00){
 			latMax="0"+90.00;
 		}else{
@@ -528,34 +529,65 @@ public class FollowyoureventTDB {
 		
 		if(lat-distancia<=-90.00){
 			latMin="0"+-90.00;
+			
 		}else{
 			latMin= getDoubleToString(lat-distancia);
 		}
 		
 		if(longi+distancia>=180.00){
-			longMax=getDoubleToString(longi+distancia-180.00);
+			longMax=getDoubleToString(longi+distancia-360.00);
+			inverse=true;
 		}else{
 			longMax=getDoubleToString(longi+distancia);
 		}
 		
 		if(longi-distancia<=-180.00){
-			longMin=getDoubleToString(longi-distancia+180.00);
+			longMin=getDoubleToString(longi-distancia+360.00);//043.33959946071883,-003.013601303100586
 			inverse=true;
 		}else{
 			longMin=getDoubleToString(longi-distancia);
 		}
 		
-		if(!inverse){
-			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long >= '"+longMin+"' && '"+longMax+"' >= ?long )}";
+		if(lat-distancia<0.00){
+			query += "FILTER (( ?lat <= '"+latMin+"' || ?lat >= '000.00') &&"; 
 		}else{
-			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long <= '"+longMin+"' && '"+longMax+"' <= ?long )}";
+			query += "FILTER ( ?lat >= '"+latMin+"' && "; 
 		}
+		
+		if(lat+distancia<0.00){
+			query += "'"+latMax+"' <= ?lat && ";
+		}else{
+			query += " ( regex(?lat, \"-\") && ( ?lat <= '"+latMax+"' || ?lat >= '-000.00') ) && ";
+		}
+		
+		if(longi-distancia<0.00 && !inverse){
+			query += "( ?long <= '"+longMin+"' || ?long >= '000.00') && ";
+		}else if(longi-distancia<0.00 && inverse){
+			query += "( ?long >= '"+longMin+"' || ?long <= '180.00') && "; 
+		}else if(longi-distancia>0.00 && !inverse){
+			query += "?long >= '"+longMin+"' && ";
+		}else if(longi-distancia>0.00  && inverse){
+			query += "( regex(?long, \"-\") &&  ( ?long <= '"+longMin+"' || ?long >= '-000.00') ) && ";
+		}
+		
+		if(longi+distancia<0.00 && !inverse){
+			query += "?long >= '"+longMax+"' )}";
+		}else if(longi+distancia<0.00 && inverse){
+			query += "( ?long <= '"+longMax+"' || ?long >= '000.00') )}"; 
+		}else if(longi+distancia>0.00 && !inverse){
+			query += "( regex(?long, \"-\") && (?long <= '"+longMax+"' || ?long >= '-000.00') ) )}";
+		}else if(longi+distancia>0.00  && inverse){
+			query += "( regex(?long, \"-\") && ( ?long >= '"+longMax+"' || ?long <= '-180.00') ) )}";
+		}
+		
+		System.out.println(query);
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	while (res.hasNext()) {
 	    		QuerySolution soln = res.next();
 	    		try{
 	    			String l = soln.getResource("ev").toString();
+	    			System.out.println(l);
 		    		arr.add(l);
 	    		}catch(Exception e){
 	    			
