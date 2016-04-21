@@ -547,7 +547,7 @@ public class FollowyoureventTDB {
 	 * @param longi
 	 * @return
 	 */
-	public ArrayList<String> getActualEventsNearToYou(double lat, double longi, double distancia){
+	public ArrayList<String> getActualEventsNearToYou(double lat, double longi, double distancia, int days){
 		String latMin,latMax,longMin,longMax;
 		boolean inverse=false;
 		Calendar cal = Calendar.getInstance();
@@ -565,16 +565,19 @@ public class FollowyoureventTDB {
 				+ " ?ev DBpedia:day ?day ."
 				+ " ?place Geo:lat ?lat ."
 				+ " ?place Geo:long ?long .";
+		
 		if((day+7)>30){
-			query += "FILTER (('"+getNumToString((day+7)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' =< ?day && ?month = '"+getNumToString(month)+"')) ";
+			query += "FILTER (('"+getNumToString((day+days)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' =< ?day && ?month = '"+getNumToString(month)+"')) ";
 		}else{
-			query += " FILTER (('"+getNumToString(day)+"' <=  ?day && ?day <= '"+getNumToString((day+7))+"') && (?month = '"+getNumToString(month)+"')) ";
+			query += " FILTER (('"+getNumToString(day)+"' <=  ?day && ?day <= '"+getNumToString((day+days))+"') && (?month = '"+getNumToString(month)+"')) ";
 		}
+		
 		if(lat+distancia>=90.00){
 			latMax="0"+90.00;
 		}else{
 			latMax = getDoubleToString(lat+distancia);
 		}
+		
 		if(lat-distancia<=-90.00){
 			latMin="0"+-90.00;
 		}else{
@@ -586,19 +589,17 @@ public class FollowyoureventTDB {
 		}else{
 			longMax=getDoubleToString(longi+distancia);
 		}
+		
 		if(longi-distancia<=-180.00){
-			System.out.println("no tiene");
 			longMin=getDoubleToString(longi-distancia+180.00);
 			inverse=true;
 		}else{
 			longMin=getDoubleToString(longi-distancia);
 		}
-		System.out.println(latMin+" - "+latMax+" - "+longMin+" - "+longMax);
+		
 		if(!inverse){
-			System.out.println("xkasi");
 			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long >= '"+longMin+"' && '"+longMax+"' >= ?long )}";
 		}else{
-			System.out.println("no inverso");
 			query += "FILTER ( ?lat >= '"+latMin+"' && '"+latMax+"' >= ?lat && ?long <= '"+longMin+"' && '"+longMax+"' <= ?long )}";
 		}
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
@@ -890,6 +891,18 @@ public class FollowyoureventTDB {
 	    }else{
 	    	return false;
 	    }
+	}
+	
+	public ArrayList<String> getWantedAutomaticPlaces(){
+		ArrayList<String> arr = new ArrayList<String>();
+		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
+				+ "SELECT ?place WHERE { ?place DBpedia:auto 'Want' }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    while(res.hasNext()){
+	    	String auto = res.next().getLiteral("place").toString();
+	    	arr.add(auto); 
+	    }
+	    return arr;
 	}
 	
 	/**
