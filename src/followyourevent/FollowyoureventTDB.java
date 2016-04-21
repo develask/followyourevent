@@ -58,7 +58,7 @@ public class FollowyoureventTDB {
  		ArrayList<String> arr;
  		try{
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			arr = fye.getWantedAutomaticPlaces();
+ 			arr = fye.getActualEventsNearToYou(60.00, 5., 5.00, "04", "20", "04", "24");
  			for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
 			}
@@ -506,14 +506,9 @@ public class FollowyoureventTDB {
 	 * @param longi
 	 * @return
 	 */
-	public ArrayList<String> getActualEventsNearToYou(double lat, double longi, double distancia, int days){
+	public ArrayList<String> getActualEventsNearToYou(double lat, double longi, double distancia, String startMonth, String startDay, String endMonth, String endDay){
 		String latMin,latMax,longMin,longMax;
 		boolean inverse=false;
-		Calendar cal = Calendar.getInstance();
-		Date now = cal.getTime();
-		cal.setTime(now);
-		int day = cal.get(Calendar.DAY_OF_MONTH);
-		int month = cal.get(Calendar.MONTH) + 1;
 		ArrayList<String> arr = new ArrayList<String>();
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ " PREFIX Own: <http://followyourevent.com/> "
@@ -523,14 +518,8 @@ public class FollowyoureventTDB {
 				+ " ?place Own:offers ?ev ."
 				+ " ?ev DBpedia:day ?day ."
 				+ " ?place Geo:lat ?lat ."
-				+ " ?place Geo:long ?long .";
-		
-		if((day+7)>30){
-			query += "FILTER (('"+getNumToString((day+days)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' =< ?day && ?month = '"+getNumToString(month)+"')) ";
-		}else{
-			query += " FILTER (('"+getNumToString(day)+"' <=  ?day && ?day <= '"+getNumToString((day+days))+"') && (?month = '"+getNumToString(month)+"')) ";
-		}
-		
+				+ " ?place Geo:long ?long ."
+		        + " FILTER ((( '"+startDay+"' <= ?day && '"+startMonth+"' = ?month ) || '"+startMonth+"' < ?month ) && (( '"+endDay+"' >= ?day && '"+endMonth+"' = ?month ) || '"+endMonth+"' > ?month ))";
 		if(lat+distancia>=90.00){
 			latMax="0"+90.00;
 		}else{
@@ -627,7 +616,7 @@ public class FollowyoureventTDB {
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
 					+ " ?ev DBpedia:day ?day ."
-					+ " FILTER ((( '"+startDay+"' <= ?day && '"+startMonth+"' = ?month ) || '"+startMonth+"' < ?month ) && (( '"+endDay+"' >= ?day && '"+endMonth+"' = ?month ) || '"+endMonth+"' > ?month ))}";//&& '"+endDay+"' <=  ?day && '"+endMonth+"' <= ?month ) }";
+					+ " FILTER ((( '"+startDay+"' <= ?day && '"+startMonth+"' = ?month ) || '"+startMonth+"' < ?month ) && (( '"+endDay+"' >= ?day && '"+endMonth+"' = ?month ) || '"+endMonth+"' > ?month ))}";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	while (res.hasNext()) {
