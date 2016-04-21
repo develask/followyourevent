@@ -6,11 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-
 import javax.xml.validation.Schema;
-
 import jena.schemagen;
-
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -26,8 +23,6 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.tdb.TDBFactory;
-import org.apache.jena.update.GraphStore;
-import org.apache.jena.update.GraphStoreFactory;
 import org.apache.jena.update.UpdateAction;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
@@ -48,10 +43,9 @@ public class FollowyoureventTDB {
  	private static InfModel rdfsmodel=null;
  	private static Dataset dataset=null;
  	private static QueryExecution qexec=null;
-// 	private static HashMap<String,Integer> oficialnames;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -62,44 +56,12 @@ public class FollowyoureventTDB {
  	public static void main(String[] args) {
  		boolean s = false;
  		ArrayList<String> arr;
- 		try{/*
- 			//s = FollowyoureventTDB.getFollowyoureventTDB().createPlace("Tidi", "calledetidi", "https://logotidi.com", "120");
- 			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
- 			//FollowyoureventTDB.getFollowyoureventTDB().getInformationOfPlace("http://followyourevent.com/place/Tidicalledetidi");
- 			*/FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			arr = fye.getActualEventsNearToYou(60.00, 005.00, 002.00);
- 			//fye.modifyPlace(MS+"place/hulencallehulen", "hulenmodificado", "callehulenmodificado", "logomodificado", "masqyeabtesmodificado", "paginaoficialmodificado", "yesmodificado", 60.51, 05.28);
- 			//System.out.println(fye.getWebUrlOfAPlace(MS+"place/hulencallehulen"));
- 			//arr = fye.getActualEventsNearToYou(5.05, 60.45);
- 			//System.out.println(fye.getEventsBetweenDates("04", "15", "05", "30").toString());
- 			//fye.createRecommendations(MS+"person/maildecade@gmail.com");
-// 			arr = fye.recommendEvents(MS+"person/maildecade@gmail.com");
-// 			System.out.println(arr.size());
- 			//fye.createPerson("develascomikel@gmail.com", "Mikel", "21", "Male", "develask");
- 			//fye.createPlace("Matxitxako", "Street 4 60", "http://static.panoramio.com/photos/original/10930791.jpg", "700", "http://www.matxitxako.com/", "No");
- 			//fye.addOwnerToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"person/"+"develascomikel@gmail.com");
- 			//fye.createEvent("EventNumber1", "http://definicion.mx/wp-content/uploads/2014/07/Evento.jpg", "https://social-kayak.rhcloud.com/", "21", "05", "10:00", "80");
- 			//fye.write(System.out, "JSON-LD");
- 			/*fye.createEvent("EventNumber2", "http://www.espaciomadrid.es/wp-content/uploads/2015/12/patinaje-navidad.jpg", "https://social-kayak.rhcloud.com/", "24", "05", "12:30", "100");
- 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber10521");
- 			fye.addEventToAPlace(MS+"place/"+("Matxitxako"+"Street 4 60").replaceAll(" ", ""), MS+"event/EventNumber10521");
- 			fye.addEventToAPerson(MS+"person/develascomikel@gmail.com", MS+"event/EventNumber20524");
- 			*/
- 			//arr = fye.getInformationOfEvent(MS+"event/hulen0223");
-// 			ArrayList<String> mios = fye.getAllThePlacesOfAPerson("develascomikel@gmail.com");
-// 			System.out.println(mios);
- 			//s = FollowyoureventTDB.getFollowyoureventTDB().addEventToAPerson(MS+"person/maildecade@gmail.com", MS+"event/hulen0223");
- 			//FollowyoureventTDB.getFollowyoureventTDB().write(System.out, "JSON-LD");
- 			//System.out.println(s);
- 			//fye.write(System.out, "JSON-LD");
- 			//System.out.println("--------------------------------------------------------------");
- 			//FollowyoureventTDB.getFollowyoureventTDB().modifyEvent(MS+"event/tidi528", "tidimod", "HTtps://urldeimagentidi.com/mod", "HTtps://urldeleventotid.com/", "28mod", "05mod", "22:00", "220krmod");
- 			//fye.write(System.out, "JSON-LD");
- 			//arr = FollowyoureventTDB.getFollowyoureventTDB().getActualEvents();
+ 		try{
+ 			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+ 			arr = fye.getWantedAutomaticPlaces();
  			for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
 			}
- 			//System.out.println(fye.eventIsFromAPerson(MS+"event/"+"EventNumber10521", MS+"person/"+"develascomikel@gmail.com"));
  		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -112,10 +74,6 @@ public class FollowyoureventTDB {
  		}
  		return FollowyoureventTDB.myFollowyoureventTDB;
  	}
- 	
-	public Model getModel(){
-		return FollowyoureventTDB.getFollowyoureventTDB().model;
-	}
 	
 	private void makeDataset(){
 		//this will be the directory that we will use to save the data
@@ -139,16 +97,13 @@ public class FollowyoureventTDB {
 	public ResultSet selectQuery(String query){
 		ResultSet results=null;
 		if(!query.contains("Update")){
-			//allow to read 
-			//dataset.begin(ReadWrite.READ);
- 			Query quer = QueryFactory.create(query);
+			Query quer = QueryFactory.create(query);
  	        qexec = QueryExecutionFactory.create(quer, rdfsmodel.getRawModel());
  	        try {
  	        	results = qexec.execSelect() ;
-           	} finally { 
-         		//rdfsmodel.close();
-           		//dataset.end(); 
-           	}
+ 	        }catch(Exception e){
+ 	        	
+ 	        }
  		}else{
  			System.out.println("The query is not a select query");
  		}
@@ -219,7 +174,6 @@ public class FollowyoureventTDB {
 	
 	public void closeTransaction(){
 		dataset.end();
-		//rdfsmodel.close();
 	}
 	
 	public void closeModel(){
@@ -287,6 +241,11 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
+	/**
+	 * 
+	 * @param uriPlace
+	 * @return the url of a place
+	 */
 	public String getWebUrlOfAPlace(String uriPlace){
 		Resource reso = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPlace);
 		String query = " PREFIX Prov: <http://www.w3.org/TR/prov-dm/> "
@@ -703,7 +662,6 @@ public class FollowyoureventTDB {
 	    	query = "SELECT ?per WHERE { ?per <"+goes+"> <"+event+"> }";
 			res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 			if(res.hasNext()){
-				int i=0;
 				while (res.hasNext()) {
 		    		try{
 		    			soln = res.next();
@@ -893,13 +851,17 @@ public class FollowyoureventTDB {
 	    }
 	}
 	
+	/**
+	 * 
+	 * @return return arraylist of wanted automatic places
+	 */
 	public ArrayList<String> getWantedAutomaticPlaces(){
 		ArrayList<String> arr = new ArrayList<String>();
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ "SELECT ?place WHERE { ?place DBpedia:auto 'Want' }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    while(res.hasNext()){
-	    	String auto = res.next().getLiteral("place").toString();
+	    	String auto = res.next().getResource("place").toString();
 	    	arr.add(auto); 
 	    }
 	    return arr;

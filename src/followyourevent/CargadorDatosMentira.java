@@ -95,7 +95,7 @@ public class CargadorDatosMentira {
 		tidi.addLiteral(VCARD.Street, "calletidi");
 		tidi.addLiteral(logo, "urllogo");
 		tidi.addLiteral(capacity, "250");
-		tidi.addLiteral(auto, "No");
+		tidi.addLiteral(auto, "Want");
 		tidi.addLiteral(primarySource, "paginaoficial");
 		tidi.addProperty(RDF.type, place);
 		tidi.addLiteral(plat, "060.90");
