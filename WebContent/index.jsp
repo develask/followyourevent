@@ -3,6 +3,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="followyourevent.*"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.Date"%>
 <!DOCTYPE html>
 <html>
 	<%@include file="Header.jsp" %>
@@ -22,7 +24,33 @@
 			<div class="col-sm-8 blog-main">
 				<%
 					ArrayList<String[]> evs = new ArrayList<String[]>();
-					ArrayList<String> evs1 = fye.getActualEvents();
+					ArrayList<String> evs1 = null;
+					if (lat != null && lon != null){
+						
+						Calendar cal = Calendar.getInstance();
+						Date now = cal.getTime();
+						cal.setTime(now);
+						String day = ""+cal.get(Calendar.DAY_OF_MONTH);
+						String month = ""+(cal.get(Calendar.MONTH) + 1);
+						if (day.length()==1) day = "0"+day;
+						if (month.length()==1) month = "0"+month;
+						String fechaInicio = cal.get(Calendar.YEAR)+"-"+month+"-"+day;
+						//año-mes-dia
+						cal = Calendar.getInstance();
+						String[] s = fechaInicio.split("-");
+						cal.set(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
+						cal.add(Calendar.DAY_OF_YEAR, 7);
+						day = ""+cal.get(Calendar.DAY_OF_MONTH);
+						month = ""+(cal.get(Calendar.MONTH) + 1);
+						if (day.length()==1) day = "0"+day;
+						if (month.length()==1) month = "0"+month;
+						String fechaFin = cal.get(Calendar.YEAR)+"-"+month+"-"+day;
+
+						
+						evs1 = fye.getActualEventsNearToYou(Double.parseDouble(lat), Double.parseDouble(lon), 0.3, fechaInicio.split("-")[1], fechaInicio.split("-")[2], fechaFin.split("-")[1], fechaFin.split("-")[2]);
+					}else{
+						evs1 = fye.getActualEvents();
+					}
 					if (mail != null) evs1.addAll(fye.recommendEvents(fye.MS+"person/"+mail));
 					int index = -1;
 					String s;

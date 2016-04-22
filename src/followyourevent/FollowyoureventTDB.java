@@ -48,8 +48,8 @@ public class FollowyoureventTDB {
  	private static Dataset dataset=null;
  	private static QueryExecution qexec=null;
  	public static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -553,22 +553,20 @@ public class FollowyoureventTDB {
 			longMin=longi-distancia;
 		}
 		
-		query += "FILTER ( ?lat >= "+latMin+" && "+latMax+"' >= ?lat && "; 
+		query += "FILTER ( xsd:double(?lat) >= "+latMin+" && "+latMax+" >= xsd:double(?lat) &&"; 
 	
 		if(!inverse){
-			query += " ?long >= "+longMin+" && ?long <= "+longMax+" )}";
+			query += " xsd:double(?long) >= "+longMin+" && xsd:double(?long) <= "+longMax+" )}";
 		}else {
-			query += " ( ?long <= "+longMin+" || ?long >= "+longMax+" )) }";
+			query += " ( xsd:double(?long) <= "+longMin+" || xsd:double(?long) >= "+longMax+" )) }";
 		}
 		
-		System.out.println(query);
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    if(res.hasNext()){
 	    	while (res.hasNext()) {
 	    		QuerySolution soln = res.next();
 	    		try{
 	    			String l = soln.getResource("ev").toString();
-	    			System.out.println(l);
 		    		arr.add(l);
 	    		}catch(Exception e){
 	    			

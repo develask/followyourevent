@@ -15,7 +15,7 @@
 				<%
 				if (request.getParameter("lat")!=null) lat = request.getParameter("lat");
 				if (request.getParameter("lng")!=null) lon = request.getParameter("lng");
-				Double dist = request.getParameter("dist")!=null?Double.parseDouble(request.getParameter("dist")):0.3;
+				Double dist = request.getParameter("dist")!=null?Double.parseDouble(request.getParameter("dist")):0.03;
 				
 				String fechaInicio = request.getParameter("datestart");
 				if (fechaInicio==null || fechaInicio.equals("")){
@@ -63,7 +63,7 @@
 					<div class="form-group">
 						<label for="dist" class="col-sm-2">Distance:</label>
 						<div class="col-sm-10 input-group" style="padding-left: 15px; padding-right: 15px;">
-							<input type="range" min="0.02" max="1" step="0.02" value="<%= dist %>" name="dist">
+							<input type="range" min="0.01" max="0.3" step="0.01" value="<%= dist %>" name="dist">
 						</div>
 					</div>
 					<div class="sr-only">
@@ -81,13 +81,14 @@
 							var myLatlng = {lat: <%= lat %>, lng: <%= lon %>};
 							
 							var map = new google.maps.Map(document.getElementById('map'), {
-							    zoom: 14,
+							    zoom: 13,
 							    center: myLatlng
 							});
 							var marker = new google.maps.Marker({
 							    position: myLatlng,
 							    map: map,
-							    title: 'Position'
+							    title: 'Position',
+							    icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
 							});
 							$("#lat").val(myLatlng.lat);
 							$("#lng").val(myLatlng.lng);
@@ -105,7 +106,6 @@
 								String[] infoEv = fye.getInformationOfEvent(ev);
 								String[] infoPl = fye.getInformationOfPlace(fye.getPlaceOfAnEvent(ev));
 								boolean b = fye.PersonAssist(fye.MS+"person/"+mail, ev);
-								System.out.println(ev);
 							%>
 							new google.maps.Marker({
 							    position: {
@@ -113,10 +113,13 @@
 							    	lng: <%= Double.parseDouble(""+infoPl[7]) %>
 							    },
 							    map: map,
-							    title: <%= infoEv[0] %>
+							    title: "<%= infoEv[0] %>",
+							    icon: "<%= b?"http://maps.google.com/mapfiles/ms/icons/green-dot.png":"http://maps.google.com/mapfiles/ms/icons/red-dot.png" %>"
 							}).addListener("click", function(ev){
 								new google.maps.InfoWindow({
-								    content: "<h1><%= infoEv[0] %></h1>"
+								    content: "<h4><%= infoEv[0] %></h4>"+
+								    		"<p>When: <b><%= infoEv[4]%>/<%= infoEv[3]%></b></p><p>Hour: <b><%= infoEv[5]%></b></p>"+
+								    		"<input type=\"button\" onclick=\"location.href='<%= "/followyourevent/event?ev="+ev.split("/event/")[1] %>';\" value=\"See\" />"
 								 }).open(map, this);
 							});
 							<%
