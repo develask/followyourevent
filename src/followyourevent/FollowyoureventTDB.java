@@ -48,8 +48,8 @@ public class FollowyoureventTDB {
  	private static Dataset dataset=null;
  	private static QueryExecution qexec=null;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -62,22 +62,23 @@ public class FollowyoureventTDB {
  		ArrayList<String> arr;
  		try{
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			/*System.out.println(fye.isAdmin(MS+"person/maildecade@gmail.com"));
- 			System.out.println(fye.addAdminRoleToAPerson(MS+"person/maildecade@gmail.com"));
+ 			arr = fye.getPeopleByName("Cade");
+ 			/*System.out.println(fye.addAdminRoleToAPerson(MS+"person/maildecade@gmail.com"));
  			fye.write(System.out, "JSON-LD");
  			System.out.println("--------------------------------------------");
- 			System.out.println(fye.isAdmin(MS+"person/maildecade@gmail.com"));
+ 			*///arr = fye.getAdminList();
+ 			/*System.out.println(fye.isAdmin(MS+"person/maildecade@gmail.com"));
  			fye.write(System.out, "JSON-LD");
  			System.out.println("--------------------------------------------");
  			System.out.println(fye.removeAdminRoleToAPerson(MS+"person/maildecade@gmail.com"));
  			fye.write(System.out, "JSON-LD");
  			System.out.println("--------------------------------------------");
  			System.out.println(fye.isAdmin(MS+"person/maildecade@gmail.com"));*/
- 			/*arr = fye.getActualEventsNearToYou(60.00, 5., 5.00, "04", "20", "04", "24");
+ 			//arr = fye.getActualEventsNearToYou(60.00, 5., 5.00, "04", "20", "04", "24");
  			for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
-			}*/
- 			fye.write(System.out, "JSON-LD");
+			}
+ 			//fye.write(System.out, "JSON-LD");
  		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -340,6 +341,45 @@ public class FollowyoureventTDB {
 		}
 	} 
 	
+	public ArrayList<String> getPeopleByName(String name){
+		ArrayList<String> arr = new ArrayList<String>();
+		String tmp = "^"+name;
+		String query = "PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> "
+				+ "PREFIX fn: <http://www.w3.org/2005/xpath-functions#> "
+				+ "PREFIX Foaf: <http://xmlns.com/foaf/0.1/> "
+				+ "SELECT ?name ?person "
+				+ "WHERE { ?person Foaf:givenname ?name ."
+				+ "FILTER regex(str(?name),\""+tmp+"\") }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+    	while (res.hasNext()) {
+    		QuerySolution soln = res.next();
+    		try{
+    			String l = soln.getResource("person").toString();
+    			arr.add(l);
+    		}catch(Exception e){
+    			return arr;
+    		}
+		}
+    	return arr;
+	}
+	
+	public ArrayList<String> getAdminList(){
+		ArrayList<String> arr = new ArrayList<String>();
+		String query = "PREFIX Prop: <http://purl.org/ontology/po/>"
+				+ " SELECT ?person "
+				+ "WHERE { ?person Prop:role ?admin }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+    	while (res.hasNext()) {
+    		QuerySolution soln = res.next();
+    		try{
+    			String l = soln.getResource("person").toString();
+	    		arr.add(l);
+    		}catch(Exception e){
+    			
+    		}
+		}
+    	return arr;
+	}
 	
 	/**
 	 * 
