@@ -113,9 +113,11 @@
 							    	lng: <%= Double.parseDouble(""+infoPl[7]) %>
 							    },
 							    map: map,
-							    title: 'Position'
+							    title: <%= infoEv[0] %>
 							}).addListener("click", function(ev){
-								
+								new google.maps.InfoWindow({
+								    content: "<h1><%= infoEv[0] %></h1>"
+								 }).open(map, this);
 							});
 							<%
 							}
