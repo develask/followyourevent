@@ -62,6 +62,17 @@ public class FollowyoureventTDB {
  		ArrayList<String> arr;
  		try{
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
+ 			/*System.out.println(fye.isAdmin(MS+"person/maildecade@gmail.com"));
+ 			System.out.println(fye.addAdminRoleToAPerson(MS+"person/maildecade@gmail.com"));
+ 			fye.write(System.out, "JSON-LD");
+ 			System.out.println("--------------------------------------------");
+ 			System.out.println(fye.isAdmin(MS+"person/maildecade@gmail.com"));
+ 			fye.write(System.out, "JSON-LD");
+ 			System.out.println("--------------------------------------------");
+ 			System.out.println(fye.removeAdminRoleToAPerson(MS+"person/maildecade@gmail.com"));
+ 			fye.write(System.out, "JSON-LD");
+ 			System.out.println("--------------------------------------------");
+ 			System.out.println(fye.isAdmin(MS+"person/maildecade@gmail.com"));*/
  			/*arr = fye.getActualEventsNearToYou(60.00, 5., 5.00, "04", "20", "04", "24");
  			for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
@@ -853,6 +864,26 @@ public class FollowyoureventTDB {
 	
 	/**
 	 * 
+	 * @param uriPerson
+	 * @return if is admin true; else false
+	 */
+	public boolean isAdmin(String uriPerson){
+		String query = "PREFIX Purl: <http://purl.org/ontology/po/> "
+				+ "SELECT ?role WHERE { <"+uriPerson+"> Purl:role ?role }";
+		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
+	    if(res.hasNext()){
+	    	if(res.next().getLiteral("role").toString().equals("Admin")){
+	    		return true;
+	    	}else{
+	    		return false;
+	    	}
+	    }else{
+	    	return false;
+	    }
+	}
+	
+	/**
+	 * 
 	 * @return return arraylist of wanted automatic places
 	 */
 	public ArrayList<String> getWantedAutomaticPlaces(){
@@ -975,6 +1006,39 @@ public class FollowyoureventTDB {
 				return false;
 			}
 		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param uriPerson
+	 * @return true if created role; if not false;
+	 */
+	public boolean addAdminRoleToAPerson(String uriPerson){
+		try {
+			Resource resPerson = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+			Property proprole = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://purl.org/ontology/po/role");
+			resPerson.addLiteral(proprole, "Admin");
+			FollowyoureventTDB.getFollowyoureventTDB().commit();
+			return true;
+		}catch(Exception e){
+			return false;
+		}
+		
+	}
+	
+	public boolean removeAdminRoleToAPerson(String uriPerson){
+		if(isAdmin(uriPerson)){
+			Resource resPerson = FollowyoureventTDB.getFollowyoureventTDB().getResource(uriPerson);
+			Property proprole = FollowyoureventTDB.getFollowyoureventTDB().createProperty("http://purl.org/ontology/po/role");
+			UpdateRequest update = UpdateFactory.create("DELETE { <"+resPerson+"> <"+proprole+"> 'Admin' }"
+					+ "WHERE { <"+resPerson+"> <"+proprole+"> 'Admin' }");
+			
+			UpdateAction.execute(update, dataset);
+			FollowyoureventTDB.getFollowyoureventTDB().commit();
+			return true;
+		}else{
 			return false;
 		}
 	}
