@@ -60,7 +60,7 @@ for (String ev: evs){
 			url: '/followyourevent/event?ev=<%= ev.split("/event/")[1] %>',
 			start: '<%= year %>-<%= evI[4] %>-<%= evI[3] %>T<%= evI[5] %>',
 			color: '<%= as?"green":"red" %>'
-		}<%
+		},<%
 }
 %>
 						]
