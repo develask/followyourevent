@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+
 import javax.xml.validation.Schema;
+
 import jena.schemagen;
+
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -34,6 +37,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
 import org.apache.jena.vocabulary.VCARD;
+import org.apache.jena.vocabulary.XSD;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
 
@@ -44,8 +48,8 @@ public class FollowyoureventTDB {
  	private static Dataset dataset=null;
  	private static QueryExecution qexec=null;
  	public static String MS = "http://followyourevent.com/";
- 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {
@@ -508,12 +512,13 @@ public class FollowyoureventTDB {
 	 * @return
 	 */
 	public ArrayList<String> getActualEventsNearToYou(double lat, double longi, double distancia, String startMonth, String startDay, String endMonth, String endDay){
-		String latMin,latMax,longMin,longMax;
+		double latMin,latMax,longMin,longMax;
 		boolean inverse=false;
 		ArrayList<String> arr = new ArrayList<String>();
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
 				+ " PREFIX Own: <http://followyourevent.com/> "
 				+ " PREFIX Geo: <http://www.w3.org/2003/01/geo/wgs84_pos#/> "
+				+ " PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
 				+ "SELECT ?ev ?month ?day ?lat ?long "
 				+ "WHERE { ?ev DBpedia:month ?month ."
 				+ " ?place Own:offers ?ev ."
@@ -522,62 +527,38 @@ public class FollowyoureventTDB {
 				+ " ?place Geo:long ?long ."
 		        + " FILTER ((( '"+startDay+"' <= ?day && '"+startMonth+"' = ?month ) || '"+startMonth+"' < ?month ) && (( '"+endDay+"' >= ?day && '"+endMonth+"' = ?month ) || '"+endMonth+"' > ?month )) ";
 		if(lat+distancia>=90.00){
-			latMax="0"+90.00;
+			latMax=90.00;
 		}else{
-			latMax = getDoubleToString(lat+distancia);
+			latMax =lat+distancia;
 		}
 		
 		if(lat-distancia<=-90.00){
-			latMin="0"+-90.00;
+			latMin=90.00;
 			
 		}else{
-			latMin= getDoubleToString(lat-distancia);
+			latMin= lat-distancia;
 		}
 		
 		if(longi+distancia>=180.00){
-			longMax=getDoubleToString(longi+distancia-360.00);
+			longMax=longi+distancia-360.00;
 			inverse=true;
 		}else{
-			longMax=getDoubleToString(longi+distancia);
+			longMax=longi+distancia;
 		}
 		
 		if(longi-distancia<=-180.00){
-			longMin=getDoubleToString(longi-distancia+360.00);//043.33959946071883,-003.013601303100586
+			longMin=longi-distancia+360.00;
 			inverse=true;
 		}else{
-			longMin=getDoubleToString(longi-distancia);
+			longMin=longi-distancia;
 		}
 		
-		if(lat-distancia<0.00){
-			query += "FILTER (( ?lat <= '"+latMin+"' || ?lat >= '000.00') &&"; 
-		}else{
-			query += "FILTER ( ?lat >= '"+latMin+"' && "; 
-		}
-		
-		if(lat+distancia<0.00){
-			query += "'"+latMax+"' <= ?lat && ";
-		}else{
-			query += " ( regex(?lat, \"-\") && ( ?lat <= '"+latMax+"' || ?lat >= '-000.00') ) && ";
-		}
-		
-		if(longi-distancia<0.00 && !inverse){
-			query += "( ?long <= '"+longMin+"' || ?long >= '000.00') && ";
-		}else if(longi-distancia<0.00 && inverse){
-			query += "( ?long >= '"+longMin+"' || ?long <= '180.00') && "; 
-		}else if(longi-distancia>0.00 && !inverse){
-			query += "?long >= '"+longMin+"' && ";
-		}else if(longi-distancia>0.00  && inverse){
-			query += "( regex(?long, \"-\") &&  ( ?long <= '"+longMin+"' || ?long >= '-000.00') ) && ";
-		}
-		
-		if(longi+distancia<0.00 && !inverse){
-			query += "?long >= '"+longMax+"' )}";
-		}else if(longi+distancia<0.00 && inverse){
-			query += "( ?long <= '"+longMax+"' || ?long >= '000.00') )}"; 
-		}else if(longi+distancia>0.00 && !inverse){
-			query += "( regex(?long, \"-\") && (?long <= '"+longMax+"' || ?long >= '-000.00') ) )}";
-		}else if(longi+distancia>0.00  && inverse){
-			query += "( regex(?long, \"-\") && ( ?long >= '"+longMax+"' || ?long <= '-180.00') ) )}";
+		query += "FILTER ( ?lat >= "+latMin+" && "+latMax+"' >= ?lat && "; 
+	
+		if(!inverse){
+			query += " ?long >= "+longMin+" && ?long <= "+longMax+" )}";
+		}else {
+			query += " ( ?long <= "+longMin+" || ?long >= "+longMax+" )) }";
 		}
 		
 		System.out.println(query);
@@ -745,8 +726,6 @@ public class FollowyoureventTDB {
 		Property plat = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/lat");
 		Property plong = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/long");
 		Resource place = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/place");
-		String slat = getDoubleToString(lat);
-		String slong = getDoubleToString(longi);
 		if(!existPlace(placeName, street)){
 			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"place/"+(placeName+street).replaceAll(" ", ""));
 			res.addLiteral(porganization, placeName);
@@ -756,8 +735,8 @@ public class FollowyoureventTDB {
 			res.addLiteral(pauto,auto);
 			res.addLiteral(primarySource, oficialweb);
 			res.addProperty(RDF.type, place);
-			res.addLiteral(plat, slat);
-			res.addLiteral(plong, slong);
+			res.addLiteral(plat, lat);
+			res.addLiteral(plong, longi);
 			FollowyoureventTDB.getFollowyoureventTDB().commit();
 			return res.toString();
 		}else{
@@ -1357,8 +1336,6 @@ public class FollowyoureventTDB {
 		Property pauto = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/auto");
 		Property plat = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/lat");
 		Property plong = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://www.w3.org/2003/01/geo/wgs84_pos#/long");
-		String slat = getDoubleToString(lat);
-		String slong = getDoubleToString(longi);
 		UpdateRequest update = UpdateFactory.create("DELETE { <"+respla+"> <"+pplaceName+"> ?placename ."
 						+ " <"+respla+"> <"+VCARD.Street+"> ?Street ."
 						+ " <"+respla+"> <"+plogo+"> ?logo ."
@@ -1373,8 +1350,8 @@ public class FollowyoureventTDB {
 						+ " <"+respla+"> <"+pcapacity+"> '"+capacity+"' ."
 						+ " <"+respla+"> <"+pprimarySource+"> '"+oficialweb+"' ."
 						+ "	<"+respla+"> <"+pauto+"> '"+auto+"' ."
-						+ " <"+respla+"> <"+plat+"> '"+slat+"' ."
-						+ " <"+respla+"> <"+plong+"> '"+slong+"' }"
+						+ " <"+respla+"> <"+plat+"> '"+lat+"' ."
+						+ " <"+respla+"> <"+plong+"> '"+longi+"' }"
 				+ "WHERE { <"+respla+"> <"+pplaceName+"> ?placename ."
 					+ " <"+respla+"> <"+VCARD.Street+"> ?Street ."
 					+ " <"+respla+"> <"+plogo+"> ?logo ."

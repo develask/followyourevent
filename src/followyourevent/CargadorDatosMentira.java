@@ -98,8 +98,8 @@ public class CargadorDatosMentira {
 		tidi.addLiteral(auto, "Want");
 		tidi.addLiteral(primarySource, "paginaoficial");
 		tidi.addProperty(RDF.type, place);
-		tidi.addLiteral(plat, "060.90");
-		tidi.addLiteral(plong, "005.80");
+		tidi.addLiteral(plat, 60.90);
+		tidi.addLiteral(plong, 005.80);
 		
 		//Create PostalAddress of Cade Tracy
 		Resource ev = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"event/hulen0411");
