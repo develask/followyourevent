@@ -48,8 +48,8 @@ public class FollowyoureventTDB {
  	private static Dataset dataset=null;
  	private static QueryExecution qexec=null;
  	public static String MS = "http://followyourevent.com/";
- 	//private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
- 	private static String OPENSHIFT_DATA_DIR="MyDatabases";
+ 	private static String OPENSHIFT_DATA_DIR="/Library/Tomcat/webapps/followyourevent/MyDatabases";
+ 	//private static String OPENSHIFT_DATA_DIR="MyDatabases";
  	private static FollowyoureventTDB myFollowyoureventTDB=null;
 
  	private FollowyoureventTDB() {

@@ -22,6 +22,13 @@
 			
 			<div class="row">
 			<div class="col-sm-8 blog-main">
+				<div class="center-block">
+					<a class="btn btn-default center-block col-md-6" href="/followyourevent/calendar" role="button">Calendar</a>
+					<a class="btn btn-default center-block col-md-6" href="/followyourevent/places/search.jsp" role="button">Find by place</a>
+				</div>
+				<br>
+				<br>
+				<hr>
 				<%
 					ArrayList<String[]> evs = new ArrayList<String[]>();
 					ArrayList<String> evs1 = null;
