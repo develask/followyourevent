@@ -1,10 +1,19 @@
 <%@ page import="followyourevent.*"%><%
 			String[] info = FollowyoureventTDB.getFollowyoureventTDB().getInformationAboutAPerson(Sessions.getSessions().verifySession(request.getCookies()));
+			boolean imadmin = FollowyoureventTDB.getFollowyoureventTDB().isAdmin(FollowyoureventTDB.MS+"person/"+Sessions.getSessions().verifySession(request.getCookies()));
 			%>
 			<div class="col-sm-3 col-sm-offset-1">
 				<div class="panel panel-default" style="margin-bottom: 0;">
 					<div class="panel-heading">
-						<h3 class="panel-title"><a href="/followyourevent"><%= info!=null?"Hello,  "+info[0]:"Follow Your Event"%></a><a class="pull-right" href="/followyourevent/user"><span class="glyphicon glyphicon-user"></span></a></h3>
+						<h3 class="panel-title">
+							<a href="/followyourevent"><%= info!=null?"Hello,  "+info[0]:"Follow Your Event"%></a>
+							<a class="pull-right" href="/followyourevent/user"><span class="glyphicon glyphicon-user"></span></a>
+							<%
+							if (imadmin){
+								%><a class="pull-right" href="/followyourevent/user/admin.jsp"><span class="glyphicon glyphicon-star"></span></a><%
+							}
+							%>
+						</h3>
 					</div>
 					<div class="panel-body">
 						<% if (info != null){ %>
