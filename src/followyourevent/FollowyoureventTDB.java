@@ -62,7 +62,8 @@ public class FollowyoureventTDB {
  		ArrayList<String> arr;
  		try{
  			FollowyoureventTDB fye = FollowyoureventTDB.getFollowyoureventTDB();
- 			arr = fye.getPeopleByName("Cade");
+ 			fye.changeAutomaticStatus(MS+"place/hulencallehulen","No");
+ 			//arr = fye.getPeopleByName("Cade");
  			/*System.out.println(fye.addAdminRoleToAPerson(MS+"person/maildecade@gmail.com"));
  			fye.write(System.out, "JSON-LD");
  			System.out.println("--------------------------------------------");
@@ -75,10 +76,10 @@ public class FollowyoureventTDB {
  			System.out.println("--------------------------------------------");
  			System.out.println(fye.isAdmin(MS+"person/maildecade@gmail.com"));*/
  			//arr = fye.getActualEventsNearToYou(60.00, 5., 5.00, "04", "20", "04", "24");
- 			for (int i = 0; i < arr.size(); i++) {
+ 			/*for (int i = 0; i < arr.size(); i++) {
  				System.out.println(arr.get(i).toString());
-			}
- 			//fye.write(System.out, "JSON-LD");
+			}*/
+ 			fye.write(System.out, "JSON-LD");
  		}catch(Exception e){
  			System.out.println(s);
  			e.printStackTrace();
@@ -1415,6 +1416,17 @@ public class FollowyoureventTDB {
 		}
 		
 		return names;
+	}
+	
+	public void changeAutomaticStatus(String uriPlace, String auto){
+		Resource respla = FollowyoureventTDB.getFollowyoureventTDB().createResource(uriPlace);
+		Property pauto = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/auto");
+		UpdateRequest update = UpdateFactory.create("DELETE { <"+respla+"> <"+pauto+"> ?auto }"
+				+ "INSERT { <"+respla+"> <"+pauto+"> '"+auto+"' }"
+				+ "WHERE { <"+respla+"> <"+pauto+"> ?auto }");
+		
+		UpdateAction.execute(update, dataset);
+		FollowyoureventTDB.getFollowyoureventTDB().commit();
 	}
 	
 	/**
