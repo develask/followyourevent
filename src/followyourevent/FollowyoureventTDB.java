@@ -646,7 +646,7 @@ public class FollowyoureventTDB {
 			query = "PREFIX DBpedia: <http://dbpedia.org/> "
 					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
 					+ " ?ev DBpedia:day ?day ."
-					+ " FILTER (('"+getNumToString((day+7)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' =< ?day && ?month = '"+getNumToString(month)+"')) }";
+					+ " FILTER (('"+getNumToString((day+7)%30)+"' >= ?day && ?month = '"+getNumToString((month+1))+"') || ('"+getNumToString(day)+"' <= ?day && ?month = '"+getNumToString(month)+"')) }";
 		}else{
 			query = "PREFIX DBpedia: <http://dbpedia.org/> "
 					+ "SELECT ?ev ?month ?day WHERE { ?ev DBpedia:month ?month ."
