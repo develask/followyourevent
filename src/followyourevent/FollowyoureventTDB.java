@@ -11,6 +11,7 @@ import javax.xml.validation.Schema;
 
 import jena.schemagen;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -1367,11 +1368,12 @@ public class FollowyoureventTDB {
 	 * @param events
 	 */
 	public void updateEvents(String[][] events){
+		//orden del array -> 0-nombreevento;1-imagen;2-month;3-hour;4-price;5-url;6-day;
 		for (int i = 0; i < events.length; i++) {
-			if(existEvent(name, month, day)){
-				modifyEvent(uriEvent, name, image, url, day, month, hour, price);
+			if(existEvent(events[i][0],events[i][3],events[i][6])){
+				modifyEvent(MS+"event/"+(events[i][0]+events[i][2]+events[i][6]).replaceAll(" ", ""), events[i][0],  events[i][1], events[i][5], events[i][6], events[i][2], events[i][3], events[i][4]);
 			}else{
-				createEvent(name, image, url, day, month, hour, price);
+				createEvent(events[i][0],  events[i][1], events[i][5], events[i][6], events[i][2], events[i][3], events[i][4]);
 			}
 		}
 	}
@@ -1388,6 +1390,7 @@ public class FollowyoureventTDB {
 		Elements els;
 		String[][] names = null;
 		int ind = 0;
+		
 		switch (uri) {
 		case "http://hulen.no/":
 			//Start making connections
@@ -1397,6 +1400,7 @@ public class FollowyoureventTDB {
 				e.printStackTrace();
 			}
 			//This will be the same for all the sites
+			String[] months = new String[]{"","jan.","febr.","mars.","apr.","mai.","juni.","juli.","aug.","sept.","okt.","nov.","des."};
 			newsHeadlines = doc.select(".no-gutter .event-list");
 			names = new String[newsHeadlines.size()][6];
 			//get all the events
@@ -1406,10 +1410,12 @@ public class FollowyoureventTDB {
 				names[ind][5] = el.select("a").first().attr("href").trim();
 				names[ind][0] = el.select("a").first().text();
 				els = el.select("li");
-				names[ind][2] = els.first().text();
+				names[ind][2] = ""+ArrayUtils.indexOf(months, els.first().text().split(" ")[1]);
+				names[ind][6] = els.first().text().split(" ")[0];
 				names[ind][3] = els.get(1).text().replaceAll("\\D+ || :+","");
 				names[ind][4] = els.get(2).text().replaceAll("\\D+","");
 				ind++;
+				//orden del array -> 0-nombreevento;1-imagen;2-month;3-hour;4-price;5-url;6-day; 
 			}
 			break;
 		default:
