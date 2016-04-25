@@ -109,7 +109,19 @@
 								for(String pl: miLista){
 									// name, street, logo, capacity, url, auto, lat, long
 									String[] info = fye.getInformationOfPlace(pl);
-									%><li class="list-group-item"><%= info[0] %> - <a target="_blank" href="<%= info[4] %>"><%= info[4] %></a></li><%
+									%><li class="list-group-item"><%= info[0] %> - <a target="_blank" href="<%= info[4] %>"><%= info[4] %></a>
+										<div class="pull-right">
+											<a href="/followyourevent/places/changeAuto.jsp?pl=<%= pl.split("/place/")[1] %>&val=Want">
+												<span class="glyphicon glyphicon-question-sign" <%= info[5].equals("Want")?"style=\"color: blue;\"":"style=\"color: black;\"" %>></span>
+											</a>
+											<a href="/followyourevent/places/changeAuto.jsp?pl=<%= pl.split("/place/")[1] %>&val=Yes">
+												<span class="glyphicon glyphicon-ok" <%= info[5].equals("Yes")?"style=\"color: green;\"":"style=\"color: black;\"" %>></span>
+											</a>
+											<a href="/followyourevent/places/changeAuto.jsp?pl=<%= pl.split("/place/")[1] %>&val=No">
+												<span class="glyphicon glyphicon-remove" style="color: black;"></span>
+											</a>
+										</div>
+									</li><%
 								}
 							%>
 						</ul>

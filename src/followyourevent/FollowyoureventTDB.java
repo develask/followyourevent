@@ -928,7 +928,8 @@ public class FollowyoureventTDB {
 	public ArrayList<String> getWantedAutomaticPlaces(){
 		ArrayList<String> arr = new ArrayList<String>();
 		String query = "PREFIX DBpedia: <http://dbpedia.org/> "
-				+ "SELECT ?place WHERE { ?place DBpedia:auto 'Want' }";
+				+ "SELECT ?place WHERE { ?place DBpedia:auto ?val "
+				+ "FILTER ( ?val = 'Yes' || ?val = 'Want' ) }";
 		ResultSet res = FollowyoureventTDB.getFollowyoureventTDB().selectQuery(query);
 	    while(res.hasNext()){
 	    	String auto = res.next().getResource("place").toString();
