@@ -251,8 +251,8 @@ public class FollowyoureventTDB {
 	    	arr[3] = soln.getLiteral("capacity").toString();
 	    	arr[4] = soln.getLiteral("url").toString();
 	    	arr[5] = soln.getLiteral("auto").toString();
-	    	arr[6] = soln.getLiteral("lat").toString();
-	    	arr[7] = soln.getLiteral("long").toString();
+	    	arr[6] = soln.getLiteral("lat").getValue().toString();
+	    	arr[7] = soln.getLiteral("long").getValue().toString();
 	    	return arr;
 	    }else{
 	    	return arr;
