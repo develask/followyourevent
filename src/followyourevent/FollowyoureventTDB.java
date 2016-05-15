@@ -797,27 +797,6 @@ public class FollowyoureventTDB {
 	
 	/**
 	 * 
-	 * @param description
-	 * @param kind
-	 * @return if created true; if not false
-	 */
-	public String createStyle(String description, String kind){
-		Property pKind = FollowyoureventTDB.getFollowyoureventTDB().getProperty("http://dbpedia.org/kind");
-		Resource style = FollowyoureventTDB.getFollowyoureventTDB().getResource("http://followyourevent.com/style");
-		if(!existStyle(kind)){
-			Resource res = FollowyoureventTDB.getFollowyoureventTDB().createResource(MS+"tyle/"+kind);
-			res.addLiteral(SKOS.definition, description);
-			res.addLiteral(pKind, kind);
-			res.addProperty(RDF.type, style);
-			FollowyoureventTDB.getFollowyoureventTDB().commit();
-			return res.toString();
-		}else{
-			return null;
-		}
-	}
-	
-	/**
-	 * 
 	 * @param name
 	 * @param image
 	 * @param url

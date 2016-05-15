@@ -17,6 +17,5 @@ http://www.w3.org/2003/01/geo/wgs84_pos#/lat - Lat
 http://www.w3.org/2003/01/geo/wgs84_pos#/long - Long
 http://dbpedia.org/capacity - Capacity
 http://www.w3.org/2004/02/skos/core#definition - Definition
-http://dbpedia.org/kind - Kind
 http://dbpedia.org/auto - Automatic
 http://purl.org/ontology/po/role - Role
